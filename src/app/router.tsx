@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router";
 import { AppLayout } from "../components/layout/AppLayout";
 import { DashboardPage } from "../features/dashboard/pages/DashboardPage";
 import { PlaceholderPage } from "../features/shared/pages/PlaceholderPage";
+import { LibraryPage } from "../features/library/pages/LibraryPage";
 
 export function AppRouter() {
   return (
@@ -18,7 +19,7 @@ export function AppRouter() {
           path="/flashcards"
           element={<PlaceholderPage title="Flashcards" />}
         />
-        <Route path="/library" element={<PlaceholderPage title="Library" />} />
+        <Route path="/library" element={<LibraryPage />} />
         <Route
           path="/settings"
           element={<PlaceholderPage title="Settings" />}
