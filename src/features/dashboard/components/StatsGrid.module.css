@@ -1,0 +1,115 @@
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 36px;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 18px 16px;
+  min-height: 137px;
+}
+
+.statTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.purple {
+  color: #7b69cf;
+  background: #f0edff;
+}
+
+.orange {
+  color: #d99450;
+  background: #fff3e6;
+}
+
+.green {
+  color: #58a981;
+  background: #eaf7ef;
+}
+
+.blue {
+  color: #5c9dc6;
+  background: #eaf5fc;
+}
+
+.statCaption {
+  color: #aaa7b5;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.statValue {
+  margin-top: 14px;
+  color: #302d43;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.statValue span {
+  color: #aaa7b5;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.statCard p {
+  color: #aaa7b5;
+  font-size: 10px;
+  margin: 6px 0 0;
+}
+
+.progressTrack {
+  height: 5px;
+  background: #f0eef6;
+  border-radius: 10px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #8273d5;
+  border-radius: 10px;
+}
+
+@media (max-width: 1100px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .statsGrid {
+    gap: 9px;
+  }
+
+  .statCard {
+    padding: 13px;
+    min-height: 125px;
+  }
+
+  .statCaption {
+    font-size: 8px;
+  }
+
+  .statValue {
+    font-size: 22px;
+  }
+}

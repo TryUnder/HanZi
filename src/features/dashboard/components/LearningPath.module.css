@@ -1,0 +1,65 @@
+.learningPath {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.pathCard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: #fff;
+  border: 1px solid #efedf4;
+  border-radius: 11px;
+  padding: 12px 14px;
+  text-align: left;
+  color: #aaa7b5;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.pathCard:hover {
+  border-color: #d8d1f7;
+  transform: translateX(2px);
+}
+
+.pathIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.writingIcon {
+  color: #7c6bc9;
+  background: #f0edff;
+}
+
+.speakingIcon {
+  color: #5b9ec1;
+  background: #eaf5fc;
+}
+
+.flashcardIcon {
+  color: #5ca681;
+  background: #eaf7ef;
+}
+
+.pathCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.pathCopy strong {
+  color: #39364b;
+  font-size: 11px;
+}
+
+.pathCopy span {
+  color: #a3a0ae;
+  font-size: 10px;
+}

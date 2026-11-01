@@ -1,0 +1,145 @@
+.continueCard {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  min-height: 245px;
+  background: white;
+  border: 1px solid #efedf4;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.continueArt {
+  background: #eeebfc;
+  position: relative;
+  min-height: 245px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.continueArt::before,
+.continueArt::after {
+  content: "";
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border: 1px solid #dcd5f7;
+  border-radius: 50%;
+}
+
+.continueArt::after {
+  width: 220px;
+  height: 220px;
+}
+
+.artCharacter {
+  z-index: 1;
+  color: #7768c9;
+  font-family: var(--font-chinese);
+  font-size: 112px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.artSmall {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  font-family: var(--font-chinese);
+  color: #a69bdc;
+  font-size: 24px;
+}
+
+.artCaption {
+  position: absolute;
+  bottom: 18px;
+  color: #988bcf;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.continueInfo {
+  padding: 24px 25px;
+}
+
+.lessonTag {
+  color: #8b7ad4;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.continueInfo h3 {
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 10px 0 8px;
+  color: #302d43;
+}
+
+.continueInfo p {
+  color: #9290a1;
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.lessonMeta {
+  display: flex;
+  gap: 17px;
+  margin: 14px 0;
+  color: #9290a1;
+  font-size: 10px;
+}
+
+.lessonMeta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.primaryButton {
+  height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 7px;
+  background: #7162c9;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.primaryButton:hover {
+  background: #5e50b6;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 1100px) {
+  .continueCard {
+    grid-template-columns: 0.7fr 1.3fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .continueCard {
+    grid-template-columns: 1fr;
+  }
+
+  .continueArt {
+    min-height: 155px;
+  }
+
+  .artCharacter {
+    font-size: 83px;
+  }
+
+  .continueInfo {
+    padding: 20px;
+  }
+}

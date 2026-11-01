@@ -1,0 +1,156 @@
+.challengeHeader {
+  /* Używany przez DashboardPage do rozmieszczenia nagłówka w siatce. */
+}
+
+.challengeCard {
+  border: 1px solid #efedf4;
+  border-radius: 14px;
+  background: #fff;
+  padding: 18px;
+  text-align: center;
+}
+
+.challengeTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.challengeLabel {
+  color: #aaa7b5;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.challengeBadge {
+  background: #f0edff;
+  color: #7668c8;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.characterDisplay {
+  font-family: var(--font-chinese);
+  font-size: 82px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #6e60c4;
+  margin-top: 12px;
+}
+
+.challengeCard h3 {
+  font-size: 18px;
+  color: #363248;
+  margin: 4px 0;
+}
+
+.characterMeaning {
+  font-size: 11px;
+  color: #aaa7b5;
+  margin: 0;
+}
+
+.characterDivider {
+  height: 1px;
+  background: #f0eef4;
+  margin: 19px 0;
+}
+
+.characterDetails {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.characterDetails div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.characterDetails div + div {
+  border-left: 1px solid #efedf4;
+}
+
+.characterDetails span {
+  font-size: 8px;
+  color: #aaa7b5;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.characterDetails strong {
+  font-size: 13px;
+  color: #464258;
+  font-weight: 700;
+}
+
+.audioButton {
+  width: 100%;
+  height: 37px;
+  margin-top: 20px;
+  border: 1px solid #e9e5f7;
+  background: #f8f6ff;
+  color: #7668c8;
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.quoteCard {
+  position: relative;
+  background: #f1effb;
+  border-radius: 12px;
+  padding: 17px 17px 15px;
+  margin-top: 15px;
+}
+
+.quoteIcon {
+  color: #a79bdd;
+  font-family: Georgia, serif;
+  font-size: 36px;
+  line-height: 0.8;
+}
+
+.quoteCard p {
+  font-family: var(--font-chinese);
+  color: #6356b3;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.quoteCard > span {
+  color: #858098;
+  font-size: 10px;
+  line-height: 1.6;
+  display: block;
+}
+
+.quoteAuthor {
+  color: #a6a1b7;
+  font-size: 9px;
+  margin-top: 10px;
+}
+
+.addGoalButton {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed #dcd7ee;
+  color: #8a81b2;
+  border-radius: 9px;
+  height: 39px;
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 600;
+}

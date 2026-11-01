@@ -1,0 +1,80 @@
+.welcomeSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #8374d1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  margin-bottom: 13px;
+}
+
+.welcomeSection h1 {
+  margin: 0;
+  font-size: clamp(27px, 3vw, 35px);
+  letter-spacing: -1.5px;
+  font-weight: 800;
+  color: #29263d;
+}
+
+.welcomeSection h1 span {
+  color: #7869d2;
+}
+
+.welcomeDescription {
+  color: #9290a1;
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
+.welcomeDate {
+  min-width: 155px;
+  border-left: 1px solid #e8e6ef;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dateLabel {
+  color: #a4a1b0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.welcomeDate strong {
+  font-size: 22px;
+  color: #6558bf;
+}
+
+.dateSubtitle {
+  color: #aaa7b5;
+  font-size: 10px;
+}
+
+@media (max-width: 560px) {
+  .welcomeSection {
+    align-items: flex-start;
+  }
+
+  .welcomeDate {
+    display: none;
+  }
+
+  .welcomeSection h1 {
+    font-size: 27px;
+  }
+
+  .welcomeDescription {
+    max-width: 270px;
+    line-height: 1.6;
+  }
+}

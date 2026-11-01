@@ -1,0 +1,38 @@
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sectionKicker {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  margin-bottom: 6px;
+}
+
+.sectionHeading h2 {
+  color: var(--color-text-heading);
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.textButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  color: #7567c9;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.activityHeading {
+  margin-top: 31px;
+}

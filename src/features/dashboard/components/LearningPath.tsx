@@ -1,5 +1,7 @@
 import { ChevronRight, Layers, PenLine, Volume2 } from "lucide-react";
 import { Link } from "react-router";
+import shared from "./DashboardShared.module.css";
+import styles from "./LearningPath.module.css";
 
 const learningModules = [
   {
@@ -7,43 +9,43 @@ const learningModules = [
     description: "Practice Chinese characters",
     path: "/writing",
     icon: PenLine,
-    iconClass: "writing-icon",
+    iconClass: styles.writingIcon,
   },
   {
     title: "Speaking",
     description: "Train pronunciation and tones",
     path: "/speaking",
     icon: Volume2,
-    iconClass: "speaking-icon",
+    iconClass: styles.speakingIcon,
   },
   {
     title: "Flashcards",
     description: "Remember words for longer",
     path: "/flashcards",
     icon: Layers,
-    iconClass: "flashcard-icon",
+    iconClass: styles.flashcardIcon,
   },
 ];
 
 export function LearningPath() {
   return (
     <>
-      <div className="section-heading activity-heading">
+      <div className={`${shared.sectionHeading} ${shared.activityHeading}`}>
         <div>
-          <span className="section-kicker">BUILD YOUR ROUTINE</span>
+          <span className={shared.sectionKicker}>BUILD YOUR ROUTINE</span>
           <h2>Your learning path</h2>
         </div>
       </div>
 
-      <div className="learning-path">
+      <div className={styles.learningPath}>
         {learningModules.map(
           ({ title, description, path, icon: Icon, iconClass }) => (
-            <Link className="path-card" key={path} to={path}>
-              <div className={`path-icon ${iconClass}`}>
+            <Link className={styles.pathCard} key={path} to={path}>
+              <div className={`${styles.pathIcon} ${iconClass}`}>
                 <Icon size={21} />
               </div>
 
-              <div className="path-copy">
+              <div className={styles.pathCopy}>
                 <strong>{title}</strong>
                 <span>{description}</span>
               </div>
