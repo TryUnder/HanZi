@@ -1,0 +1,14 @@
+.appShell {
+  min-height: 100vh;
+}
+
+.mainContent {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+}
+
+@media (max-width: 800px) {
+  .mainContent {
+    margin-left: 0;
+  }
+}
