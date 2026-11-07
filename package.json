@@ -11,7 +11,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc -b --pretty",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "audio:download": "node scripts/download-audio.mjs",
+    "audio:download:force": "node scripts/download-audio.mjs --force"
   },
   "dependencies": {
     "hanzi-writer": "^3.7.3",
