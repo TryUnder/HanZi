@@ -13,7 +13,12 @@
     "typecheck": "tsc -b --pretty",
     "preview": "vite preview",
     "audio:download": "node scripts/download-audio.mjs",
-    "audio:download:force": "node scripts/download-audio.mjs --force"
+    "audio:download:force": "node scripts/download-audio.mjs --force",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cedict:parse": "node scripts/parse-cedict.mjs",
+    "hsk:analyze": "node scripts/analyze-hsk-cedict.mjs",
+    "vocabulary:build": "node scripts/build-vocabulary.mjs"
   },
   "dependencies": {
     "hanzi-writer": "^3.7.3",
@@ -36,6 +41,7 @@
     "prettier": "^3.9.10",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.72.0",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
   }
 }

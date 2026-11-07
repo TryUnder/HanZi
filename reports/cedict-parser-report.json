@@ -1,0 +1,459 @@
+{
+  "generatedAt": "2026-11-07T17:46:55.351Z",
+  "source": "CC-CEDICT",
+  "license": "CC BY-SA 4.0",
+  "totalEntries": 125379,
+  "uniqueSimplifiedWords": 121612,
+  "uniqueTraditionalWords": 122799,
+  "wordsWithMultiplePronunciations": 1251,
+  "wordsWithEquivalentNotation": 1148,
+  "examples": {
+    "multiplePronunciations": [
+      {
+        "word": "□",
+        "pronunciations": ["biang4", "biu1", "ging1"],
+        "sourceVariants": [["biang4"], ["biu1"], ["ging1"]]
+      },
+      {
+        "word": "俊",
+        "pronunciations": ["jun4", "zun4"],
+        "sourceVariants": [["jun4"], ["zun4"]]
+      },
+      {
+        "word": "参",
+        "pronunciations": ["can1", "cen1", "shen1"],
+        "sourceVariants": [["can1"], ["cen1"], ["shen1"]]
+      },
+      {
+        "word": "宿",
+        "pronunciations": ["su4", "xiu3", "xiu4"],
+        "sourceVariants": [["su4", "Su4"], ["xiu3"], ["xiu4"]]
+      },
+      {
+        "word": "㝵",
+        "pronunciations": ["ai4", "de2"],
+        "sourceVariants": [["ai4"], ["de2"]]
+      },
+      {
+        "word": "晃",
+        "pronunciations": ["huang3", "huang4"],
+        "sourceVariants": [["huang3"], ["huang4"]]
+      },
+      {
+        "word": "据",
+        "pronunciations": ["ju4", "ju1"],
+        "sourceVariants": [["ju4"], ["ju1"]]
+      },
+      {
+        "word": "散",
+        "pronunciations": ["san4", "san3"],
+        "sourceVariants": [["san4"], ["san3"]]
+      },
+      {
+        "word": "饮",
+        "pronunciations": ["yin3", "yin4"],
+        "sourceVariants": [["yin3"], ["yin4"]]
+      },
+      {
+        "word": "㲈",
+        "pronunciations": ["shao2", "tao2"],
+        "sourceVariants": [["shao2"], ["tao2"]]
+      },
+      {
+        "word": "糊",
+        "pronunciations": ["hu2", "hu1", "hu4"],
+        "sourceVariants": [["hu2"], ["hu1"], ["hu4"]]
+      },
+      {
+        "word": "䕭",
+        "pronunciations": ["qian2", "xian2"],
+        "sourceVariants": [["qian2"], ["xian2"]]
+      },
+      {
+        "word": "脉",
+        "pronunciations": ["mai4", "mo4"],
+        "sourceVariants": [["mai4"], ["mo4"]]
+      },
+      {
+        "word": "卒",
+        "pronunciations": ["zu2", "cu4"],
+        "sourceVariants": [["zu2"], ["cu4"]]
+      },
+      {
+        "word": "趟",
+        "pronunciations": ["tang1", "tang4"],
+        "sourceVariants": [["tang1"], ["tang4"]]
+      },
+      {
+        "word": "驮",
+        "pronunciations": ["tuo2", "duo4"],
+        "sourceVariants": [["tuo2"], ["duo4"]]
+      },
+      {
+        "word": "一哄而散",
+        "pronunciations": ["yi1 hong1 er2 san4", "yi1 hong4 er2 san4"],
+        "sourceVariants": [["yi1 hong1 er2 san4"], ["yi1 hong4 er2 san4"]]
+      },
+      {
+        "word": "丁",
+        "pronunciations": ["ding1", "zheng1"],
+        "sourceVariants": [["Ding1", "ding1"], ["zheng1"]]
+      },
+      {
+        "word": "丁丁",
+        "pronunciations": ["ding1 ding1", "zheng1 zheng1"],
+        "sourceVariants": [["Ding1 ding1", "ding1 ding1"], ["zheng1 zheng1"]]
+      },
+      {
+        "word": "万",
+        "pronunciations": ["mo4", "wan4"],
+        "sourceVariants": [["mo4"], ["Wan4", "wan4"]]
+      },
+      {
+        "word": "上",
+        "pronunciations": ["shang3", "shang4"],
+        "sourceVariants": [["shang3"], ["shang4"]]
+      },
+      {
+        "word": "上色",
+        "pronunciations": ["shang4 se4", "shang4 shai3"],
+        "sourceVariants": [["shang4 se4"], ["shang4 shai3"]]
+      },
+      {
+        "word": "上头",
+        "pronunciations": ["shang4 tou2", "shang4 tou5"],
+        "sourceVariants": [["shang4 tou2"], ["shang4 tou5"]]
+      },
+      {
+        "word": "下咽",
+        "pronunciations": ["xia4 yan1", "xia4 yan4"],
+        "sourceVariants": [["xia4 yan1"], ["xia4 yan4"]]
+      },
+      {
+        "word": "下场",
+        "pronunciations": ["xia4 chang3", "xia4 chang5"],
+        "sourceVariants": [["xia4 chang3"], ["xia4 chang5"]]
+      },
+      {
+        "word": "下水",
+        "pronunciations": ["xia4 shui3", "xia4 shui5"],
+        "sourceVariants": [["xia4 shui3"], ["xia4 shui5"]]
+      },
+      {
+        "word": "下调",
+        "pronunciations": ["xia4 diao4", "xia4 tiao2"],
+        "sourceVariants": [["xia4 diao4"], ["xia4 tiao2"]]
+      },
+      {
+        "word": "丌",
+        "pronunciations": ["ji1", "qi2"],
+        "sourceVariants": [["ji1"], ["qi2"]]
+      },
+      {
+        "word": "不了",
+        "pronunciations": ["bu4 le5", "bu4 liao3"],
+        "sourceVariants": [["bu4 le5"], ["bu4 liao3"]]
+      },
+      {
+        "word": "不差",
+        "pronunciations": ["bu4 cha1", "bu4 cha4"],
+        "sourceVariants": [["bu4 cha1"], ["bu4 cha4"]]
+      }
+    ],
+    "equivalentNotation": [
+      {
+        "word": "以",
+        "normalizedPronunciation": "yi3",
+        "sourceVariants": ["yi3", "Yi3"]
+      },
+      {
+        "word": "宿",
+        "normalizedPronunciation": "su4",
+        "sourceVariants": ["su4", "Su4"]
+      },
+      {
+        "word": "廉",
+        "normalizedPronunciation": "lian2",
+        "sourceVariants": ["lian2", "Lian2"]
+      },
+      {
+        "word": "捷",
+        "normalizedPronunciation": "jie2",
+        "sourceVariants": ["jie2", "Jie2"]
+      },
+      {
+        "word": "法",
+        "normalizedPronunciation": "fa3",
+        "sourceVariants": ["fa3", "Fa3"]
+      },
+      {
+        "word": "丁",
+        "normalizedPronunciation": "ding1",
+        "sourceVariants": ["Ding1", "ding1"]
+      },
+      {
+        "word": "丁丁",
+        "normalizedPronunciation": "ding1 ding1",
+        "sourceVariants": ["Ding1 ding1", "ding1 ding1"]
+      },
+      {
+        "word": "万",
+        "normalizedPronunciation": "wan4",
+        "sourceVariants": ["Wan4", "wan4"]
+      },
+      {
+        "word": "三",
+        "normalizedPronunciation": "san1",
+        "sourceVariants": ["San1", "san1"]
+      },
+      {
+        "word": "三元",
+        "normalizedPronunciation": "san1 yuan2",
+        "sourceVariants": ["San1 yuan2", "san1 yuan2"]
+      },
+      {
+        "word": "三字经",
+        "normalizedPronunciation": "san1 zi4 jing1",
+        "sourceVariants": ["San1 zi4 Jing1", "san1 zi4 jing1"]
+      },
+      {
+        "word": "三星",
+        "normalizedPronunciation": "san1 xing1",
+        "sourceVariants": ["San1 xing1", "san1 xing1"]
+      },
+      {
+        "word": "三田",
+        "normalizedPronunciation": "san1 tian2",
+        "sourceVariants": ["San1 tian2", "san1 tian2"]
+      },
+      {
+        "word": "三重",
+        "normalizedPronunciation": "san1 chong2",
+        "sourceVariants": ["San1 chong2", "san1 chong2"]
+      },
+      {
+        "word": "上官",
+        "normalizedPronunciation": "shang4 guan1",
+        "sourceVariants": ["Shang4 guan1", "shang4 guan1"]
+      },
+      {
+        "word": "上水",
+        "normalizedPronunciation": "shang4 shui3",
+        "sourceVariants": ["Shang4 shui3", "shang4 shui3"]
+      },
+      {
+        "word": "丑",
+        "normalizedPronunciation": "chou3",
+        "sourceVariants": ["Chou3", "chou3"]
+      },
+      {
+        "word": "世",
+        "normalizedPronunciation": "shi4",
+        "sourceVariants": ["Shi4", "shi4"]
+      },
+      {
+        "word": "丘",
+        "normalizedPronunciation": "qiu1",
+        "sourceVariants": ["Qiu1", "qiu1"]
+      },
+      {
+        "word": "中",
+        "normalizedPronunciation": "zhong1",
+        "sourceVariants": ["Zhong1", "zhong1"]
+      },
+      {
+        "word": "中古",
+        "normalizedPronunciation": "zhong1 gu3",
+        "sourceVariants": ["Zhong1 Gu3", "zhong1 gu3"]
+      },
+      {
+        "word": "中和",
+        "normalizedPronunciation": "zhong1 he2",
+        "sourceVariants": ["Zhong1 he2", "zhong1 he2"]
+      },
+      {
+        "word": "中土",
+        "normalizedPronunciation": "zhong1 tu3",
+        "sourceVariants": ["Zhong1 Tu3", "Zhong1 tu3"]
+      },
+      {
+        "word": "中巴",
+        "normalizedPronunciation": "zhong1 ba1",
+        "sourceVariants": ["Zhong1 Ba1", "zhong1 ba1"]
+      },
+      {
+        "word": "中庸",
+        "normalizedPronunciation": "zhong1 yong1",
+        "sourceVariants": ["Zhong1 yong1", "zhong1 yong1"]
+      },
+      {
+        "word": "中欧",
+        "normalizedPronunciation": "zhong1 ou1",
+        "sourceVariants": ["Zhong1 Ou1", "Zhong1 ou1"]
+      },
+      {
+        "word": "中正",
+        "normalizedPronunciation": "zhong1 zheng4",
+        "sourceVariants": ["Zhong1 zheng4", "zhong1 zheng4"]
+      },
+      {
+        "word": "中波",
+        "normalizedPronunciation": "zhong1 bo1",
+        "sourceVariants": ["Zhong1 Bo1", "zhong1 bo1"]
+      },
+      {
+        "word": "中生代",
+        "normalizedPronunciation": "zhong1 sheng1 dai4",
+        "sourceVariants": ["Zhong1 sheng1 dai4", "zhong1 sheng1 dai4"]
+      },
+      {
+        "word": "中美",
+        "normalizedPronunciation": "zhong1 mei3",
+        "sourceVariants": ["Zhong1 Mei3", "Zhong1 mei3"]
+      }
+    ],
+    "sampleEntries": [
+      {
+        "traditional": "110",
+        "simplified": "110",
+        "pinyin": "yao1 yao1 ling2",
+        "definitions": [
+          "the emergency number for law enforcement in Mainland China and Taiwan"
+        ]
+      },
+      {
+        "traditional": "119",
+        "simplified": "119",
+        "pinyin": "yao1 yao1 jiu3",
+        "definitions": [
+          "the emergency number for firefighting services in Mainland China"
+        ]
+      },
+      {
+        "traditional": "11區",
+        "simplified": "11区",
+        "pinyin": "11 Qu1",
+        "definitions": [
+          "(ACG) Japan (from the anime \"Code Geass\", in which Japan was renamed Area 11)"
+        ]
+      },
+      {
+        "traditional": "120",
+        "simplified": "120",
+        "pinyin": "yao1 er4 ling2",
+        "definitions": [
+          "the emergency number for medical assistance and first aid in Mainland China"
+        ]
+      },
+      {
+        "traditional": "2019冠狀病毒病",
+        "simplified": "2019冠状病毒病",
+        "pinyin": "er4 ling2 yi1 jiu3 guan1 zhuang4 bing4 du2 bing4",
+        "definitions": ["COVID-19, the coronavirus disease identified in 2019"]
+      },
+      {
+        "traditional": "21三體綜合症",
+        "simplified": "21三体综合症",
+        "pinyin": "21 san1 ti3 zong1 he2 zheng4",
+        "definitions": ["trisomy; Down's syndrome"]
+      },
+      {
+        "traditional": "3C",
+        "simplified": "3C",
+        "pinyin": "san1 C",
+        "definitions": [
+          "computers, communications, and consumer electronics",
+          "China Compulsory Certificate (CCC)"
+        ]
+      },
+      {
+        "traditional": "3D打印",
+        "simplified": "3D打印",
+        "pinyin": "san1 D da3 yin4",
+        "definitions": ["to 3D print; 3D printing"]
+      },
+      {
+        "traditional": "3D打印機",
+        "simplified": "3D打印机",
+        "pinyin": "san1 D da3 yin4 ji1",
+        "definitions": ["3D printer"]
+      },
+      {
+        "traditional": "3P",
+        "simplified": "3P",
+        "pinyin": "san1 P",
+        "definitions": ["(slang) threesome"]
+      },
+      {
+        "traditional": "3Q",
+        "simplified": "3Q",
+        "pinyin": "san1 Q",
+        "definitions": ["(Internet slang) thank you (loanword)"]
+      },
+      {
+        "traditional": "421",
+        "simplified": "421",
+        "pinyin": "si4 er4 yi1",
+        "definitions": ["four grandparents, two parents and an only child"]
+      },
+      {
+        "traditional": "4S店",
+        "simplified": "4S店",
+        "pinyin": "si4 S dian4",
+        "definitions": [
+          "authorized full-service car dealership (offering sales, spare parts, after-sales service and customer support)"
+        ]
+      },
+      {
+        "traditional": "502膠",
+        "simplified": "502胶",
+        "pinyin": "wu3 ling2 er4 jiao1",
+        "definitions": ["cyanoacrylate glue"]
+      },
+      {
+        "traditional": "88",
+        "simplified": "88",
+        "pinyin": "ba1 ba1",
+        "definitions": [
+          "(Internet slang) bye-bye (alternative for 拜拜[bai2 bai2])"
+        ]
+      },
+      {
+        "traditional": "95後",
+        "simplified": "95后",
+        "pinyin": "jiu3 wu3 hou4",
+        "definitions": [
+          "people born between 1995-01-01 and 1999-12-31",
+          "Gen Z (abbr. for 95後|95后[jiu3 wu3 hou4] + 00後|00后[ling2 ling2 hou4])"
+        ]
+      },
+      {
+        "traditional": "996",
+        "simplified": "996",
+        "pinyin": "jiu3 jiu3 liu4",
+        "definitions": ["9am–9pm, six days a week (work schedule)"]
+      },
+      {
+        "traditional": "A",
+        "simplified": "A",
+        "pinyin": "A",
+        "definitions": ["(slang) (Tw) to steal"]
+      },
+      {
+        "traditional": "AA制",
+        "simplified": "AA制",
+        "pinyin": "AA zhi4",
+        "definitions": ["to split the bill; to go Dutch"]
+      },
+      {
+        "traditional": "AB制",
+        "simplified": "AB制",
+        "pinyin": "A B zhi4",
+        "definitions": [
+          "to split the bill (where the male counterpart foots the larger portion of the sum)",
+          "(theater) a system where two actors take turns in acting the main role, with one actor replacing the other if either is unavailable"
+        ]
+      }
+    ]
+  }
+}

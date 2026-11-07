@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-11-07T18:04:42.710Z",
+  "sources": {
+    "hsk": "HSK 2012",
+    "dictionary": "CC-CEDICT",
+    "dictionaryLicense": "CC BY-SA 4.0"
+  },
+  "statistics": {
+    "totalWords": 4995,
+    "matchedWords": 4990,
+    "unmatchedWords": 5,
+    "totalReadings": 5251,
+    "totalDictionaryEntries": 5603,
+    "wordsWithMultipleReadings": 218,
+    "wordsWithoutDictionaryEntries": 5
+  },
+  "hskLevels": {
+    "HSK1": 150,
+    "HSK2": 151,
+    "HSK3": 300,
+    "HSK4": 600,
+    "HSK5": 1300,
+    "HSK6": 2500
+  },
+  "unmatchedWords": [
+    {
+      "simplified": "弹钢琴",
+      "hskLevels": [
+        4
+      ]
+    },
+    {
+      "simplified": "打篮球",
+      "hskLevels": [
+        2
+      ]
+    },
+    {
+      "simplified": "系领带",
+      "hskLevels": [
+        5
+      ]
+    },
+    {
+      "simplified": "纽扣儿",
+      "hskLevels": [
+        6
+      ]
+    },
+    {
+      "simplified": "踢足球",
+      "hskLevels": [
+        2
+      ]
+    }
+  ]
+}

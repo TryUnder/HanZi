@@ -1,0 +1,160 @@
+[
+  {
+    "id": "ni",
+    "simplified": "你",
+    "pinyin": "nǐ",
+    "audioUrl": "/audio/characters/ni.mp3",
+    "tone": 3,
+    "meaning": "ty",
+    "radical": "亻",
+    "strokes": 7,
+    "hskLevel": 1,
+    "examples": [
+      { "word": "你好", "pinyin": "nǐ hǎo", "meaning": "cześć" },
+      { "word": "你们", "pinyin": "nǐ men", "meaning": "wy" }
+    ]
+  },
+  {
+    "id": "hao",
+    "simplified": "好",
+    "pinyin": "hǎo",
+    "audioUrl": "/audio/characters/hao.mp3",
+    "tone": 3,
+    "meaning": "dobry, dobrze",
+    "radical": "女",
+    "strokes": 6,
+    "hskLevel": 1,
+    "examples": [
+      { "word": "你好", "pinyin": "nǐ hǎo", "meaning": "cześć" },
+      { "word": "好人", "pinyin": "hǎo rén", "meaning": "dobry człowiek" }
+    ]
+  },
+  {
+    "id": "wo",
+    "simplified": "我",
+    "pinyin": "wǒ",
+    "audioUrl": "/audio/characters/wo.mp3",
+    "tone": 3,
+    "meaning": "ja, mnie",
+    "radical": "戈",
+    "strokes": 7,
+    "hskLevel": 1,
+    "examples": [{ "word": "我们", "pinyin": "wǒ men", "meaning": "my" }]
+  },
+  {
+    "id": "shi",
+    "simplified": "是",
+    "pinyin": "shì",
+    "audioUrl": "/audio/characters/shi.mp3",
+    "tone": 4,
+    "meaning": "być, tak",
+    "radical": "日",
+    "strokes": 9,
+    "hskLevel": 1,
+    "examples": [{ "word": "不是", "pinyin": "bú shì", "meaning": "nie być" }]
+  },
+  {
+    "id": "bu",
+    "simplified": "不",
+    "pinyin": "bù",
+    "audioUrl": "/audio/characters/bu.mp3",
+    "tone": 4,
+    "meaning": "nie",
+    "radical": "一",
+    "strokes": 4,
+    "hskLevel": 1,
+    "examples": [{ "word": "不是", "pinyin": "bú shì", "meaning": "nie być" }]
+  },
+  {
+    "id": "ren",
+    "simplified": "人",
+    "pinyin": "rén",
+    "audioUrl": "/audio/characters/ren.mp3",
+    "tone": 2,
+    "meaning": "człowiek, osoba",
+    "radical": "人",
+    "strokes": 2,
+    "hskLevel": 1,
+    "examples": [
+      { "word": "中国人", "pinyin": "zhōng guó rén", "meaning": "Chińczyk" }
+    ]
+  },
+  {
+    "id": "zhong",
+    "simplified": "中",
+    "pinyin": "zhōng",
+    "audioUrl": "/audio/characters/zhong.mp3",
+    "tone": 1,
+    "meaning": "środek, centralny",
+    "radical": "丨",
+    "strokes": 4,
+    "hskLevel": 1,
+    "examples": [{ "word": "中国", "pinyin": "zhōng guó", "meaning": "Chiny" }]
+  },
+  {
+    "id": "guo",
+    "simplified": "国",
+    "pinyin": "guó",
+    "audioUrl": "/audio/characters/guo.mp3",
+    "tone": 2,
+    "meaning": "kraj, państwo",
+    "radical": "囗",
+    "strokes": 8,
+    "hskLevel": 1,
+    "examples": [{ "word": "中国", "pinyin": "zhōng guó", "meaning": "Chiny" }]
+  },
+  {
+    "id": "xue",
+    "simplified": "学",
+    "pinyin": "xué",
+    "audioUrl": "/audio/characters/xue.mp3",
+    "tone": 2,
+    "meaning": "uczyć się, nauka",
+    "radical": "子",
+    "strokes": 8,
+    "hskLevel": 1,
+    "examples": [
+      { "word": "学生", "pinyin": "xué sheng", "meaning": "uczeń, student" }
+    ]
+  },
+  {
+    "id": "sheng",
+    "simplified": "生",
+    "pinyin": "shēng",
+    "audioUrl": "/audio/characters/sheng.mp3",
+    "tone": 1,
+    "meaning": "życie, urodzić się",
+    "radical": "生",
+    "strokes": 5,
+    "hskLevel": 1,
+    "examples": [
+      { "word": "学生", "pinyin": "xué sheng", "meaning": "uczeń, student" }
+    ]
+  },
+  {
+    "id": "ma",
+    "simplified": "吗",
+    "pinyin": "ma",
+    "audioUrl": "/audio/characters/ma.mp3",
+    "tone": 5,
+    "meaning": "partykuła pytająca",
+    "radical": "口",
+    "strokes": 6,
+    "hskLevel": 1,
+    "examples": [
+      { "word": "好吗", "pinyin": "hǎo ma", "meaning": "czy dobrze?" }
+    ]
+  },
+  {
+    "id": "zai",
+    "simplified": "在",
+    "pinyin": "zài",
+    "audioUrl": "/audio/characters/zai.mp3",
+    "tone": 4,
+    "meaning": "być w, znajdować się",
+    "radical": "土",
+    "strokes": 6,
+    "hskLevel": 1,
+    "examples": [{ "word": "现在", "pinyin": "xiàn zài", "meaning": "teraz" }]
+  }
+]

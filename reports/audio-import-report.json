@@ -1,138 +1,103 @@
 {
-  "generatedAt": "2026-11-07T14:06:54.923Z",
+  "generatedAt": "2026-11-07T17:17:06.861Z",
   "source": "hugolpz/audio-cmn",
+  "totalCharacters": 12,
   "results": [
     {
       "id": "ni",
       "character": "你",
       "pinyin": "ni3",
       "file": "ni.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-ni3.mp3",
-      "sizeBytes": 11292,
-      "sha256": "0cdb538793b73cdd13273e2ca9198179cd712272af87afc89647b63146f94f3b"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "hao",
       "character": "好",
       "pinyin": "hao3",
       "file": "hao.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-hao3.mp3",
-      "sizeBytes": 11294,
-      "sha256": "75f0e255a3b2bf249385db25aa0c5e0de76b48ce00efb619824354f427c58d0e"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "wo",
       "character": "我",
       "pinyin": "wo3",
       "file": "wo.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-wo3.mp3",
-      "sizeBytes": 10716,
-      "sha256": "61ce3c6ada9917323c13b758275374f2918fb54477ce85ae0d9c39c176205890"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "shi",
       "character": "是",
       "pinyin": "shi4",
       "file": "shi.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-shi4.mp3",
-      "sizeBytes": 9950,
-      "sha256": "7fe9744e2cf3b9f1a865648ede04b0d34c59bf198129f5487ca5e23cda776823"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "bu",
       "character": "不",
       "pinyin": "bu4",
       "file": "bu.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-bu4.mp3",
-      "sizeBytes": 8028,
-      "sha256": "e1acafa396b42cfbc81ba7952c2577049bd4cd82316953224a4c79b471949916"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "ren",
       "character": "人",
       "pinyin": "ren2",
       "file": "ren.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-ren2.mp3",
-      "sizeBytes": 9566,
-      "sha256": "ed8bddda616a3e30cbe0d2bf44263896f1211b8ca700f1dcd69bbe233e2916a0"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "zhong",
       "character": "中",
       "pinyin": "zhong1",
       "file": "zhong.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-zhong1.mp3",
-      "sizeBytes": 9570,
-      "sha256": "67a855a9d381d38af81a31e041b1472abf1641c07da869a8c05c883f4b5319f8"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "guo",
       "character": "国",
       "pinyin": "guo2",
       "file": "guo.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-guo2.mp3",
-      "sizeBytes": 9182,
-      "sha256": "1ef9b12241af99597a3a888e2d02cac3502bd7a7fc68d2196cac8c8fc686dff3"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "xue",
       "character": "学",
       "pinyin": "xue2",
       "file": "xue.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-xue2.mp3",
-      "sizeBytes": 9182,
-      "sha256": "6cf1cbcbf4563b31301731970cc5a4987ef1e952174d8749e6ac1a8c2fd7658d"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "sheng",
       "character": "生",
       "pinyin": "sheng1",
       "file": "sheng.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-sheng1.mp3",
-      "sizeBytes": 9570,
-      "sha256": "d2a01628801a134c187cde7963fd1de76c752bc434dd9e16dbbb2bf26badd625"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "ma",
       "character": "吗",
       "pinyin": "ma5",
       "file": "ma.mp3",
-      "status": "downloaded",
-      "sourceType": "hsk-character",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/hsk/cmn-%E5%90%97.mp3",
-      "sizeBytes": 7522,
-      "sha256": "c8be94ee926dbc33079794882a3e88b3df4d3c97b9f3f59778dcc40649176dd7"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     },
     {
       "id": "zai",
       "character": "在",
       "pinyin": "zai4",
       "file": "zai.mp3",
-      "status": "downloaded",
-      "sourceType": "syllable",
-      "sourceUrl": "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k/syllabs/cmn-zai4.mp3",
-      "sizeBytes": 9182,
-      "sha256": "7affc21255e54b9a0e291161b5667243df563924b11329454a1cc3ba5c2b5682"
+      "status": "skipped",
+      "reason": "Valid file already exists"
     }
   ]
 }

@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+const CHARACTER_DATA_PATH = resolve(
+  PROJECT_ROOT,
+  "src/features/library/data/characters.json",
+);
+
 const AUDIO_DIRECTORY = resolve(PROJECT_ROOT, "public/audio/characters");
 
 const REPORT_PATH = resolve(PROJECT_ROOT, "reports/audio-import-report.json");
@@ -14,20 +19,25 @@ const BASE_URL =
 
 const FORCE_DOWNLOAD = process.argv.includes("--force");
 
-const characters = [
-  { id: "ni", character: "你", pinyin: "ni3", file: "ni.mp3" },
-  { id: "hao", character: "好", pinyin: "hao3", file: "hao.mp3" },
-  { id: "wo", character: "我", pinyin: "wo3", file: "wo.mp3" },
-  { id: "shi", character: "是", pinyin: "shi4", file: "shi.mp3" },
-  { id: "bu", character: "不", pinyin: "bu4", file: "bu.mp3" },
-  { id: "ren", character: "人", pinyin: "ren2", file: "ren.mp3" },
-  { id: "zhong", character: "中", pinyin: "zhong1", file: "zhong.mp3" },
-  { id: "guo", character: "国", pinyin: "guo2", file: "guo.mp3" },
-  { id: "xue", character: "学", pinyin: "xue2", file: "xue.mp3" },
-  { id: "sheng", character: "生", pinyin: "sheng1", file: "sheng.mp3" },
-  { id: "ma", character: "吗", pinyin: "ma5", file: "ma.mp3" },
-  { id: "zai", character: "在", pinyin: "zai4", file: "zai.mp3" },
-];
+function getPinyinSlug(pinyin) {
+  return pinyin
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function getPinyinNumber(pinyin, tone) {
+  return `${getPinyinSlug(pinyin)}${tone}`;
+}
+
+function mapCharacter(character) {
+  return {
+    id: character.id,
+    character: character.simplified,
+    pinyin: getPinyinNumber(character.pinyin, character.tone),
+    file: `${character.id}.mp3`,
+  };
+}
 
 function isValidMp3(buffer) {
   if (buffer.length < 4) {
@@ -66,9 +76,7 @@ async function downloadCharacter(character) {
 
       if (isValidMp3(existingFile)) {
         return {
-          id: character.id,
-          character: character.character,
-          file: character.file,
+          ...character,
           status: "skipped",
           reason: "Valid file already exists",
         };
@@ -79,6 +87,8 @@ async function downloadCharacter(character) {
   }
 
   for (const source of getSourceCandidates(character)) {
+    let temporaryPath;
+
     try {
       const response = await fetch(source.url);
 
@@ -96,16 +106,13 @@ async function downloadCharacter(character) {
 
       await mkdir(AUDIO_DIRECTORY, { recursive: true });
 
-      const temporaryPath = `${destination}.tmp`;
+      temporaryPath = `${destination}.tmp`;
 
       await writeFile(temporaryPath, buffer);
       await rename(temporaryPath, destination);
 
       return {
-        id: character.id,
-        character: character.character,
-        pinyin: character.pinyin,
-        file: character.file,
+        ...character,
         status: "downloaded",
         sourceType: source.type,
         sourceUrl: source.url,
@@ -113,6 +120,10 @@ async function downloadCharacter(character) {
         sha256: hash,
       };
     } catch (error) {
+      if (temporaryPath) {
+        await rm(temporaryPath, { force: true }).catch(() => {});
+      }
+
       if (error instanceof Error) {
         console.error(`Failed ${character.character}: ${error.message}`);
       }
@@ -120,9 +131,7 @@ async function downloadCharacter(character) {
   }
 
   return {
-    id: character.id,
-    character: character.character,
-    file: character.file,
+    ...character,
     status: "failed",
     reason: "No valid audio source found",
   };
@@ -130,6 +139,15 @@ async function downloadCharacter(character) {
 
 async function main() {
   console.log("Starting Mandarin audio import...\n");
+
+  const rawData = await readFile(CHARACTER_DATA_PATH, "utf8");
+  const characterData = JSON.parse(rawData);
+
+  if (!Array.isArray(characterData)) {
+    throw new Error("Invalid character database: expected an array.");
+  }
+
+  const characters = characterData.map(mapCharacter);
 
   const results = [];
 
@@ -151,6 +169,7 @@ async function main() {
       {
         generatedAt: new Date().toISOString(),
         source: "hugolpz/audio-cmn",
+        totalCharacters: characters.length,
         results,
       },
       null,
@@ -170,6 +189,7 @@ async function main() {
   const failed = results.filter((result) => result.status === "failed").length;
 
   console.log("\nImport summary:");
+  console.log(`Total:      ${characters.length}`);
   console.log(`Downloaded: ${downloaded}`);
   console.log(`Skipped:    ${skipped}`);
   console.log(`Failed:     ${failed}`);
