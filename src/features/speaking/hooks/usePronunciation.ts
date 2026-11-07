@@ -13,6 +13,12 @@ interface UsePronunciationReturn {
   play: () => Promise<void>;
 }
 
+function getChineseVoice(): SpeechSynthesisVoice | undefined {
+  const voices = window.speechSynthesis.getVoices();
+
+  return voices.find((voice) => /^zh([-_]|$)/i.test(voice.lang));
+}
+
 export function usePronunciation({
   audioUrl,
   text,
@@ -26,11 +32,20 @@ export function usePronunciation({
   const play = useCallback(async (): Promise<void> => {
     setError(null);
 
-    // Play local audio file
+    // Local MP3 playback
     if (audioUrl) {
       const audio = audioRef.current;
 
-      if (!audio) return;
+      if (!audio) {
+        setError("Audio player is unavailable.");
+        return;
+      }
+
+      // Stop speech synthesis before playing an audio file.
+      if (utteranceRef.current && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        utteranceRef.current = null;
+      }
 
       if (!audio.paused) {
         audio.pause();
@@ -51,7 +66,7 @@ export function usePronunciation({
       return;
     }
 
-    // Check browser speech synthesis support
+    // Browser speech synthesis
     if (!("speechSynthesis" in window)) {
       setError("Speech synthesis is not supported in this browser.");
       return;
@@ -59,8 +74,8 @@ export function usePronunciation({
 
     const speech = window.speechSynthesis;
 
-    // Pause or resume existing speech
-    if (utteranceRef.current && speech.speaking) {
+    // Pause or resume the current utterance.
+    if (utteranceRef.current && (speech.speaking || speech.pending)) {
       if (speech.paused) {
         speech.resume();
       } else {
@@ -76,6 +91,12 @@ export function usePronunciation({
 
     utterance.lang = "zh-CN";
     utterance.rate = 0.8;
+
+    const chineseVoice = getChineseVoice();
+
+    if (chineseVoice) {
+      utterance.voice = chineseVoice;
+    }
 
     utterance.onstart = () => {
       setIsPlaying(true);
@@ -100,7 +121,9 @@ export function usePronunciation({
       utteranceRef.current = null;
 
       if (event.error !== "canceled" && event.error !== "interrupted") {
-        setError("Speech playback failed.");
+        setError(
+          "Speech playback failed. Check your browser's Chinese voice settings.",
+        );
       }
     };
 
@@ -108,13 +131,17 @@ export function usePronunciation({
     speech.speak(utterance);
   }, [audioUrl, text]);
 
-  // Handle audio element events
+  // Listen for local audio events.
   useEffect(() => {
     const audio = audioRef.current;
 
     if (!audio) return;
 
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setError(null);
+    };
+
     const handlePause = () => setIsPlaying(false);
     const handleEnded = () => setIsPlaying(false);
 
@@ -136,7 +163,23 @@ export function usePronunciation({
     };
   }, []);
 
-  // Cleanup when the component unmounts
+  // Stop previous playback when the example changes.
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    audio?.pause();
+
+    if (audio) {
+      audio.currentTime = 0;
+    }
+
+    if (utteranceRef.current && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      utteranceRef.current = null;
+    }
+  }, [audioUrl, text]);
+
+  // Cleanup on unmount.
   useEffect(() => {
     const audio = audioRef.current;
 
@@ -145,6 +188,7 @@ export function usePronunciation({
 
       if (utteranceRef.current && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
+        utteranceRef.current = null;
       }
     };
   }, []);

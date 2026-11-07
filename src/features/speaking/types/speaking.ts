@@ -1,18 +1,23 @@
+import type { ChineseCharacter } from "../../library/types/character";
+
 /**
  * Mandarin Chinese tones.
- *
- * Tone 5 represents the neutral tone.
  */
 export type MandarinTone = 1 | 2 | 3 | 4 | 5;
 
 /**
  * Relative pitch values used to visualize a tone.
- * Values range from 1 (low) to 5 (high).
- *
- * These are educational contours, not measured acoustic data.
  */
 export type ToneContour = readonly number[];
 
+/**
+ * Available speaking exercise modes.
+ */
+export type ListeningExerciseMode = "character" | "pinyin" | "tone";
+
+/**
+ * Shared definition of a Mandarin tone.
+ */
 export interface ToneDefinition {
   tone: MandarinTone;
   name: string;
@@ -20,6 +25,9 @@ export interface ToneDefinition {
   contour: ToneContour;
 }
 
+/**
+ * Additional pronunciation examples used for tone-specific exercises.
+ */
 export interface PronunciationExample {
   id: string;
   character: string;
@@ -27,4 +35,15 @@ export interface PronunciationExample {
   tone: MandarinTone;
   meaning: string;
   audioUrl: string | null;
+}
+
+/**
+ * A question generated from the character library.
+ */
+export interface ListeningQuestion {
+  id: string;
+  character: ChineseCharacter;
+  mode: ListeningExerciseMode;
+  options: string[];
+  correctAnswer: string;
 }

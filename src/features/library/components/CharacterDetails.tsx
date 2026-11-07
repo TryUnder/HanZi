@@ -1,5 +1,6 @@
 import { Check, Plus } from "lucide-react";
 import type { ChineseCharacter } from "../types/character";
+import { PronunciationPlayer } from "../../speaking/components/PronunciationPlayer";
 import styles from "../pages/LibraryPage.module.css";
 
 interface CharacterDetailsProps {
@@ -21,7 +22,16 @@ export function CharacterDetails({
       </div>
 
       <div className={styles.detailsCharacter}>{character.simplified}</div>
-      <h2>{character.pinyin}</h2>
+
+      <div className={styles.detailsPronunciation}>
+        <h2>{character.pinyin}</h2>
+        <PronunciationPlayer
+          audioUrl={character.audioUrl ?? null}
+          text={character.simplified}
+          label={character.pinyin}
+        />
+      </div>
+
       <p className={styles.detailsMeaning}>{character.meaning}</p>
 
       <div className={styles.detailsFacts}>

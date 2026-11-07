@@ -1,41 +1,32 @@
 import { Pause, Play } from "lucide-react";
-import type { PronunciationExample } from "../types/speaking";
 import { usePronunciation } from "../hooks/usePronunciation";
 import styles from "./PronunciationPlayer.module.css";
 
 interface PronunciationPlayerProps {
-  example: PronunciationExample;
+  audioUrl: string | null;
+  text: string;
+  label: string;
 }
 
-export function PronunciationPlayer({ example }: PronunciationPlayerProps) {
+export function PronunciationPlayer({
+  audioUrl,
+  text,
+  label,
+}: PronunciationPlayerProps) {
   const { audioRef, isPlaying, error, play } = usePronunciation({
-    audioUrl: example.audioUrl,
-    text: example.character,
+    audioUrl,
+    text,
   });
 
   return (
     <div className={styles.container}>
-      {example.audioUrl && (
-        <audio
-          ref={audioRef}
-          src={example.audioUrl}
-          preload="none"
-          onPlay={() => {}}
-          onPause={() => {}}
-          onEnded={() => {}}
-          onError={() => {}}
-        />
-      )}
+      <audio ref={audioRef} src={audioUrl ?? undefined} preload="none" />
 
       <button
         type="button"
         className={styles.playButton}
         onClick={() => void play()}
-        aria-label={
-          isPlaying
-            ? `Pause pronunciation of ${example.pinyin}`
-            : `Play pronunciation of ${example.pinyin}`
-        }
+        aria-label={isPlaying ? `Pause ${label}` : `Play ${label}`}
         title={isPlaying ? "Pause pronunciation" : "Play pronunciation"}
       >
         {isPlaying ? <Pause size={17} /> : <Play size={17} />}

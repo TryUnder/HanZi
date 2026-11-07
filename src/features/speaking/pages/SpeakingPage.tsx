@@ -1,5 +1,6 @@
 import { ToneTrainer } from "../components/ToneTrainer";
 import styles from "./SpeakingPage.module.css";
+import { ListeningExercise } from "../components/ListeningExercise";
 
 export default function SpeakingPage() {
   return (
@@ -13,6 +14,7 @@ export default function SpeakingPage() {
       </header>
 
       <ToneTrainer />
+      <ListeningExercise />
     </div>
   );
 }

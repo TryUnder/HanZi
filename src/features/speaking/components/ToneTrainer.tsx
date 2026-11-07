@@ -87,7 +87,11 @@ export function ToneTrainer() {
                     <span className={styles.meaning}>{example.meaning}</span>
                   </div>
 
-                  <PronunciationPlayer example={example} />
+                  <PronunciationPlayer
+                    audioUrl={example.audioUrl}
+                    text={example.character}
+                    label={example.pinyin}
+                  />
                 </article>
               ))}
             </div>

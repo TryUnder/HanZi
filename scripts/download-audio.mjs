@@ -1,29 +1,13 @@
-
 import { createHash } from "node:crypto";
-import {
-  mkdir,
-  readFile,
-  rename,
-  rm,
-  writeFile,
-} from "node:fs/promises";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const PROJECT_ROOT = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  "..",
-);
+const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-const AUDIO_DIRECTORY = resolve(
-  PROJECT_ROOT,
-  "public/audio/characters",
-);
+const AUDIO_DIRECTORY = resolve(PROJECT_ROOT, "public/audio/characters");
 
-const REPORT_PATH = resolve(
-  PROJECT_ROOT,
-  "reports/audio-import-report.json",
-);
+const REPORT_PATH = resolve(PROJECT_ROOT, "reports/audio-import-report.json");
 
 const BASE_URL =
   "https://raw.githubusercontent.com/hugolpz/audio-cmn/master/64k";
@@ -51,28 +35,20 @@ function isValidMp3(buffer) {
   }
 
   const hasId3Header =
-    buffer[0] === 0x49 &&
-    buffer[1] === 0x44 &&
-    buffer[2] === 0x33;
+    buffer[0] === 0x49 && buffer[1] === 0x44 && buffer[2] === 0x33;
 
-  const hasMpegFrameHeader =
-    buffer[0] === 0xff &&
-    (buffer[1] & 0xe0) === 0xe0;
+  const hasMpegFrameHeader = buffer[0] === 0xff && (buffer[1] & 0xe0) === 0xe0;
 
   return hasId3Header || hasMpegFrameHeader;
 }
 
 function getSourceCandidates(character) {
-  const syllableUrl =
-    `${BASE_URL}/syllabs/cmn-${character.pinyin}.mp3`;
+  const syllableUrl = `${BASE_URL}/syllabs/cmn-${character.pinyin}.mp3`;
 
-  const hskUrl =
-    `${BASE_URL}/hsk/cmn-${encodeURIComponent(character.character)}.mp3`;
+  const hskUrl = `${BASE_URL}/hsk/cmn-${encodeURIComponent(character.character)}.mp3`;
 
   if (character.pinyin.endsWith("5")) {
-    return [
-      { url: hskUrl, type: "hsk-character" },
-    ];
+    return [{ url: hskUrl, type: "hsk-character" }];
   }
 
   return [
@@ -116,9 +92,7 @@ async function downloadCharacter(character) {
         throw new Error("Downloaded file is not a valid MP3.");
       }
 
-      const hash = createHash("sha256")
-        .update(buffer)
-        .digest("hex");
+      const hash = createHash("sha256").update(buffer).digest("hex");
 
       await mkdir(AUDIO_DIRECTORY, { recursive: true });
 
@@ -140,9 +114,7 @@ async function downloadCharacter(character) {
       };
     } catch (error) {
       if (error instanceof Error) {
-        console.error(
-          `Failed ${character.character}: ${error.message}`,
-        );
+        console.error(`Failed ${character.character}: ${error.message}`);
       }
     }
   }
@@ -195,9 +167,7 @@ async function main() {
     (result) => result.status === "skipped",
   ).length;
 
-  const failed = results.filter(
-    (result) => result.status === "failed",
-  ).length;
+  const failed = results.filter((result) => result.status === "failed").length;
 
   console.log("\nImport summary:");
   console.log(`Downloaded: ${downloaded}`);
