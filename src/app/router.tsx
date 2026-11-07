@@ -3,6 +3,7 @@ import { AppLayout } from "../components/layout/AppLayout";
 import { DashboardPage } from "../features/dashboard/pages/DashboardPage";
 import { PlaceholderPage } from "../features/shared/pages/PlaceholderPage";
 import { LibraryPage } from "../features/library/pages/LibraryPage";
+import { WritingPage } from "../features/writing/pages/WritingPage";
 
 export function AppRouter() {
   return (
@@ -10,7 +11,7 @@ export function AppRouter() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/writing" element={<PlaceholderPage title="Writing" />} />
+        <Route path="/writing" element={<WritingPage />} />
         <Route
           path="/speaking"
           element={<PlaceholderPage title="Speaking" />}

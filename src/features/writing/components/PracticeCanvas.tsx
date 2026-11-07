@@ -1,0 +1,115 @@
+import { useEffect, useRef, useState } from "react";
+import HanziWriter from "hanzi-writer";
+import styles from "./CharacterCanvas.module.css";
+
+interface PracticeCanvasProps {
+  character: string;
+  onCorrectStroke: () => void;
+  onMistake: (totalMistakes: number) => void;
+  onComplete: (totalMistakes: number) => void;
+}
+
+export function PracticeCanvas({
+  character,
+  onCorrectStroke,
+  onMistake,
+  onComplete,
+}: PracticeCanvasProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    let isActive = true;
+
+    setIsLoading(true);
+    setError(null);
+    container.replaceChildren();
+
+    const writer = HanziWriter.create(container, character, {
+      width: 280,
+      height: 280,
+      padding: 20,
+      showCharacter: false,
+      showOutline: true,
+      outlineColor: "#dedbea",
+      drawingColor: "#6558bf",
+      highlightColor: "#d99450",
+      strokeColor: "#6558bf",
+      drawingWidth: 5,
+      showHintAfterMisses: 3,
+      onLoadCharDataSuccess: () => {
+        if (!isActive) {
+          return;
+        }
+
+        setIsLoading(false);
+
+        writer.quiz({
+          showHintAfterMisses: 3,
+          onCorrectStroke: () => {
+            if (isActive) {
+              onCorrectStroke();
+            }
+          },
+          onMistake: (data) => {
+            if (isActive) {
+              onMistake(data.totalMistakes);
+            }
+          },
+          onComplete: (data) => {
+            if (isActive) {
+              onComplete(data.totalMistakes);
+            }
+          },
+        });
+      },
+      onLoadCharDataError: () => {
+        if (!isActive) {
+          return;
+        }
+
+        setIsLoading(false);
+        setError(
+          "Could not load character data. Check your internet connection.",
+        );
+      },
+    });
+
+    return () => {
+      isActive = false;
+      writer.cancelQuiz();
+      container.replaceChildren();
+    };
+  }, [character, onCorrectStroke, onMistake, onComplete]);
+
+  return (
+    <section className={styles.canvasSection}>
+      <div className={styles.canvasContainer}>
+        <div ref={containerRef} className={styles.canvas} />
+
+        {isLoading && (
+          <div className={styles.canvasOverlay}>
+            <span>Preparing practice...</span>
+          </div>
+        )}
+
+        {error && (
+          <div className={styles.canvasOverlay}>
+            <span>{error}</span>
+          </div>
+        )}
+      </div>
+
+      <p className={styles.practiceHint}>
+        Follow the stroke direction and draw each stroke in the correct order.
+      </p>
+    </section>
+  );
+}

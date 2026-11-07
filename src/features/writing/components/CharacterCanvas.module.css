@@ -1,0 +1,69 @@
+.canvasSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.canvasContainer {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 320px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+
+.canvas {
+  width: 280px;
+  height: 280px;
+  max-width: 100%;
+}
+
+.canvasOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.animateButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-brand-600);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background var(--transition-fast);
+}
+
+.animateButton:hover:not(:disabled) {
+  background: var(--color-brand-800);
+}
+
+.animateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.practiceHint {
+  max-width: 280px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.6;
+  text-align: center;
+}
