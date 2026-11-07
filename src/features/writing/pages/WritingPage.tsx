@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { characters } from "../../library/data/characters";
 import { CharacterCanvas } from "../components/CharacterCanvas";
 import { PracticeCanvas } from "../components/PracticeCanvas";
+import { WritingHistory } from "../components/WritingHistory";
 import { useWritingSession } from "../hooks/useWritingSession";
-import type { WritingMode } from "../types/writing";
+import { useWritingHistory } from "../hooks/useWritingHistory";
+import type { WritingMode, WritingSessionResult } from "../types/writing";
 import styles from "./WritingPage.module.css";
 
 export function WritingPage() {
   const [selectedCharacterId, setSelectedCharacterId] = useState("ni");
   const [mode, setMode] = useState<WritingMode>("learn");
   const [attempt, setAttempt] = useState(0);
+  const { history, error, addSession } = useWritingHistory();
+  const savedSessionKeyRef = useRef<string | null>(null);
 
   const selectedCharacter =
     characters.find((character) => character.id === selectedCharacterId) ??
@@ -32,11 +36,39 @@ export function WritingPage() {
     selectedCharacter.strokes,
   );
 
+  const sessionKey = `${selectedCharacter.id}:${attempt}`;
+
+  const handleSessionComplete = useCallback(
+    (totalMistakes: number) => {
+      if (savedSessionKeyRef.current === sessionKey) {
+        return;
+      }
+
+      handleComplete(totalMistakes);
+
+      const result: WritingSessionResult = {
+        characterId: selectedCharacter.id,
+        character: selectedCharacter.simplified,
+        correctStrokes: selectedCharacter.strokes,
+        totalStrokes: selectedCharacter.strokes,
+        mistakes: totalMistakes,
+        completedAt: new Date().toISOString(),
+      };
+
+      const savedSession = addSession(result);
+
+      if (savedSession) {
+        savedSessionKeyRef.current = sessionKey;
+      }
+    },
+    [addSession, handleComplete, selectedCharacter, sessionKey],
+  );
+
   function handleCharacterChange(characterId: string) {
     setSelectedCharacterId(characterId);
     setMode("learn");
     resetProgress();
-    setAttempt(0);
+    setAttempt((current) => current + 1);
   }
 
   function handleModeChange(nextMode: WritingMode) {
@@ -129,7 +161,7 @@ export function WritingPage() {
                 character={selectedCharacter.simplified}
                 onCorrectStroke={handleCorrectStroke}
                 onMistake={handleMistake}
-                onComplete={handleComplete}
+                onComplete={handleSessionComplete}
               />
 
               <section className={styles.sessionPanel}>
@@ -167,6 +199,10 @@ export function WritingPage() {
                   </span>
                 </div>
 
+                {error && (
+                  <p role="alert">Could not save your session: {error}</p>
+                )}
+
                 {progress.completed && (
                   <div className={styles.completionMessage}>
                     <strong>Well done!</strong>
@@ -190,6 +226,7 @@ export function WritingPage() {
           )}
         </div>
       </section>
+      <WritingHistory history={history} characters={characters} />
     </div>
   );
 }
