@@ -1,4 +1,3 @@
-
 # Third-party assets
 
 ## Mandarin pronunciation audio

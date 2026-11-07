@@ -4,6 +4,7 @@ import { toneDefinitions } from "../data/toneDefinitions";
 import type { MandarinTone } from "../types/speaking";
 import { ToneContourChart } from "./ToneContourChart";
 import styles from "./ToneTrainer.module.css";
+import { PronunciationPlayer } from "./PronunciationPlayer";
 
 export function ToneTrainer() {
   const [selectedTone, setSelectedTone] = useState<MandarinTone>(1);
@@ -85,6 +86,8 @@ export function ToneTrainer() {
                     <span className={styles.pinyin}>{example.pinyin}</span>
                     <span className={styles.meaning}>{example.meaning}</span>
                   </div>
+
+                  <PronunciationPlayer example={example} />
                 </article>
               ))}
             </div>

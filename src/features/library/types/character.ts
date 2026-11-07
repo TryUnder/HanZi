@@ -16,5 +16,6 @@ export interface ChineseCharacter {
   radical: string;
   strokes: number;
   hskLevel: HskLevel;
+  audioUrl?: string | null;
   examples: CharacterExample[];
 }

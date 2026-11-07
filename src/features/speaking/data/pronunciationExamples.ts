@@ -7,7 +7,7 @@ export const pronunciationExamples: PronunciationExample[] = [
     pinyin: "mā",
     tone: 1,
     meaning: "mother",
-    audioUrl: null,
+    audioUrl: "/audio/mandarin/ma1.mp3",
   },
   {
     id: "ma-2",
@@ -15,7 +15,7 @@ export const pronunciationExamples: PronunciationExample[] = [
     pinyin: "má",
     tone: 2,
     meaning: "hemp",
-    audioUrl: null,
+    audioUrl: "/audio/mandarin/ma2.mp3",
   },
   {
     id: "ma-3",
@@ -23,7 +23,7 @@ export const pronunciationExamples: PronunciationExample[] = [
     pinyin: "mǎ",
     tone: 3,
     meaning: "horse",
-    audioUrl: null,
+    audioUrl: "/audio/mandarin/ma3.mp3",
   },
   {
     id: "ma-4",
@@ -31,7 +31,7 @@ export const pronunciationExamples: PronunciationExample[] = [
     pinyin: "mà",
     tone: 4,
     meaning: "to scold",
-    audioUrl: null,
+    audioUrl: "/audio/mandarin/ma4.mp3",
   },
   {
     id: "ma-5",

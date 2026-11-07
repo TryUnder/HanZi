@@ -4,12 +4,11 @@ import styles from "./SpeakingPage.module.css";
 export default function SpeakingPage() {
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
+      <header className={styles.pageHeader}>
         <div>
-          <h1 className={styles.title}>Speaking</h1>
-          <p className={styles.description}>
-            Learn Mandarin pronunciation and master the five tones.
-          </p>
+          <span className={styles.eyebrow}>PRONUNCIATION & TONES</span>
+          <h1>Speaking</h1>
+          <p>Learn Mandarin pronunciation and master the five tones.</p>
         </div>
       </header>
 
