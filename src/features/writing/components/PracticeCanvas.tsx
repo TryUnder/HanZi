@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
+import type { WritingMistakeEvent } from "../types/writing";
 import styles from "./CharacterCanvas.module.css";
 
 interface PracticeCanvasProps {
   character: string;
   onCorrectStroke: () => void;
-  onMistake: (totalMistakes: number) => void;
+  onMistake: (event: WritingMistakeEvent) => void;
   onComplete: (totalMistakes: number) => void;
 }
 
@@ -53,16 +54,23 @@ export function PracticeCanvas({
 
         writer.quiz({
           showHintAfterMisses: 3,
+
           onCorrectStroke: () => {
             if (isActive) {
               onCorrectStroke();
             }
           },
+
           onMistake: (data) => {
             if (isActive) {
-              onMistake(data.totalMistakes);
+              onMistake({
+                strokeNum: data.strokeNum,
+                mistakesOnStroke: data.mistakesOnStroke,
+                totalMistakes: data.totalMistakes,
+              });
             }
           },
+
           onComplete: (data) => {
             if (isActive) {
               onComplete(data.totalMistakes);
@@ -70,6 +78,7 @@ export function PracticeCanvas({
           },
         });
       },
+
       onLoadCharDataError: () => {
         if (!isActive) {
           return;

@@ -1,20 +1,14 @@
-import { useCallback, useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { useState } from "react";
 import { characters } from "../../library/data/characters";
-import { CharacterCanvas } from "../components/CharacterCanvas";
-import { PracticeCanvas } from "../components/PracticeCanvas";
 import { WritingHistory } from "../components/WritingHistory";
-import { useWritingSession } from "../hooks/useWritingSession";
+import { WritingWorkspace } from "../components/WritingWorkspace";
 import { useWritingHistory } from "../hooks/useWritingHistory";
-import type { WritingMode, WritingSessionResult } from "../types/writing";
 import styles from "./WritingPage.module.css";
 
 export function WritingPage() {
   const [selectedCharacterId, setSelectedCharacterId] = useState("ni");
-  const [mode, setMode] = useState<WritingMode>("learn");
-  const [attempt, setAttempt] = useState(0);
+
   const { history, error, addSession } = useWritingHistory();
-  const savedSessionKeyRef = useRef<string | null>(null);
 
   const selectedCharacter =
     characters.find((character) => character.id === selectedCharacterId) ??
@@ -23,72 +17,6 @@ export function WritingPage() {
   if (!selectedCharacter) {
     throw new Error("The character library is empty.");
   }
-
-  const {
-    progress,
-    resetProgress,
-    handleCorrectStroke,
-    handleMistake,
-    handleComplete,
-  } = useWritingSession(
-    selectedCharacter.id,
-    selectedCharacter.simplified,
-    selectedCharacter.strokes,
-  );
-
-  const sessionKey = `${selectedCharacter.id}:${attempt}`;
-
-  const handleSessionComplete = useCallback(
-    (totalMistakes: number) => {
-      if (savedSessionKeyRef.current === sessionKey) {
-        return;
-      }
-
-      handleComplete(totalMistakes);
-
-      const result: WritingSessionResult = {
-        characterId: selectedCharacter.id,
-        character: selectedCharacter.simplified,
-        correctStrokes: selectedCharacter.strokes,
-        totalStrokes: selectedCharacter.strokes,
-        mistakes: totalMistakes,
-        completedAt: new Date().toISOString(),
-      };
-
-      const savedSession = addSession(result);
-
-      if (savedSession) {
-        savedSessionKeyRef.current = sessionKey;
-      }
-    },
-    [addSession, handleComplete, selectedCharacter, sessionKey],
-  );
-
-  function handleCharacterChange(characterId: string) {
-    setSelectedCharacterId(characterId);
-    setMode("learn");
-    resetProgress();
-    setAttempt((current) => current + 1);
-  }
-
-  function handleModeChange(nextMode: WritingMode) {
-    if (nextMode === "practice" && mode !== "practice") {
-      resetProgress();
-      setAttempt((current) => current + 1);
-    }
-
-    setMode(nextMode);
-  }
-
-  function handleRetry() {
-    resetProgress();
-    setAttempt((current) => current + 1);
-  }
-
-  const progressPercentage =
-    progress.totalStrokes > 0
-      ? (progress.correctStrokes / progress.totalStrokes) * 100
-      : 0;
 
   return (
     <div className={styles.page}>
@@ -105,7 +33,7 @@ export function WritingPage() {
           <select
             id="character-select"
             value={selectedCharacterId}
-            onChange={(event) => handleCharacterChange(event.target.value)}
+            onChange={(event) => setSelectedCharacterId(event.target.value)}
           >
             {characters.map((character) => (
               <option key={character.id} value={character.id}>
@@ -124,108 +52,16 @@ export function WritingPage() {
               {selectedCharacter.hskLevel}
             </small>
           </div>
-
-          <div className={styles.modeControls}>
-            <button
-              className={
-                mode === "learn" ? styles.activeMode : styles.modeButton
-              }
-              onClick={() => handleModeChange("learn")}
-              type="button"
-            >
-              Learn
-            </button>
-
-            <button
-              className={
-                mode === "practice" ? styles.activeMode : styles.modeButton
-              }
-              onClick={() => handleModeChange("practice")}
-              type="button"
-            >
-              Practice
-            </button>
-          </div>
         </div>
 
-        <div className={styles.practiceArea}>
-          {mode === "learn" ? (
-            <CharacterCanvas
-              key={selectedCharacter.id}
-              character={selectedCharacter.simplified}
-            />
-          ) : (
-            <>
-              <PracticeCanvas
-                key={`${selectedCharacter.id}-${attempt}`}
-                character={selectedCharacter.simplified}
-                onCorrectStroke={handleCorrectStroke}
-                onMistake={handleMistake}
-                onComplete={handleSessionComplete}
-              />
-
-              <section className={styles.sessionPanel}>
-                <div className={styles.progressHeader}>
-                  <strong>Writing progress</strong>
-                  <span>
-                    {progress.correctStrokes} / {progress.totalStrokes} strokes
-                  </span>
-                </div>
-
-                <div
-                  className={styles.progressTrack}
-                  role="progressbar"
-                  aria-label="Writing progress"
-                  aria-valuemin={0}
-                  aria-valuemax={progress.totalStrokes}
-                  aria-valuenow={progress.correctStrokes}
-                >
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-
-                <div className={styles.progressStats}>
-                  <span>
-                    <strong>{progress.mistakes}</strong> mistakes
-                  </span>
-
-                  <span>
-                    <strong>
-                      {progress.totalStrokes - progress.correctStrokes}
-                    </strong>{" "}
-                    remaining
-                  </span>
-                </div>
-
-                {error && (
-                  <p role="alert">Could not save your session: {error}</p>
-                )}
-
-                {progress.completed && (
-                  <div className={styles.completionMessage}>
-                    <strong>Well done!</strong>
-                    <span>
-                      You completed {selectedCharacter.simplified} with{" "}
-                      {progress.mistakes} mistakes.
-                    </span>
-                  </div>
-                )}
-
-                <button
-                  className={styles.retryButton}
-                  onClick={handleRetry}
-                  type="button"
-                >
-                  <RotateCcw size={15} />
-                  Try again
-                </button>
-              </section>
-            </>
-          )}
-        </div>
+        <WritingWorkspace
+          key={selectedCharacter.id}
+          character={selectedCharacter}
+          historyError={error}
+          addSession={addSession}
+        />
       </section>
+
       <WritingHistory history={history} characters={characters} />
     </div>
   );

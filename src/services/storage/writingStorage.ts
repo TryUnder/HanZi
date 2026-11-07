@@ -1,5 +1,6 @@
 import type {
   StoredWritingSession,
+  StrokeMistake,
   WritingSessionResult,
 } from "../../features/writing/types/writing";
 
@@ -15,6 +16,40 @@ function isNonEmptyString(value: unknown): value is string {
 
 function isNonNegativeInteger(value: unknown): value is number {
   return Number.isInteger(value) && typeof value === "number" && value >= 0;
+}
+
+function isStrokeMistake(
+  value: unknown,
+  totalStrokes: number,
+): value is StrokeMistake {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    isNonNegativeInteger(value.strokeIndex) &&
+    value.strokeIndex < totalStrokes &&
+    isNonNegativeInteger(value.mistakes) &&
+    value.mistakes > 0
+  );
+}
+
+function hasValidStrokeMistakes(value: unknown, totalStrokes: number): boolean {
+  if (value === undefined) {
+    return true;
+  }
+
+  if (!Array.isArray(value)) {
+    return false;
+  }
+
+  if (!value.every((item) => isStrokeMistake(item, totalStrokes))) {
+    return false;
+  }
+
+  const strokeIndexes = value.map((item) => item.strokeIndex);
+
+  return new Set(strokeIndexes).size === strokeIndexes.length;
 }
 
 function isStoredWritingSession(value: unknown): value is StoredWritingSession {
@@ -33,7 +68,8 @@ function isStoredWritingSession(value: unknown): value is StoredWritingSession {
     value.correctStrokes <= value.totalStrokes &&
     value.correctStrokes === value.totalStrokes &&
     typeof value.completedAt === "string" &&
-    Number.isFinite(Date.parse(value.completedAt))
+    Number.isFinite(Date.parse(value.completedAt)) &&
+    hasValidStrokeMistakes(value.strokeMistakes, value.totalStrokes)
   );
 }
 
@@ -80,7 +116,8 @@ export function saveWritingSession(
     !isNonNegativeInteger(result.mistakes) ||
     result.totalStrokes <= 0 ||
     result.correctStrokes !== result.totalStrokes ||
-    !Number.isFinite(Date.parse(result.completedAt))
+    !Number.isFinite(Date.parse(result.completedAt)) ||
+    !hasValidStrokeMistakes(result.strokeMistakes, result.totalStrokes)
   ) {
     throw new Error("Cannot save an invalid or incomplete writing session.");
   }

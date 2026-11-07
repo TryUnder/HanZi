@@ -1,0 +1,244 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  animation: appear 0.2s ease;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eyebrow {
+  color: var(--color-brand-600);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.title {
+  margin: 5px 0 0;
+  color: var(--color-text-heading);
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.closeButton {
+  padding: 8px 12px;
+  color: var(--color-brand-700);
+  background: var(--color-brand-50);
+  border: 1px solid var(--color-brand-100);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--color-brand-100);
+}
+
+.characterSection {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.character {
+  display: grid;
+  flex-shrink: 0;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  color: var(--color-brand-700);
+  background: var(--color-brand-50);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-chinese);
+  font-size: 43px;
+}
+
+.characterInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.characterInfo h3 {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 17px;
+}
+
+.characterInfo p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.characterInfo span {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.statistics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.statistic {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px;
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-md);
+}
+
+.statisticValue {
+  color: var(--color-text-heading);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.statisticLabel {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.chartSection {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.chartHeader h3 {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 15px;
+}
+
+.chartHeader p {
+  margin: 5px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.chartRow {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 12px;
+}
+
+.strokeLabel {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.barTrack {
+  overflow: hidden;
+  height: 10px;
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-full);
+}
+
+.barWithMistakes,
+.barWithoutMistakes {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+.barWithMistakes {
+  background: var(--color-orange);
+}
+
+.barWithoutMistakes {
+  background: var(--color-green);
+}
+
+.mistakeCount {
+  color: var(--color-text-heading);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.notice,
+.successMessage {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.notice {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+}
+
+.successMessage {
+  color: var(--color-green);
+  background: var(--color-green-background);
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 18px;
+  }
+
+  .statistics {
+    gap: 8px;
+  }
+
+  .statistic {
+    padding: 12px;
+  }
+
+  .statisticValue {
+    font-size: 19px;
+  }
+
+  .statisticLabel {
+    font-size: 10px;
+  }
+
+  .chartRow {
+    grid-template-columns: 65px minmax(0, 1fr) 20px;
+    gap: 8px;
+  }
+
+  .closeButton {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+}

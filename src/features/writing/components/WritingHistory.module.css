@@ -73,13 +73,33 @@
 .session {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 16px;
-  padding: 15px 0;
+  padding: 15px 10px;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  background: transparent;
+  border: none;
   border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  appearance: none;
+  transition: background var(--transition-fast);
+}
+
+.session:hover,
+.selectedSession {
+  background: var(--color-surface-subtle);
+}
+
+.session:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
 }
 
 .session:last-child {
-  padding-bottom: 0;
   border-bottom: none;
 }
 
@@ -215,6 +235,7 @@
 
   .session {
     gap: 10px;
+    padding: 12px 6px;
   }
 
   .character {

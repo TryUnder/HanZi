@@ -1,5 +1,7 @@
+import { useState } from "react";
 import type { ChineseCharacter } from "../../library/types/character";
 import type { StoredWritingSession } from "../types/writing";
+import { WritingSessionDetails } from "./WritingSessionDetails";
 import styles from "./WritingHistory.module.css";
 
 interface WritingHistoryProps {
@@ -18,6 +20,10 @@ function formatCompletionDate(date: string): string {
 }
 
 export function WritingHistory({ history, characters }: WritingHistoryProps) {
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
+    null,
+  );
+
   const characterMap = new Map(
     characters.map((character) => [character.id, character]),
   );
@@ -31,6 +37,20 @@ export function WritingHistory({ history, characters }: WritingHistoryProps) {
       ? history.reduce((total, session) => total + session.mistakes, 0) /
         history.length
       : 0;
+
+  const selectedSession = history.find(
+    (session) => session.id === selectedSessionId,
+  );
+
+  const selectedCharacter = selectedSession
+    ? characterMap.get(selectedSession.characterId)
+    : undefined;
+
+  function handleSessionSelect(sessionId: string) {
+    setSelectedSessionId((currentId) =>
+      currentId === sessionId ? null : sessionId,
+    );
+  }
 
   return (
     <section className={styles.container}>
@@ -77,10 +97,19 @@ export function WritingHistory({ history, characters }: WritingHistoryProps) {
           <div className={styles.sessionList}>
             {history.map((session) => {
               const character = characterMap.get(session.characterId);
+              const isSelected = selectedSessionId === session.id;
 
               return (
-                <article className={styles.session} key={session.id}>
-                  <div className={styles.character}>{session.character}</div>
+                <button
+                  aria-pressed={isSelected}
+                  className={`${styles.session} ${
+                    isSelected ? styles.selectedSession : ""
+                  }`}
+                  key={session.id}
+                  onClick={() => handleSessionSelect(session.id)}
+                  type="button"
+                >
+                  <span className={styles.character}>{session.character}</span>
 
                   <div className={styles.sessionInfo}>
                     <div className={styles.characterHeading}>
@@ -114,10 +143,18 @@ export function WritingHistory({ history, characters }: WritingHistoryProps) {
                       {session.mistakes === 1 ? "mistake" : "mistakes"}
                     </span>
                   </div>
-                </article>
+                </button>
               );
             })}
           </div>
+
+          {selectedSession && (
+            <WritingSessionDetails
+              session={selectedSession}
+              character={selectedCharacter}
+              onClose={() => setSelectedSessionId(null)}
+            />
+          )}
         </>
       )}
     </section>
