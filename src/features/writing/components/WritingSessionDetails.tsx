@@ -1,9 +1,9 @@
 import type { ChineseCharacter } from "../../library/types/character";
-import type { StoredWritingSession } from "../types/writing";
+import type { WritingHistoryEntry } from "../types/writingHistory";
 import styles from "./WritingSessionDetails.module.css";
 
 interface WritingSessionDetailsProps {
-  session: StoredWritingSession;
+  session: WritingHistoryEntry;
   character: ChineseCharacter | undefined;
   onClose: () => void;
 }
@@ -23,15 +23,12 @@ export function WritingSessionDetails({
   character,
   onClose,
 }: WritingSessionDetailsProps) {
-  const strokeMistakes = session.strokeMistakes;
-  const hasStrokeBreakdown = strokeMistakes !== undefined;
-
   const mistakesByStroke = Array.from(
     { length: session.totalStrokes },
     (_, strokeIndex) => ({
       strokeIndex,
       mistakes:
-        strokeMistakes?.find((item) => item.strokeIndex === strokeIndex)
+        session.strokeMistakes.find((item) => item.strokeIndex === strokeIndex)
           ?.mistakes ?? 0,
     }),
   );
@@ -100,12 +97,7 @@ export function WritingSessionDetails({
           </div>
         </div>
 
-        {!hasStrokeBreakdown ? (
-          <div className={styles.notice}>
-            Per-stroke mistake data is not available for this session. It may
-            have been recorded before stroke-level tracking was introduced.
-          </div>
-        ) : session.mistakes === 0 ? (
+        {session.mistakes === 0 ? (
           <div className={styles.successMessage}>
             Excellent! No mistakes were made during this session.
           </div>

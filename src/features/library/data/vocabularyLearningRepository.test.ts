@@ -1,9 +1,6 @@
-
 import { describe, expect, it } from "vitest";
 
-import {
-  createVocabularyLearningRepository,
-} from "./vocabularyLearningRepository";
+import { createVocabularyLearningRepository } from "./vocabularyLearningRepository";
 
 import type {
   VocabularyEntry,
@@ -77,10 +74,7 @@ const learningFixture: VocabularyLearningDataset = {
 };
 
 function createTestRepository() {
-  return createVocabularyLearningRepository(
-    vocabularyFixture,
-    learningFixture,
-  );
+  return createVocabularyLearningRepository(vocabularyFixture, learningFixture);
 }
 
 describe("vocabularyLearningRepository", () => {
@@ -129,9 +123,9 @@ describe("vocabularyLearningRepository", () => {
   it("returns only verified vocabulary entries", () => {
     const repository = createTestRepository();
 
-    expect(
-      repository.getVerifiedVocabulary().map((entry) => entry.id),
-    ).toEqual(["vocab-ni"]);
+    expect(repository.getVerifiedVocabulary().map((entry) => entry.id)).toEqual(
+      ["vocab-ni"],
+    );
 
     expect(repository.getVerifiedVocabularyCount()).toBe(1);
   });
@@ -155,10 +149,7 @@ describe("vocabularyLearningRepository", () => {
     };
 
     expect(() =>
-      createVocabularyLearningRepository(
-        vocabularyFixture,
-        invalidDataset,
-      ),
+      createVocabularyLearningRepository(vocabularyFixture, invalidDataset),
     ).toThrow("unknown vocabulary ID");
   });
 });

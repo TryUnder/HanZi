@@ -1,0 +1,1957 @@
+=== HANZI INTEGRATION POINTS AUDIT ===
+
+
+========================================
+FILE: src/features/writing/pages/WritingPage.tsx
+========================================
+
+import { useState } from "react";
+import { characters } from "../../library/data/characters";
+import { WritingHistory } from "../components/WritingHistory";
+import { WritingWorkspace } from "../components/WritingWorkspace";
+import { useWritingHistory } from "../hooks/useWritingHistory";
+import styles from "./WritingPage.module.css";
+
+export function WritingPage() {
+  const [selectedCharacterId, setSelectedCharacterId] = useState("ni");
+
+  const { history, error, addSession } = useWritingHistory();
+
+  const selectedCharacter =
+    characters.find((character) => character.id === selectedCharacterId) ??
+    characters[0];
+
+  if (!selectedCharacter) {
+    throw new Error("The character library is empty.");
+  }
+
+  return (
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <span className={styles.eyebrow}>LEARN CHINESE WRITING</span>
+        <h1>Character practice</h1>
+        <p>Learn how Chinese characters are written, stroke by stroke.</p>
+      </header>
+
+      <section className={styles.workspace}>
+        <div className={styles.characterSelector}>
+          <label htmlFor="character-select">Choose a character</label>
+
+          <select
+            id="character-select"
+            value={selectedCharacterId}
+            onChange={(event) => setSelectedCharacterId(event.target.value)}
+          >
+            {characters.map((character) => (
+              <option key={character.id} value={character.id}>
+                {character.simplified} — {character.pinyin} ({character.meaning}
+                )
+              </option>
+            ))}
+          </select>
+
+          <div className={styles.characterInfo}>
+            <span>{selectedCharacter.simplified}</span>
+            <strong>{selectedCharacter.pinyin}</strong>
+            <p>{selectedCharacter.meaning}</p>
+            <small>
+              {selectedCharacter.strokes} strokes · HSK{" "}
+              {selectedCharacter.hskLevel}
+            </small>
+          </div>
+        </div>
+
+        <WritingWorkspace
+          key={selectedCharacter.id}
+          character={selectedCharacter}
+          historyError={error}
+          addSession={addSession}
+        />
+      </section>
+
+      <WritingHistory history={history} characters={characters} />
+    </div>
+  );
+}
+
+
+========================================
+FILE: src/features/writing/components/WritingWorkspace.tsx
+========================================
+
+import { useCallback, useRef, useState } from "react";
+import { RotateCcw } from "lucide-react";
+import type { ChineseCharacter } from "../../library/types/character";
+import { CharacterCanvas } from "./CharacterCanvas";
+import { PracticeCanvas } from "./PracticeCanvas";
+import { useWritingSession } from "../hooks/useWritingSession";
+import styles from "../pages/WritingPage.module.css";
+import type {
+  StoredWritingSession,
+  WritingMode,
+  WritingSessionResult,
+} from "../types/writing";
+
+interface WritingWorkspaceProps {
+  character: ChineseCharacter;
+  historyError: string | null;
+  addSession: (result: WritingSessionResult) => StoredWritingSession | null;
+}
+
+export function WritingWorkspace({
+  character,
+  historyError,
+  addSession,
+}: WritingWorkspaceProps) {
+  const [mode, setMode] = useState<WritingMode>("learn");
+  const [attempt, setAttempt] = useState(0);
+  const savedSessionKeyRef = useRef<string | null>(null);
+
+  const {
+    progress,
+    resetProgress,
+    handleCorrectStroke,
+    handleMistake,
+    handleComplete,
+    getStrokeMistakes,
+  } = useWritingSession(character.id, character.simplified, character.strokes);
+
+  const sessionKey = `${character.id}:${attempt}`;
+
+  const handleSessionComplete = useCallback(
+    (totalMistakes: number) => {
+      if (savedSessionKeyRef.current === sessionKey) {
+        return;
+      }
+
+      handleComplete(totalMistakes);
+
+      const result: WritingSessionResult = {
+        characterId: character.id,
+        character: character.simplified,
+        correctStrokes: character.strokes,
+        totalStrokes: character.strokes,
+        mistakes: totalMistakes,
+        strokeMistakes: getStrokeMistakes(),
+        completedAt: new Date().toISOString(),
+      };
+
+      const savedSession = addSession(result);
+
+      if (savedSession) {
+        savedSessionKeyRef.current = sessionKey;
+      }
+    },
+    [addSession, character, getStrokeMistakes, handleComplete, sessionKey],
+  );
+
+  function handleModeChange(nextMode: WritingMode) {
+    if (nextMode === "practice" && mode !== "practice") {
+      resetProgress();
+      setAttempt((current) => current + 1);
+    }
+
+    setMode(nextMode);
+  }
+
+  function handleRetry() {
+    resetProgress();
+    setAttempt((current) => current + 1);
+  }
+
+  const progressPercentage =
+    progress.totalStrokes > 0
+      ? (progress.correctStrokes / progress.totalStrokes) * 100
+      : 0;
+
+  return (
+    <>
+      <div className={styles.modeControls}>
+        <button
+          className={mode === "learn" ? styles.activeMode : styles.modeButton}
+          onClick={() => handleModeChange("learn")}
+          type="button"
+        >
+          Learn
+        </button>
+
+        <button
+          className={
+            mode === "practice" ? styles.activeMode : styles.modeButton
+          }
+          onClick={() => handleModeChange("practice")}
+          type="button"
+        >
+          Practice
+        </button>
+      </div>
+
+      <div className={styles.practiceArea}>
+        {mode === "learn" ? (
+          <CharacterCanvas character={character.simplified} />
+        ) : (
+          <>
+            <PracticeCanvas
+              key={`${character.id}-${attempt}`}
+              character={character.simplified}
+              onCorrectStroke={handleCorrectStroke}
+              onMistake={handleMistake}
+              onComplete={handleSessionComplete}
+            />
+
+            <section className={styles.sessionPanel}>
+              <div className={styles.progressHeader}>
+                <strong>Writing progress</strong>
+                <span>
+                  {progress.correctStrokes} / {progress.totalStrokes} strokes
+                </span>
+              </div>
+
+              <div
+                className={styles.progressTrack}
+                role="progressbar"
+                aria-label="Writing progress"
+                aria-valuemin={0}
+                aria-valuemax={progress.totalStrokes}
+                aria-valuenow={progress.correctStrokes}
+              >
+                <div
+                  className={styles.progressFill}
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+
+              <div className={styles.progressStats}>
+                <span>
+                  <strong>{progress.mistakes}</strong> mistakes
+                </span>
+
+                <span>
+                  <strong>
+                    {progress.totalStrokes - progress.correctStrokes}
+                  </strong>{" "}
+                  remaining
+                </span>
+              </div>
+
+              {historyError && (
+                <p role="alert">Could not save your session: {historyError}</p>
+              )}
+
+              {progress.completed && (
+                <div className={styles.completionMessage}>
+                  <strong>Well done!</strong>
+                  <span>
+                    You completed {character.simplified} with{" "}
+                    {progress.mistakes} mistakes.
+                  </span>
+                </div>
+              )}
+
+              <button
+                className={styles.retryButton}
+                onClick={handleRetry}
+                type="button"
+              >
+                <RotateCcw size={15} />
+                Try again
+              </button>
+            </section>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+
+========================================
+FILE: src/features/writing/components/WritingSessionDetails.tsx
+========================================
+
+import type { ChineseCharacter } from "../../library/types/character";
+import type { StoredWritingSession } from "../types/writing";
+import styles from "./WritingSessionDetails.module.css";
+
+interface WritingSessionDetailsProps {
+  session: StoredWritingSession;
+  character: ChineseCharacter | undefined;
+  onClose: () => void;
+}
+
+function formatCompletionDate(date: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
+}
+
+export function WritingSessionDetails({
+  session,
+  character,
+  onClose,
+}: WritingSessionDetailsProps) {
+  const strokeMistakes = session.strokeMistakes;
+  const hasStrokeBreakdown = strokeMistakes !== undefined;
+
+  const mistakesByStroke = Array.from(
+    { length: session.totalStrokes },
+    (_, strokeIndex) => ({
+      strokeIndex,
+      mistakes:
+        strokeMistakes?.find((item) => item.strokeIndex === strokeIndex)
+          ?.mistakes ?? 0,
+    }),
+  );
+
+  const maxMistakes = Math.max(
+    1,
+    ...mistakesByStroke.map((stroke) => stroke.mistakes),
+  );
+
+  const strokesWithMistakes = mistakesByStroke.filter(
+    (stroke) => stroke.mistakes > 0,
+  ).length;
+
+  return (
+    <section
+      className={styles.container}
+      aria-labelledby="session-details-title"
+    >
+      <header className={styles.header}>
+        <div>
+          <span className={styles.eyebrow}>WRITING HISTORY</span>
+          <h2 id="session-details-title" className={styles.title}>
+            Session details
+          </h2>
+        </div>
+
+        <button className={styles.closeButton} onClick={onClose} type="button">
+          Back to history
+        </button>
+      </header>
+
+      <div className={styles.characterSection}>
+        <div className={styles.character}>{session.character}</div>
+
+        <div className={styles.characterInfo}>
+          <h3>{character?.pinyin ?? "Unknown pronunciation"}</h3>
+          <p>{character?.meaning ?? "Unknown character"}</p>
+          <span>{formatCompletionDate(session.completedAt)}</span>
+        </div>
+      </div>
+
+      <div className={styles.statistics}>
+        <div className={styles.statistic}>
+          <span className={styles.statisticValue}>
+            {session.correctStrokes}/{session.totalStrokes}
+          </span>
+          <span className={styles.statisticLabel}>Correct strokes</span>
+        </div>
+
+        <div className={styles.statistic}>
+          <span className={styles.statisticValue}>{session.mistakes}</span>
+          <span className={styles.statisticLabel}>Total mistakes</span>
+        </div>
+
+        <div className={styles.statistic}>
+          <span className={styles.statisticValue}>{strokesWithMistakes}</span>
+          <span className={styles.statisticLabel}>Strokes with mistakes</span>
+        </div>
+      </div>
+
+      <div className={styles.chartSection}>
+        <div className={styles.chartHeader}>
+          <div>
+            <h3>Mistakes by stroke</h3>
+            <p>Number of mistakes made on each individual stroke.</p>
+          </div>
+        </div>
+
+        {!hasStrokeBreakdown ? (
+          <div className={styles.notice}>
+            Per-stroke mistake data is not available for this session. It may
+            have been recorded before stroke-level tracking was introduced.
+          </div>
+        ) : session.mistakes === 0 ? (
+          <div className={styles.successMessage}>
+            Excellent! No mistakes were made during this session.
+          </div>
+        ) : (
+          <div className={styles.chart}>
+            {mistakesByStroke.map((stroke) => {
+              const barWidth = (stroke.mistakes / maxMistakes) * 100;
+
+              return (
+                <div className={styles.chartRow} key={stroke.strokeIndex}>
+                  <span className={styles.strokeLabel}>
+                    Stroke {stroke.strokeIndex + 1}
+                  </span>
+
+                  <div
+                    className={styles.barTrack}
+                    role="meter"
+                    aria-label={`Mistakes on stroke ${stroke.strokeIndex + 1}`}
+                    aria-valuemin={0}
+                    aria-valuemax={maxMistakes}
+                    aria-valuenow={stroke.mistakes}
+                  >
+                    <div
+                      className={
+                        stroke.mistakes > 0
+                          ? styles.barWithMistakes
+                          : styles.barWithoutMistakes
+                      }
+                      style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+
+                  <span className={styles.mistakeCount}>{stroke.mistakes}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+
+========================================
+FILE: src/features/writing/hooks/useWritingSession.ts
+========================================
+
+import { useCallback, useRef, useState } from "react";
+import type {
+  StrokeMistake,
+  WritingMistakeEvent,
+  WritingProgress,
+  WritingSessionResult,
+} from "../types/writing";
+
+function createInitialProgress(totalStrokes: number): WritingProgress {
+  return {
+    correctStrokes: 0,
+    totalStrokes,
+    mistakes: 0,
+    strokeMistakes: [],
+    completed: false,
+  };
+}
+
+export function useWritingSession(
+  characterId: string,
+  character: string,
+  totalStrokes: number,
+) {
+  const [progress, setProgress] = useState<WritingProgress>(() =>
+    createInitialProgress(totalStrokes),
+  );
+
+  const strokeMistakesRef = useRef<StrokeMistake[]>([]);
+
+  const resetProgress = useCallback(() => {
+    strokeMistakesRef.current = [];
+    setProgress(createInitialProgress(totalStrokes));
+  }, [totalStrokes]);
+
+  const handleCorrectStroke = useCallback(() => {
+    setProgress((current) => ({
+      ...current,
+      correctStrokes: Math.min(
+        current.correctStrokes + 1,
+        current.totalStrokes,
+      ),
+    }));
+  }, []);
+
+  const handleMistake = useCallback(
+    (event: WritingMistakeEvent) => {
+      if (
+        !Number.isInteger(event.strokeNum) ||
+        event.strokeNum < 0 ||
+        event.strokeNum >= totalStrokes ||
+        !Number.isInteger(event.mistakesOnStroke) ||
+        event.mistakesOnStroke < 1 ||
+        !Number.isInteger(event.totalMistakes) ||
+        event.totalMistakes < 1
+      ) {
+        return;
+      }
+
+      const updatedMistakes = [...strokeMistakesRef.current];
+      const existingIndex = updatedMistakes.findIndex(
+        (item) => item.strokeIndex === event.strokeNum,
+      );
+
+      const strokeMistake: StrokeMistake = {
+        strokeIndex: event.strokeNum,
+        mistakes: event.mistakesOnStroke,
+      };
+
+      if (existingIndex >= 0) {
+        updatedMistakes[existingIndex] = strokeMistake;
+      } else {
+        updatedMistakes.push(strokeMistake);
+      }
+
+      updatedMistakes.sort(
+        (first, second) => first.strokeIndex - second.strokeIndex,
+      );
+
+      strokeMistakesRef.current = updatedMistakes;
+
+      setProgress((current) => ({
+        ...current,
+        mistakes: event.totalMistakes,
+        strokeMistakes: updatedMistakes,
+      }));
+    },
+    [totalStrokes],
+  );
+
+  const handleComplete = useCallback((totalMistakes: number) => {
+    setProgress((current) => ({
+      ...current,
+      correctStrokes: current.totalStrokes,
+      mistakes: totalMistakes,
+      completed: true,
+      strokeMistakes: strokeMistakesRef.current,
+    }));
+  }, []);
+
+  const getStrokeMistakes = useCallback(() => {
+    return strokeMistakesRef.current.map((item) => ({ ...item }));
+  }, []);
+
+  const createResult = useCallback((): WritingSessionResult => {
+    return {
+      characterId,
+      character,
+      correctStrokes: progress.correctStrokes,
+      totalStrokes: progress.totalStrokes,
+      mistakes: progress.mistakes,
+      strokeMistakes: getStrokeMistakes(),
+      completedAt: new Date().toISOString(),
+    };
+  }, [characterId, character, getStrokeMistakes, progress]);
+
+  return {
+    progress,
+    resetProgress,
+    handleCorrectStroke,
+    handleMistake,
+    handleComplete,
+    createResult,
+    getStrokeMistakes,
+  };
+}
+
+
+========================================
+FILE: src/features/writing/hooks/useWritingHistory.ts
+========================================
+
+import { useCallback, useState } from "react";
+import {
+  getWritingHistory,
+  saveWritingSession,
+} from "../../../services/storage/writingStorage";
+import type {
+  StoredWritingSession,
+  WritingSessionResult,
+} from "../types/writing";
+
+interface UseWritingHistoryReturn {
+  history: StoredWritingSession[];
+  error: string | null;
+  addSession: (result: WritingSessionResult) => StoredWritingSession | null;
+  refreshHistory: () => void;
+}
+
+export function useWritingHistory(): UseWritingHistoryReturn {
+  const [history, setHistory] = useState<StoredWritingSession[]>(() =>
+    getWritingHistory(),
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  const refreshHistory = useCallback(() => {
+    setHistory(getWritingHistory());
+  }, []);
+
+  const addSession = useCallback(
+    (result: WritingSessionResult): StoredWritingSession | null => {
+      try {
+        const savedSession = saveWritingSession(result);
+
+        setHistory((currentHistory) => [savedSession, ...currentHistory]);
+
+        setError(null);
+
+        return savedSession;
+      } catch (caughtError) {
+        const message =
+          caughtError instanceof Error
+            ? caughtError.message
+            : "An unexpected error occurred while saving writing history.";
+
+        setError(message);
+
+        return null;
+      }
+    },
+    [],
+  );
+
+  return {
+    history,
+    error,
+    addSession,
+    refreshHistory,
+  };
+}
+
+
+========================================
+FILE: src/features/writing/types/writing.ts
+========================================
+
+export type WritingMode = "learn" | "practice";
+
+export interface StrokeMistake {
+  /**
+   * Zero-based index returned by Hanzi Writer.
+   * Example: 0 represents the first stroke.
+   */
+  strokeIndex: number;
+  mistakes: number;
+}
+
+export interface WritingMistakeEvent {
+  strokeNum: number;
+  mistakesOnStroke: number;
+  totalMistakes: number;
+}
+
+export interface WritingProgress {
+  correctStrokes: number;
+  totalStrokes: number;
+  mistakes: number;
+  strokeMistakes: StrokeMistake[];
+  completed: boolean;
+}
+
+export interface WritingSessionResult {
+  characterId: string;
+  character: string;
+  correctStrokes: number;
+  totalStrokes: number;
+  mistakes: number;
+  completedAt: string;
+
+  /**
+   * Optional to support sessions saved by older versions of HanZi.
+   */
+  strokeMistakes?: StrokeMistake[];
+}
+
+export interface StoredWritingSession extends WritingSessionResult {
+  id: string;
+}
+
+
+========================================
+FILE: src/features/speaking/pages/SpeakingPage.tsx
+========================================
+
+import { useState } from "react";
+import { ToneTrainer } from "../components/ToneTrainer";
+import { ListeningExercise } from "../components/ListeningExercise";
+import { SpeakingRecorder } from "../components/SpeakingRecorder";
+import { characters } from "../../library/data/characters";
+import styles from "./SpeakingPage.module.css";
+
+export default function SpeakingPage() {
+  const [selectedCharacterId, setSelectedCharacterId] = useState(
+    characters[0]?.id ?? "",
+  );
+
+  const selectedCharacter = characters.find(
+    (character) => character.id === selectedCharacterId,
+  );
+
+  return (
+    <div className={styles.page}>
+      <header className={styles.pageHeader}>
+        <div>
+          <span className={styles.eyebrow}>PRONUNCIATION & TONES</span>
+          <h1>Speaking</h1>
+          <p>Learn Mandarin pronunciation and master the five tones.</p>
+        </div>
+      </header>
+
+      <ToneTrainer />
+
+      <ListeningExercise />
+
+      {selectedCharacter && (
+        <SpeakingRecorder
+          key={selectedCharacter.id}
+          characters={characters}
+          character={selectedCharacter}
+          onCharacterChange={setSelectedCharacterId}
+        />
+      )}
+    </div>
+  );
+}
+
+
+========================================
+FILE: src/features/speaking/components/SpeakingRecorder.tsx
+========================================
+
+import { Mic, RotateCcw, Square } from "lucide-react";
+import { useMicrophone } from "../hooks/useMicrophone";
+import { usePitchAnalysis } from "../hooks/usePitchAnalysis";
+import type { MandarinTone } from "../types/speaking";
+import type { ChineseCharacter } from "../../library/types/character";
+import { PitchContourChart } from "./PitchContourChart";
+import { PronunciationPlayer } from "./PronunciationPlayer";
+import styles from "./SpeakingRecorder.module.css";
+
+interface SpeakingRecorderProps {
+  characters: ChineseCharacter[];
+  character: ChineseCharacter;
+  onCharacterChange: (characterId: string) => void;
+}
+
+const TONE_NAMES: Record<MandarinTone, string> = {
+  1: "High and level",
+  2: "Rising",
+  3: "Low and dipping",
+  4: "Falling",
+  5: "Neutral",
+};
+
+export function SpeakingRecorder({
+  characters,
+  character,
+  onCharacterChange,
+}: SpeakingRecorderProps) {
+  const {
+    isRecording,
+    audioUrl,
+    error: recordingError,
+    startRecording,
+    stopRecording,
+    clearRecording,
+  } = useMicrophone();
+
+  const {
+    frames,
+    duration,
+    assessment,
+    isAnalyzing,
+    error: analysisError,
+    analyze,
+    reset,
+  } = usePitchAnalysis();
+
+  function handleStartRecording() {
+    reset();
+    void startRecording();
+  }
+
+  function handleClearRecording() {
+    clearRecording();
+    reset();
+  }
+
+  const toneMatches =
+    assessment?.status === "matched" &&
+    assessment.matchedTone === character.tone;
+
+  const toneDiffers =
+    assessment?.status === "matched" &&
+    assessment.matchedTone !== character.tone;
+
+  return (
+    <section className={styles.container}>
+      <div className={styles.header}>
+        <div>
+          <span className={styles.eyebrow}>SPEAKING PRACTICE</span>
+          <h3 className={styles.title}>Practice your pronunciation</h3>
+          <p className={styles.description}>
+            Choose a character, listen to its pronunciation, record your voice,
+            and compare your tone.
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.characterSelection}>
+        <label className={styles.selectLabel} htmlFor="speaking-character">
+          Choose a character
+        </label>
+
+        <select
+          id="speaking-character"
+          className={styles.characterSelect}
+          value={character.id}
+          onChange={(event) => onCharacterChange(event.target.value)}
+          disabled={isRecording || isAnalyzing}
+        >
+          {characters.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.simplified} — {item.pinyin} ({item.meaning})
+            </option>
+          ))}
+        </select>
+
+        <div className={styles.target}>
+          <div className={styles.targetCharacter}>{character.simplified}</div>
+
+          <div className={styles.targetInfo}>
+            <h4 className={styles.targetPinyin}>{character.pinyin}</h4>
+            <p className={styles.targetMeaning}>{character.meaning}</p>
+            <span className={styles.targetTone}>
+              Expected tone: {character.tone} – {TONE_NAMES[character.tone]}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.reference}>
+        <div>
+          <strong>Reference pronunciation</strong>
+          <p>Listen to the correct pronunciation before recording.</p>
+        </div>
+
+        <PronunciationPlayer
+          audioUrl={character.audioUrl ?? null}
+          text={character.simplified}
+          label={character.simplified}
+        />
+      </div>
+
+      <div className={styles.recorder}>
+        <div
+          className={`${styles.microphone} ${
+            isRecording ? styles.microphoneActive : ""
+          }`}
+        >
+          <Mic size={30} />
+        </div>
+
+        <p className={styles.status} aria-live="polite">
+          {isRecording
+            ? "Recording in progress..."
+            : audioUrl
+              ? "Recording completed"
+              : "Ready to record"}
+        </p>
+
+        <p className={styles.hint}>
+          {isRecording
+            ? "Speak now. Press stop when you finish."
+            : "Try to reproduce the reference pronunciation."}
+        </p>
+
+        <div className={styles.controls}>
+          {!isRecording ? (
+            <button
+              type="button"
+              className={styles.recordButton}
+              onClick={handleStartRecording}
+            >
+              <Mic size={18} />
+              {audioUrl ? "Record again" : "Start recording"}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={styles.stopButton}
+              onClick={stopRecording}
+            >
+              <Square size={17} />
+              Stop recording
+            </button>
+          )}
+
+          {audioUrl && !isRecording && (
+            <button
+              type="button"
+              className={styles.resetButton}
+              onClick={handleClearRecording}
+              aria-label="Delete recording"
+            >
+              <RotateCcw size={17} />
+              Clear
+            </button>
+          )}
+        </div>
+
+        {audioUrl && !isRecording && (
+          <div className={styles.playback}>
+            <span className={styles.playbackLabel}>Your recording</span>
+
+            <audio
+              className={styles.audioPlayer}
+              controls
+              src={audioUrl}
+              preload="metadata"
+            />
+
+            <button
+              type="button"
+              className={styles.recordButton}
+              onClick={() => void analyze(audioUrl)}
+              disabled={isAnalyzing}
+            >
+              {isAnalyzing ? "Analyzing audio..." : "Analyze pronunciation"}
+            </button>
+          </div>
+        )}
+
+        {recordingError && (
+          <p className={styles.error} role="alert">
+            {recordingError}
+          </p>
+        )}
+
+        {analysisError && (
+          <p className={styles.error} role="alert">
+            {analysisError}
+          </p>
+        )}
+
+        {assessment && (
+          <div className={styles.assessment} aria-live="polite">
+            <div className={styles.assessmentHeader}>
+              <h4 className={styles.assessmentTitle}>Tone analysis</h4>
+
+              {assessment.status === "matched" && (
+                <span className={styles.assessmentScore}>
+                  {assessment.confidence}% similarity
+                </span>
+              )}
+            </div>
+
+            {assessment.status === "matched" && assessment.matchedTone && (
+              <>
+                <p className={styles.assessmentMessage}>
+                  Detected tone:{" "}
+                  <strong>
+                    Tone {assessment.matchedTone} –{" "}
+                    {TONE_NAMES[assessment.matchedTone]}
+                  </strong>
+                </p>
+
+                <div className={styles.toneComparison}>
+                  {toneMatches ? (
+                    <strong>
+                      Your detected tone matches the expected tone.
+                    </strong>
+                  ) : toneDiffers ? (
+                    <strong>
+                      The detected tone differs from the expected tone (
+                      {character.tone}).
+                    </strong>
+                  ) : null}
+                </div>
+
+                <p className={styles.assessmentHint}>
+                  This is a preliminary contour-based result, not a complete
+                  pronunciation assessment.
+                </p>
+              </>
+            )}
+
+            {assessment.status === "ambiguous" && (
+              <>
+                <p className={styles.assessmentMessage}>
+                  The tone could not be identified confidently.
+                </p>
+
+                <div className={styles.candidateList}>
+                  {assessment.candidates.map((candidate) => (
+                    <span className={styles.candidate} key={candidate.tone}>
+                      Tone {candidate.tone} – {TONE_NAMES[candidate.tone]}
+                    </span>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {assessment.status === "uncertain" && (
+              <p className={styles.assessmentMessage}>
+                Your pitch contour does not closely match any of the tone
+                templates. Try speaking more clearly and consistently.
+              </p>
+            )}
+
+            {assessment.status === "insufficient-data" && (
+              <p className={styles.assessmentMessage}>
+                Not enough clear voice data. Try recording a longer
+                pronunciation with less background noise.
+              </p>
+            )}
+          </div>
+        )}
+
+        {frames.length > 0 && (
+          <PitchContourChart frames={frames} duration={duration} />
+        )}
+      </div>
+    </section>
+  );
+}
+
+
+========================================
+FILE: src/features/speaking/components/PronunciationTargetSelector.tsx
+========================================
+
+import type { ChineseCharacter } from "../../library/types/character";
+import styles from "./PronunciationTargetSelector.module.css";
+
+interface PronunciationTargetSelectorProps {
+  characters: ChineseCharacter[];
+  selectedCharacterId: string;
+  onCharacterChange: (characterId: string) => void;
+}
+
+const TONE_NAMES: Record<ChineseCharacter["tone"], string> = {
+  1: "High and level",
+  2: "Rising",
+  3: "Low and dipping",
+  4: "Falling",
+  5: "Neutral",
+};
+
+export function PronunciationTargetSelector({
+  characters,
+  selectedCharacterId,
+  onCharacterChange,
+}: PronunciationTargetSelectorProps) {
+  const selectedCharacter = characters.find(
+    (character) => character.id === selectedCharacterId,
+  );
+
+  return (
+    <section className={styles.container}>
+      <div className={styles.header}>
+        <span className={styles.eyebrow}>PRONUNCIATION TARGET</span>
+        <h3 className={styles.title}>Choose a character to practice</h3>
+        <p className={styles.description}>
+          Select a character from your library to practice its pronunciation and
+          tone.
+        </p>
+      </div>
+
+      <label className={styles.label} htmlFor="pronunciation-character">
+        Chinese character
+      </label>
+
+      <select
+        id="pronunciation-character"
+        className={styles.select}
+        value={selectedCharacterId}
+        onChange={(event) => onCharacterChange(event.target.value)}
+      >
+        {characters.map((character) => (
+          <option key={character.id} value={character.id}>
+            {character.simplified} — {character.pinyin} ({character.meaning})
+          </option>
+        ))}
+      </select>
+
+      {selectedCharacter && (
+        <div className={styles.characterDetails}>
+          <div className={styles.characterSymbol}>
+            {selectedCharacter.simplified}
+          </div>
+
+          <div className={styles.characterInfo}>
+            <h4 className={styles.pinyin}>{selectedCharacter.pinyin}</h4>
+            <p className={styles.meaning}>{selectedCharacter.meaning}</p>
+
+            <div className={styles.metadata}>
+              <span className={styles.tone}>
+                Tone {selectedCharacter.tone} –{" "}
+                {TONE_NAMES[selectedCharacter.tone]}
+              </span>
+
+              <span className={styles.level}>
+                HSK {selectedCharacter.hskLevel}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+
+========================================
+FILE: src/features/speaking/hooks/usePitchAnalysis.ts
+========================================
+
+import { useCallback, useRef, useState } from "react";
+import { detectPitch } from "../utils/pitchDetection";
+import type { PitchFrame } from "../utils/pitchDetection";
+import { normalizePitchContour } from "../utils/pitchNormalization";
+import type { PitchNormalizationResult } from "../utils/pitchNormalization";
+import { assessTone } from "../utils/toneAssessment";
+import type { ToneAssessmentResult } from "../utils/toneAssessment";
+
+interface UsePitchAnalysisReturn {
+  frames: PitchFrame[];
+  duration: number;
+  normalization: PitchNormalizationResult | null;
+  assessment: ToneAssessmentResult | null;
+  isAnalyzing: boolean;
+  error: string | null;
+  analyze: (audioUrl: string) => Promise<void>;
+  reset: () => void;
+}
+
+export function usePitchAnalysis(): UsePitchAnalysisReturn {
+  const [frames, setFrames] = useState<PitchFrame[]>([]);
+  const [duration, setDuration] = useState(0);
+  const [normalization, setNormalization] =
+    useState<PitchNormalizationResult | null>(null);
+  const [assessment, setAssessment] = useState<ToneAssessmentResult | null>(
+    null,
+  );
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const requestIdRef = useRef(0);
+
+  const reset = useCallback(() => {
+    requestIdRef.current += 1;
+    setFrames([]);
+    setDuration(0);
+    setNormalization(null);
+    setAssessment(null);
+    setIsAnalyzing(false);
+    setError(null);
+  }, []);
+
+  const analyze = useCallback(async (audioUrl: string) => {
+    const requestId = ++requestIdRef.current;
+    let audioContext: AudioContext | null = null;
+
+    setIsAnalyzing(true);
+    setError(null);
+    setFrames([]);
+    setDuration(0);
+    setNormalization(null);
+    setAssessment(null);
+
+    try {
+      if (typeof AudioContext === "undefined") {
+        throw new Error("Audio analysis is not supported in this browser.");
+      }
+
+      const response = await fetch(audioUrl);
+
+      if (!response.ok) {
+        throw new Error("Could not read the recording.");
+      }
+
+      const audioData = await response.arrayBuffer();
+
+      audioContext = new AudioContext();
+
+      const audioBuffer = await audioContext.decodeAudioData(audioData);
+      const channelData = audioBuffer.getChannelData(0);
+
+      const pitchFrames = detectPitch(channelData, audioBuffer.sampleRate);
+
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      if (pitchFrames.length === 0) {
+        throw new Error("The recording is too short to analyze.");
+      }
+
+      const normalizedContour = normalizePitchContour(pitchFrames);
+      const toneResult = assessTone(normalizedContour);
+
+      setFrames(pitchFrames);
+      setDuration(audioBuffer.duration);
+      setNormalization(normalizedContour);
+      setAssessment(toneResult);
+    } catch (caughtError) {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "An unexpected error occurred during audio analysis.",
+      );
+    } finally {
+      if (audioContext && audioContext.state !== "closed") {
+        await audioContext.close();
+      }
+
+      if (requestId === requestIdRef.current) {
+        setIsAnalyzing(false);
+      }
+    }
+  }, []);
+
+  return {
+    frames,
+    duration,
+    normalization,
+    assessment,
+    isAnalyzing,
+    error,
+    analyze,
+    reset,
+  };
+}
+
+
+========================================
+FILE: src/features/speaking/hooks/useListeningExercise.ts
+========================================
+
+import { useCallback, useMemo, useState } from "react";
+import type {
+  ListeningExerciseMode,
+  ListeningQuestion,
+} from "../types/speaking";
+import { generateListeningQuestions } from "../utils/ListeningQuestionGenerator";
+
+export type ListeningExercisePhase =
+  "intro" | "question" | "feedback" | "complete";
+
+interface UseListeningExerciseReturn {
+  phase: ListeningExercisePhase;
+  mode: ListeningExerciseMode;
+  questions: ListeningQuestion[];
+  currentQuestion: ListeningQuestion | undefined;
+  questionIndex: number;
+  score: number;
+  selectedAnswer: string | null;
+  isCorrect: boolean;
+  progress: number;
+  start: (selectedMode: ListeningExerciseMode) => void;
+  answer: (value: string) => void;
+  next: () => void;
+  reset: () => void;
+}
+
+export function useListeningExercise(): UseListeningExerciseReturn {
+  const [phase, setPhase] = useState<ListeningExercisePhase>("intro");
+  const [mode, setMode] = useState<ListeningExerciseMode>("character");
+  const [questions, setQuestions] = useState<ListeningQuestion[]>([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+
+  const currentQuestion = questions[questionIndex];
+
+  const isCorrect =
+    currentQuestion !== undefined &&
+    selectedAnswer === currentQuestion.correctAnswer;
+
+  const progress = useMemo(() => {
+    if (questions.length === 0) {
+      return 0;
+    }
+
+    return ((questionIndex + 1) / questions.length) * 100;
+  }, [questionIndex, questions.length]);
+
+  const start = useCallback((selectedMode: ListeningExerciseMode) => {
+    const generatedQuestions = generateListeningQuestions(selectedMode);
+
+    if (generatedQuestions.length === 0) {
+      return;
+    }
+
+    setMode(selectedMode);
+    setQuestions(generatedQuestions);
+    setQuestionIndex(0);
+    setScore(0);
+    setSelectedAnswer(null);
+    setPhase("question");
+  }, []);
+
+  const answer = useCallback(
+    (value: string) => {
+      if (phase !== "question" || !currentQuestion) {
+        return;
+      }
+
+      setSelectedAnswer(value);
+
+      if (value === currentQuestion.correctAnswer) {
+        setScore((previousScore) => previousScore + 1);
+      }
+
+      setPhase("feedback");
+    },
+    [currentQuestion, phase],
+  );
+
+  const next = useCallback(() => {
+    if (phase !== "feedback") {
+      return;
+    }
+
+    if (questionIndex + 1 >= questions.length) {
+      setPhase("complete");
+      return;
+    }
+
+    setQuestionIndex((previousIndex) => previousIndex + 1);
+    setSelectedAnswer(null);
+    setPhase("question");
+  }, [phase, questionIndex, questions.length]);
+
+  const reset = useCallback(() => {
+    setPhase("intro");
+    setQuestions([]);
+    setQuestionIndex(0);
+    setScore(0);
+    setSelectedAnswer(null);
+  }, []);
+
+  return {
+    phase,
+    mode,
+    questions,
+    currentQuestion,
+    questionIndex,
+    score,
+    selectedAnswer,
+    isCorrect,
+    progress,
+    start,
+    answer,
+    next,
+    reset,
+  };
+}
+
+
+========================================
+FILE: src/features/speaking/types/speaking.ts
+========================================
+
+import type { ChineseCharacter } from "../../library/types/character";
+
+/**
+ * Mandarin Chinese tones.
+ */
+export type MandarinTone = 1 | 2 | 3 | 4 | 5;
+
+/**
+ * Relative pitch values used to visualize a tone.
+ */
+export type ToneContour = readonly number[];
+
+/**
+ * Available speaking exercise modes.
+ */
+export type ListeningExerciseMode = "character" | "pinyin" | "tone";
+
+/**
+ * Shared definition of a Mandarin tone.
+ */
+export interface ToneDefinition {
+  tone: MandarinTone;
+  name: string;
+  description: string;
+  contour: ToneContour;
+}
+
+/**
+ * Additional pronunciation examples used for tone-specific exercises.
+ */
+export interface PronunciationExample {
+  id: string;
+  character: string;
+  pinyin: string;
+  tone: MandarinTone;
+  meaning: string;
+  audioUrl: string | null;
+}
+
+/**
+ * A question generated from the character library.
+ */
+export interface ListeningQuestion {
+  id: string;
+  character: ChineseCharacter;
+  mode: ListeningExerciseMode;
+  options: string[];
+  correctAnswer: string;
+}
+
+
+========================================
+FILE: src/features/library/pages/LibraryPage.tsx
+========================================
+
+import { useState } from "react";
+import { Search, BookOpen } from "lucide-react";
+import { CharacterCard } from "../components/CharacterCard";
+import { CharacterDetails } from "../components/CharacterDetails";
+import { useLibrary } from "../hooks/useLibrary";
+import type { HskLevel } from "../types/character";
+import { LibraryTabs } from "../components/LibraryTabs";
+import styles from "./LibraryPage.module.css";
+
+export function LibraryPage() {
+  const {
+    search,
+    setSearch,
+    selectedLevel,
+    setSelectedLevel,
+    filteredCharacters,
+    learnedIds,
+    toggleLearned,
+  } = useLibrary();
+
+  const [selectedId, setSelectedId] = useState<string | null>("ni");
+
+  const selectedCharacter =
+    filteredCharacters.find((character) => character.id === selectedId) ??
+    filteredCharacters[0] ??
+    null;
+
+  function handleLevelChange(value: string) {
+    setSelectedLevel(value === "all" ? "all" : (Number(value) as HskLevel));
+  }
+
+  return (
+    <div className={styles.page}>
+      <header className={styles.pageHeader}>
+        <div>
+          <span className={styles.eyebrow}>YOUR CHINESE KNOWLEDGE BASE</span>
+          <h1>Character library</h1>
+          <p>
+            Explore Chinese characters, understand their meaning and build your
+            vocabulary.
+          </p>
+        </div>
+
+        <div className={styles.libraryCount}>
+          <BookOpen size={19} />
+          <div>
+            <strong>{learnedIds.length}</strong>
+            <span>in your learning list</span>
+          </div>
+        </div>
+      </header>
+
+      <LibraryTabs />
+
+      <section className={styles.toolbar} aria-label="Library filters">
+        <label className={styles.searchBox}>
+          <Search size={18} />
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search characters, pinyin or meaning..."
+            aria-label="Search characters"
+          />
+        </label>
+
+        <label className={styles.levelFilter}>
+          <span>HSK level</span>
+          <select
+            value={selectedLevel}
+            onChange={(event) => handleLevelChange(event.target.value)}
+          >
+            <option value="all">All levels</option>
+            {[1, 2, 3, 4, 5, 6].map((level) => (
+              <option key={level} value={level}>
+                HSK {level}
+              </option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      <div className={styles.libraryLayout}>
+        <section className={styles.resultsSection}>
+          <div className={styles.resultsHeader}>
+            <h2>Characters</h2>
+            <span>{filteredCharacters.length} results</span>
+          </div>
+
+          {filteredCharacters.length > 0 ? (
+            <div className={styles.characterGrid}>
+              {filteredCharacters.map((character) => (
+                <CharacterCard
+                  key={character.id}
+                  character={character}
+                  isLearned={learnedIds.includes(character.id)}
+                  isSelected={selectedCharacter?.id === character.id}
+                  onSelect={() => setSelectedId(character.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <Search size={25} />
+              <h3>No characters found</h3>
+              <p>Try another search phrase or change the HSK filter.</p>
+            </div>
+          )}
+        </section>
+
+        {selectedCharacter && (
+          <CharacterDetails
+            character={selectedCharacter}
+            isLearned={learnedIds.includes(selectedCharacter.id)}
+            onToggleLearned={() => toggleLearned(selectedCharacter.id)}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+========================================
+FILE: src/features/library/components/CharacterCard.tsx
+========================================
+
+import { Check, Plus } from "lucide-react";
+import type { ChineseCharacter } from "../types/character";
+import { PronunciationPlayer } from "../../speaking/components/PronunciationPlayer";
+import styles from "../pages/LibraryPage.module.css";
+
+interface CharacterCardProps {
+  character: ChineseCharacter;
+  isLearned: boolean;
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+export function CharacterCard({
+  character,
+  isLearned,
+  isSelected,
+  onSelect,
+}: CharacterCardProps) {
+  return (
+    <div className={styles.characterCardWrapper}>
+      <button
+        className={`${styles.characterCard} ${isSelected ? styles.selected : ""}`}
+        onClick={onSelect}
+        type="button"
+        aria-pressed={isSelected}
+      >
+        <span className={styles.cardLevel}>HSK {character.hskLevel}</span>
+        <span className={styles.cardCharacter}>{character.simplified}</span>
+        <strong className={styles.cardPinyin}>{character.pinyin}</strong>
+        <span className={styles.cardMeaning}>{character.meaning}</span>
+        <span className={styles.cardLearned}>
+          {isLearned ? <Check size={14} /> : <Plus size={14} />}
+          {isLearned ? "In your learning list" : "Add to learning"}
+        </span>
+      </button>
+
+      <div className={styles.cardAudio}>
+        <PronunciationPlayer
+          audioUrl={character.audioUrl ?? null}
+          text={character.simplified}
+          label={character.pinyin}
+        />
+      </div>
+    </div>
+  );
+}
+
+
+========================================
+FILE: src/features/library/components/CharacterDetails.tsx
+========================================
+
+import { Check, Plus } from "lucide-react";
+import type { ChineseCharacter } from "../types/character";
+import { PronunciationPlayer } from "../../speaking/components/PronunciationPlayer";
+import styles from "../pages/LibraryPage.module.css";
+
+interface CharacterDetailsProps {
+  character: ChineseCharacter;
+  isLearned: boolean;
+  onToggleLearned: () => void;
+}
+
+export function CharacterDetails({
+  character,
+  isLearned,
+  onToggleLearned,
+}: CharacterDetailsProps) {
+  return (
+    <aside className={styles.detailsPanel}>
+      <div className={styles.detailsHeader}>
+        <span>CHARACTER DETAILS</span>
+        <span className={styles.detailsLevel}>HSK {character.hskLevel}</span>
+      </div>
+
+      <div className={styles.detailsCharacter}>{character.simplified}</div>
+
+      <div className={styles.detailsPronunciation}>
+        <h2>{character.pinyin}</h2>
+        <PronunciationPlayer
+          audioUrl={character.audioUrl ?? null}
+          text={character.simplified}
+          label={character.pinyin}
+        />
+      </div>
+
+      <p className={styles.detailsMeaning}>{character.meaning}</p>
+
+      <div className={styles.detailsFacts}>
+        <div>
+          <span>RADICAL</span>
+          <strong>{character.radical}</strong>
+        </div>
+        <div>
+          <span>STROKES</span>
+          <strong>{character.strokes}</strong>
+        </div>
+        <div>
+          <span>TONE</span>
+          <strong>{character.tone}</strong>
+        </div>
+      </div>
+
+      <button
+        className={styles.learnButton}
+        onClick={onToggleLearned}
+        type="button"
+      >
+        {isLearned ? <Check size={16} /> : <Plus size={16} />}
+        {isLearned ? "Remove from learning list" : "Add to learning list"}
+      </button>
+
+      <div className={styles.examples}>
+        <h3>Example words</h3>
+
+        {character.examples.length > 0 ? (
+          character.examples.map((example) => (
+            <div className={styles.example} key={example.word}>
+              <strong>{example.word}</strong>
+              <span>{example.pinyin}</span>
+              <span>{example.meaning}</span>
+            </div>
+          ))
+        ) : (
+          <p>No examples available yet.</p>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+
+========================================
+FILE: src/features/library/hooks/useLibrary.ts
+========================================
+
+import { useMemo, useState } from "react";
+import { characters } from "../data/characters";
+import type { HskLevel } from "../types/character";
+import {
+  readLearnedCharacters,
+  writeLearnedCharacters,
+} from "../../../services/storage/localStorage";
+
+export function useLibrary() {
+  const [search, setSearch] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState<HskLevel | "all">("all");
+  const [learnedIds, setLearnedIds] = useState<string[]>(readLearnedCharacters);
+
+  const filteredCharacters = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+
+    return characters.filter((character) => {
+      const matchesSearch =
+        query.length === 0 ||
+        character.simplified.includes(query) ||
+        character.pinyin.toLocaleLowerCase().includes(query) ||
+        character.meaning.toLocaleLowerCase().includes(query);
+
+      const matchesLevel =
+        selectedLevel === "all" || character.hskLevel === selectedLevel;
+
+      return matchesSearch && matchesLevel;
+    });
+  }, [search, selectedLevel]);
+
+  function toggleLearned(characterId: string) {
+    setLearnedIds((currentIds) => {
+      const nextIds = currentIds.includes(characterId)
+        ? currentIds.filter((id) => id !== characterId)
+        : [...currentIds, characterId];
+
+      writeLearnedCharacters(nextIds);
+      return nextIds;
+    });
+  }
+
+  return {
+    search,
+    setSearch,
+    selectedLevel,
+    setSelectedLevel,
+    filteredCharacters,
+    learnedIds,
+    toggleLearned,
+  };
+}
+
+
+========================================
+FILE: src/components/layout/AppLayout.tsx
+========================================
+
+import { useState } from "react";
+import { Outlet } from "react-router";
+import { Sidebar } from "./Sidebar";
+import { Topbar } from "./Topbar";
+import styles from "./AppLayout.module.css";
+
+export function AppLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
+  const toggleMenu = () => setMenuOpen((open) => !open);
+
+  return (
+    <div className={styles.appShell}>
+      <Sidebar isOpen={menuOpen} onNavigate={closeMenu} />
+
+      <main className={styles.mainContent}>
+        <Topbar onMenuClick={toggleMenu} />
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
+
+========================================
+FILE: src/app/App.tsx
+========================================
+
+import { BrowserRouter } from "react-router";
+import { AppRouter } from "./router";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
+
+========================================
+FILE: src/app/providers
+========================================
+
+
+
+========================================
+FILE: src/services/storage/localStorage.ts
+========================================
+
+const LEARNED_CHARACTERS_KEY = "hanzi:learned-characters";
+
+export function readLearnedCharacters(): string[] {
+  try {
+    const storedValue = localStorage.getItem(LEARNED_CHARACTERS_KEY);
+
+    if (!storedValue) {
+      return [];
+    }
+
+    const parsed: unknown = JSON.parse(storedValue);
+
+    if (
+      Array.isArray(parsed) &&
+      parsed.every((item): item is string => typeof item === "string")
+    ) {
+      return parsed;
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeLearnedCharacters(characterIds: string[]): void {
+  localStorage.setItem(LEARNED_CHARACTERS_KEY, JSON.stringify(characterIds));
+}
+
+
+========================================
+FILE: src/services/storage/writingStorage.ts
+========================================
+
+import type {
+  StoredWritingSession,
+  StrokeMistake,
+  WritingSessionResult,
+} from "../../features/writing/types/writing";
+
+const WRITING_HISTORY_KEY = "hanzi:writing-history:v1";
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+  return Number.isInteger(value) && typeof value === "number" && value >= 0;
+}
+
+function isStrokeMistake(
+  value: unknown,
+  totalStrokes: number,
+): value is StrokeMistake {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    isNonNegativeInteger(value.strokeIndex) &&
+    value.strokeIndex < totalStrokes &&
+    isNonNegativeInteger(value.mistakes) &&
+    value.mistakes > 0
+  );
+}
+
+function hasValidStrokeMistakes(value: unknown, totalStrokes: number): boolean {
+  if (value === undefined) {
+    return true;
+  }
+
+  if (!Array.isArray(value)) {
+    return false;
+  }
+
+  if (!value.every((item) => isStrokeMistake(item, totalStrokes))) {
+    return false;
+  }
+
+  const strokeIndexes = value.map((item) => item.strokeIndex);
+
+  return new Set(strokeIndexes).size === strokeIndexes.length;
+}
+
+function isStoredWritingSession(value: unknown): value is StoredWritingSession {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    isNonEmptyString(value.id) &&
+    isNonEmptyString(value.characterId) &&
+    isNonEmptyString(value.character) &&
+    isNonNegativeInteger(value.correctStrokes) &&
+    isNonNegativeInteger(value.totalStrokes) &&
+    isNonNegativeInteger(value.mistakes) &&
+    value.totalStrokes > 0 &&
+    value.correctStrokes <= value.totalStrokes &&
+    value.correctStrokes === value.totalStrokes &&
+    typeof value.completedAt === "string" &&
+    Number.isFinite(Date.parse(value.completedAt)) &&
+    hasValidStrokeMistakes(value.strokeMistakes, value.totalStrokes)
+  );
+}
+
+/**
+ * Returns valid writing sessions, newest first.
+ * Invalid or unavailable storage data results in an empty history.
+ */
+export function getWritingHistory(): StoredWritingSession[] {
+  try {
+    const storedValue = localStorage.getItem(WRITING_HISTORY_KEY);
+
+    if (!storedValue) {
+      return [];
+    }
+
+    const parsedValue: unknown = JSON.parse(storedValue);
+
+    if (!Array.isArray(parsedValue)) {
+      return [];
+    }
+
+    return parsedValue
+      .filter(isStoredWritingSession)
+      .sort(
+        (first, second) =>
+          Date.parse(second.completedAt) - Date.parse(first.completedAt),
+      );
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Saves a completed writing session and returns its persisted record.
+ */
+export function saveWritingSession(
+  result: WritingSessionResult,
+): StoredWritingSession {
+  if (
+    !isNonEmptyString(result.characterId) ||
+    !isNonEmptyString(result.character) ||
+    !isNonNegativeInteger(result.correctStrokes) ||
+    !isNonNegativeInteger(result.totalStrokes) ||
+    !isNonNegativeInteger(result.mistakes) ||
+    result.totalStrokes <= 0 ||
+    result.correctStrokes !== result.totalStrokes ||
+    !Number.isFinite(Date.parse(result.completedAt)) ||
+    !hasValidStrokeMistakes(result.strokeMistakes, result.totalStrokes)
+  ) {
+    throw new Error("Cannot save an invalid or incomplete writing session.");
+  }
+
+  const savedSession: StoredWritingSession = {
+    ...result,
+    id: crypto.randomUUID(),
+  };
+
+  try {
+    const history = getWritingHistory();
+    const updatedHistory = [savedSession, ...history];
+
+    localStorage.setItem(WRITING_HISTORY_KEY, JSON.stringify(updatedHistory));
+
+    return savedSession;
+  } catch {
+    throw new Error("Unable to save writing history to local storage.");
+  }
+}

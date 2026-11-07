@@ -5,3 +5,6 @@ coverage/
 .env.*
 !.env.example
 *.tsbuildinfo
+# Local development TLS certificates
+localhost+ip.pem
+localhost+ip-key.pem

@@ -25,33 +25,23 @@
   "unmatchedWords": [
     {
       "simplified": "弹钢琴",
-      "hskLevels": [
-        4
-      ]
+      "hskLevels": [4]
     },
     {
       "simplified": "打篮球",
-      "hskLevels": [
-        2
-      ]
+      "hskLevels": [2]
     },
     {
       "simplified": "系领带",
-      "hskLevels": [
-        5
-      ]
+      "hskLevels": [5]
     },
     {
       "simplified": "纽扣儿",
-      "hskLevels": [
-        6
-      ]
+      "hskLevels": [6]
     },
     {
       "simplified": "踢足球",
-      "hskLevels": [
-        2
-      ]
+      "hskLevels": [2]
     }
   ]
 }

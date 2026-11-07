@@ -1,0 +1,26 @@
+export type { LearningItemReference } from "./learningItem";
+
+export type {
+  FlashcardAttemptDetails,
+  FlashcardRating,
+  FlashcardLearningAttempt,
+  LearningActivity,
+  LearningAttempt,
+  LearningRecord,
+  LearningRecordBase,
+  LearningStatus,
+  LearningStatusChanged,
+  ListeningAttemptDetails,
+  ListeningExerciseMode,
+  ListeningLearningAttempt,
+  MandarinTone,
+  RecognitionAttemptDetails,
+  RecognitionLearningAttempt,
+  SpeakingAttemptDetails,
+  SpeakingLearningAttempt,
+  StrokeMistake,
+  ToneAssessmentStatus,
+  ToneCandidate,
+  WritingAttemptDetails,
+  WritingLearningAttempt,
+} from "./learningRecord";

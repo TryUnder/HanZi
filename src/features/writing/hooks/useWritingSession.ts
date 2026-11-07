@@ -3,7 +3,6 @@ import type {
   StrokeMistake,
   WritingMistakeEvent,
   WritingProgress,
-  WritingSessionResult,
 } from "../types/writing";
 
 function createInitialProgress(totalStrokes: number): WritingProgress {
@@ -16,11 +15,7 @@ function createInitialProgress(totalStrokes: number): WritingProgress {
   };
 }
 
-export function useWritingSession(
-  characterId: string,
-  character: string,
-  totalStrokes: number,
-) {
+export function useWritingSession(totalStrokes: number) {
   const [progress, setProgress] = useState<WritingProgress>(() =>
     createInitialProgress(totalStrokes),
   );
@@ -101,25 +96,12 @@ export function useWritingSession(
     return strokeMistakesRef.current.map((item) => ({ ...item }));
   }, []);
 
-  const createResult = useCallback((): WritingSessionResult => {
-    return {
-      characterId,
-      character,
-      correctStrokes: progress.correctStrokes,
-      totalStrokes: progress.totalStrokes,
-      mistakes: progress.mistakes,
-      strokeMistakes: getStrokeMistakes(),
-      completedAt: new Date().toISOString(),
-    };
-  }, [characterId, character, getStrokeMistakes, progress]);
-
   return {
     progress,
     resetProgress,
     handleCorrectStroke,
     handleMistake,
     handleComplete,
-    createResult,
     getStrokeMistakes,
   };
 }

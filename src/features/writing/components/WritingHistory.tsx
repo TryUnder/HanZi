@@ -1,12 +1,12 @@
 import { useState } from "react";
 import type { ChineseCharacter } from "../../library/types/character";
-import type { StoredWritingSession } from "../types/writing";
+import type { WritingHistoryEntry } from "../types/writingHistory";
 import { WritingSessionDetails } from "./WritingSessionDetails";
 import styles from "./WritingHistory.module.css";
 
 interface WritingHistoryProps {
-  history: StoredWritingSession[];
-  characters: ChineseCharacter[];
+  history: WritingHistoryEntry[];
+  characters: readonly ChineseCharacter[];
 }
 
 function formatCompletionDate(date: string): string {

@@ -1,57 +1,202 @@
-import { useCallback, useState } from "react";
-import {
-  getWritingHistory,
-  saveWritingSession,
-} from "../../../services/storage/writingStorage";
-import type {
-  StoredWritingSession,
-  WritingSessionResult,
-} from "../types/writing";
+import { useCallback, useEffect, useState } from "react";
+import { learningRecordService } from "../../../app/services/learningRecordService";
+import type { LearningRecord } from "../../learning/domain/types";
+import type { ChineseCharacter } from "../../library/types/character";
+import type { WritingHistoryEntry } from "../types/writingHistory";
+import type { WritingSessionResult } from "../types/writing";
 
 interface UseWritingHistoryReturn {
-  history: StoredWritingSession[];
+  history: WritingHistoryEntry[];
   error: string | null;
-  addSession: (result: WritingSessionResult) => StoredWritingSession | null;
-  refreshHistory: () => void;
+  isLoading: boolean;
+  addSession: (
+    result: WritingSessionResult,
+  ) => Promise<WritingHistoryEntry | null>;
+  refreshHistory: () => Promise<void>;
 }
 
-export function useWritingHistory(): UseWritingHistoryReturn {
-  const [history, setHistory] = useState<StoredWritingSession[]>(() =>
-    getWritingHistory(),
-  );
-  const [error, setError] = useState<string | null>(null);
+type WritingAttemptRecord = Extract<
+  LearningRecord,
+  { recordType: "attempt"; activity: "writing" }
+>;
 
-  const refreshHistory = useCallback(() => {
-    setHistory(getWritingHistory());
-  }, []);
+function isWritingAttempt(
+  record: LearningRecord,
+): record is WritingAttemptRecord {
+  return record.recordType === "attempt" && record.activity === "writing";
+}
+
+function toWritingHistoryEntry(
+  record: WritingAttemptRecord,
+  characters: readonly ChineseCharacter[],
+): WritingHistoryEntry | null {
+  const character = characters.find((item) => item.id === record.item.id);
+
+  if (!character) {
+    return null;
+  }
+
+  return {
+    id: record.id,
+    characterId: character.id,
+    character: character.simplified,
+    correctStrokes: record.details.correctStrokes,
+    totalStrokes: record.details.totalStrokes,
+    mistakes: record.details.mistakes,
+    completedAt: record.occurredAt,
+    strokeMistakes: record.details.strokeMistakes ?? [],
+  };
+}
+
+function getErrorMessage(caughtError: unknown): string {
+  return caughtError instanceof Error
+    ? caughtError.message
+    : "An unexpected error occurred while accessing writing history.";
+}
+
+export function useWritingHistory(
+  characters: readonly ChineseCharacter[],
+): UseWritingHistoryReturn {
+  const [history, setHistory] = useState<WritingHistoryEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const refreshHistory = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const records = await learningRecordService.getAllRecords();
+
+      const writingHistory = records
+        .filter(isWritingAttempt)
+        .map((record) =>
+          toWritingHistoryEntry(
+            record as Extract<
+              LearningRecord,
+              { recordType: "attempt"; activity: "writing" }
+            >,
+            characters,
+          ),
+        )
+        .filter((entry): entry is WritingHistoryEntry => entry !== null)
+        .sort(
+          (first, second) =>
+            new Date(second.completedAt).getTime() -
+            new Date(first.completedAt).getTime(),
+        );
+
+      setHistory(writingHistory);
+      setError(null);
+    } catch (caughtError) {
+      setError(getErrorMessage(caughtError));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [characters]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadHistory = async () => {
+      try {
+        const records = await learningRecordService.getAllRecords();
+
+        const writingHistory = records
+          .filter(isWritingAttempt)
+          .map((record) => toWritingHistoryEntry(record, characters))
+          .filter((entry): entry is WritingHistoryEntry => entry !== null)
+          .sort(
+            (first, second) =>
+              new Date(second.completedAt).getTime() -
+              new Date(first.completedAt).getTime(),
+          );
+
+        if (isActive) {
+          setHistory(writingHistory);
+          setError(null);
+        }
+      } catch (caughtError) {
+        if (isActive) {
+          setError(getErrorMessage(caughtError));
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadHistory();
+
+    return () => {
+      isActive = false;
+    };
+  }, [characters]);
 
   const addSession = useCallback(
-    (result: WritingSessionResult): StoredWritingSession | null => {
-      try {
-        const savedSession = saveWritingSession(result);
+    async (
+      result: WritingSessionResult,
+    ): Promise<WritingHistoryEntry | null> => {
+      const character = characters.find(
+        (item) => item.id === result.characterId,
+      );
 
-        setHistory((currentHistory) => [savedSession, ...currentHistory]);
+      if (!character) {
+        setError("The character for this writing session could not be found.");
+        return null;
+      }
+
+      try {
+        const record = await learningRecordService.recordAttempt({
+          item: {
+            kind: "character",
+            id: result.characterId,
+          },
+          recordType: "attempt",
+          activity: "writing",
+          details: {
+            correctStrokes: result.correctStrokes,
+            totalStrokes: result.totalStrokes,
+            mistakes: result.mistakes,
+            strokeMistakes: result.strokeMistakes ?? [],
+          },
+        });
+
+        if (!isWritingAttempt(record)) {
+          throw new Error("The saved record is not a writing attempt.");
+        }
+
+        const entry = toWritingHistoryEntry(record, characters);
+
+        if (!entry) {
+          throw new Error(
+            "The character for this writing session could not be found.",
+          );
+        }
+
+        setHistory((currentHistory) =>
+          [entry, ...currentHistory].sort(
+            (first, second) =>
+              new Date(second.completedAt).getTime() -
+              new Date(first.completedAt).getTime(),
+          ),
+        );
 
         setError(null);
 
-        return savedSession;
+        return entry;
       } catch (caughtError) {
-        const message =
-          caughtError instanceof Error
-            ? caughtError.message
-            : "An unexpected error occurred while saving writing history.";
-
-        setError(message);
-
+        setError(getErrorMessage(caughtError));
         return null;
       }
     },
-    [],
+    [characters],
   );
 
   return {
     history,
     error,
+    isLoading,
     addSession,
     refreshHistory,
   };

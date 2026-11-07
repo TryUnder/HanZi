@@ -1,0 +1,251 @@
+HANZI PROJECT AUDIT
+Generated: 2026-11-07 19:54:46
+Root: D:\P.R.I.V\Programowanie\Projects\HanZi
+
+PROJECT STRUCTURE
+=================
+├── data
+│   └── sources
+│       ├── hsk2012
+│       │   ├── HSK2012_1.txt
+│       │   ├── HSK2012_2.txt
+│       │   ├── HSK2012_3.txt
+│       │   ├── HSK2012_4.txt
+│       │   ├── HSK2012_5.txt
+│       │   └── HSK2012_6.txt
+│       └── cedict_1_0_ts_utf-8_mdbg.txt
+├── public
+│   ├── audio
+│   │   ├── characters
+│   │   │   ├── bu.mp3
+│   │   │   ├── guo.mp3
+│   │   │   ├── hao.mp3
+│   │   │   ├── ma.mp3
+│   │   │   ├── ni.mp3
+│   │   │   ├── ren.mp3
+│   │   │   ├── sheng.mp3
+│   │   │   ├── shi.mp3
+│   │   │   ├── wo.mp3
+│   │   │   ├── xue.mp3
+│   │   │   ├── zai.mp3
+│   │   │   └── zhong.mp3
+│   │   └── mandarin
+│   │       ├── ma1.mp3
+│   │       ├── ma2.mp3
+│   │       ├── ma3.mp3
+│   │       └── ma4.mp3
+│   ├── favicon.svg
+│   └── icons.svg
+├── reports
+│   ├── audio-import-report.json
+│   ├── cedict-parser-report.json
+│   ├── hsk-cedict-coverage-report.json
+│   └── vocabulary-build-report.json
+├── scripts
+│   ├── analyze-hsk-cedict.mjs
+│   ├── build-vocabulary.mjs
+│   ├── build-vocabulary.test.mjs
+│   ├── cedictParser.mjs
+│   ├── cedictParser.test.mjs
+│   ├── download-audio.mjs
+│   ├── hskCedictMatcher.mjs
+│   ├── hskCedictMatcher.test.mjs
+│   ├── hskDiagnostics.mjs
+│   ├── hskDiagnostics.test.mjs
+│   ├── hskParser.mjs
+│   ├── hskParser.test.mjs
+│   ├── parse-cedict.mjs
+│   ├── pinyinNormalizer.mjs
+│   └── pinyinNormalizer.test.mjs
+├── src
+│   ├── app
+│   │   ├── providers
+│   │   ├── App.tsx
+│   │   └── router.tsx
+│   ├── assets
+│   │   ├── hero.png
+│   │   ├── react.svg
+│   │   └── vite.svg
+│   ├── components
+│   │   ├── layout
+│   │   │   ├── AppLayout.Module.css
+│   │   │   ├── AppLayout.tsx
+│   │   │   ├── Sidebar.module.css
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── Topbar.module.css
+│   │   │   └── Topbar.tsx
+│   │   └── ui
+│   ├── features
+│   │   ├── dashboard
+│   │   │   ├── components
+│   │   │   │   ├── ContinueLearning.module.css
+│   │   │   │   ├── ContinueLearning.tsx
+│   │   │   │   ├── DailyChallenge.module.css
+│   │   │   │   ├── DailyChallenge.tsx
+│   │   │   │   ├── DashboardShared.module.css
+│   │   │   │   ├── LearningPath.module.css
+│   │   │   │   ├── LearningPath.tsx
+│   │   │   │   ├── StatsGrid.module.css
+│   │   │   │   ├── StatsGrid.tsx
+│   │   │   │   ├── WelcomeSection.module.css
+│   │   │   │   └── WelcomeSection.tsx
+│   │   │   ├── hooks
+│   │   │   ├── pages
+│   │   │   │   ├── DashboardPage.module.css
+│   │   │   │   └── DashboardPage.tsx
+│   │   │   └── types
+│   │   ├── flashcards
+│   │   │   └── pages
+│   │   ├── library
+│   │   │   ├── components
+│   │   │   │   ├── CharacterCard.tsx
+│   │   │   │   ├── CharacterDetails.tsx
+│   │   │   │   ├── LibraryFilters.tsx
+│   │   │   │   ├── LibrarySearch.tsx
+│   │   │   │   ├── LibraryTabs.module.css
+│   │   │   │   └── LibraryTabs.tsx
+│   │   │   ├── data
+│   │   │   │   ├── characters.json
+│   │   │   │   ├── characters.ts
+│   │   │   │   ├── vocabulary-learning.json
+│   │   │   │   ├── vocabulary.json
+│   │   │   │   ├── vocabularyLearningRepository.test.ts
+│   │   │   │   └── vocabularyLearningRepository.ts
+│   │   │   ├── hooks
+│   │   │   │   └── useLibrary.ts
+│   │   │   ├── pages
+│   │   │   │   ├── LibraryPage.module.css
+│   │   │   │   ├── LibraryPage.tsx
+│   │   │   │   ├── VocabularyPage.module.css
+│   │   │   │   └── VocabularyPage.tsx
+│   │   │   ├── types
+│   │   │   │   ├── character.ts
+│   │   │   │   └── vocabulary.ts
+│   │   │   └── utils
+│   │   │       ├── vocabularyLearningValidation.test.ts
+│   │   │       └── vocabularyLearningValidation.ts
+│   │   ├── shared
+│   │   │   └── pages
+│   │   │       └── PlaceholderPage.tsx
+│   │   ├── speaking
+│   │   │   ├── components
+│   │   │   │   ├── ListeningExercise.module.css
+│   │   │   │   ├── ListeningExercise.tsx
+│   │   │   │   ├── PitchContourChart.module.css
+│   │   │   │   ├── PitchContourChart.tsx
+│   │   │   │   ├── PronunciationPlayer.module.css
+│   │   │   │   ├── PronunciationPlayer.tsx
+│   │   │   │   ├── PronunciationTargetSelector.module.css
+│   │   │   │   ├── PronunciationTargetSelector.tsx
+│   │   │   │   ├── SpeakingRecorder.module.css
+│   │   │   │   ├── SpeakingRecorder.tsx
+│   │   │   │   ├── ToneContourChart.module.css
+│   │   │   │   ├── ToneContourChart.tsx
+│   │   │   │   ├── ToneTrainer.module.css
+│   │   │   │   └── ToneTrainer.tsx
+│   │   │   ├── data
+│   │   │   │   ├── pronunciationExamples.ts
+│   │   │   │   └── toneDefinitions.ts
+│   │   │   ├── hooks
+│   │   │   │   ├── useListeningExercise.ts
+│   │   │   │   ├── useMicrophone.ts
+│   │   │   │   ├── usePitchAnalysis.ts
+│   │   │   │   └── usePronunciation.ts
+│   │   │   ├── pages
+│   │   │   │   ├── SpeakingPage.module.css
+│   │   │   │   └── SpeakingPage.tsx
+│   │   │   ├── types
+│   │   │   │   └── speaking.ts
+│   │   │   └── utils
+│   │   │       ├── ListeningQuestionGenerator.ts
+│   │   │       ├── pitchDetection.test.ts
+│   │   │       ├── pitchDetection.ts
+│   │   │       ├── pitchNormalization.test.ts
+│   │   │       ├── pitchNormalization.ts
+│   │   │       ├── toneAssessment.test.ts
+│   │   │       └── toneAssessment.ts
+│   │   └── writing
+│   │       ├── components
+│   │       │   ├── CharacterCanvas.module.css
+│   │       │   ├── CharacterCanvas.tsx
+│   │       │   ├── PracticeCanvas.tsx
+│   │       │   ├── SessionSummary.tsx
+│   │       │   ├── StrokeMistakeChart.tsx
+│   │       │   ├── WritingControls.tsx
+│   │       │   ├── WritingHistory.module.css
+│   │       │   ├── WritingHistory.tsx
+│   │       │   ├── WritingProgress.tsx
+│   │       │   ├── WritingSessionDetails.module.css
+│   │       │   ├── WritingSessionDetails.tsx
+│   │       │   └── WritingWorkspace.tsx
+│   │       ├── hooks
+│   │       │   ├── useWritingHistory.ts
+│   │       │   └── useWritingSession.ts
+│   │       ├── pages
+│   │       │   ├── WritingPage.module.css
+│   │       │   └── WritingPage.tsx
+│   │       └── types
+│   │           └── writing.ts
+│   ├── services
+│   │   ├── api
+│   │   └── storage
+│   │       ├── localStorage.ts
+│   │       └── writingStorage.ts
+│   ├── shared
+│   │   ├── constants
+│   │   ├── hooks
+│   │   ├── lib
+│   │   └── types
+│   ├── styles
+│   │   ├── globals.css
+│   │   ├── index.css
+│   │   └── tokens.css
+│   ├── App.css
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+├── .gitattributes
+├── .gitignore
+├── .prettierignore
+├── eslint.config.js
+├── index.html
+├── localhost+ip-key.pem
+├── localhost+ip.pem
+├── package-lock.json
+├── package.json
+├── prettier.config.json
+├── README.md
+├── THIRD_PARTY_NOTICES.md
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+
+ROOT FILES
+==========
+.gitattributes [0.16 KB]
+.gitignore [0.07 KB]
+.prettierignore [0.04 KB]
+eslint.config.js [0.67 KB]
+index.html [0.35 KB]
+localhost+ip-key.pem [1.66 KB]
+localhost+ip.pem [1.45 KB]
+package-lock.json [105.43 KB]
+package.json [1.36 KB]
+prettier.config.json [0.14 KB]
+README.md [2.29 KB]
+THIRD_PARTY_NOTICES.md [0.36 KB]
+tsconfig.app.json [0.84 KB]
+tsconfig.json [0.12 KB]
+tsconfig.node.json [0.54 KB]
+vite.config.ts [0.51 KB]
+
+SOURCE FILE STATISTICS
+======================
+Total source files: 102
+.css: 30
+.json: 3
+.png: 1
+.svg: 2
+.ts: 27
+.tsx: 39

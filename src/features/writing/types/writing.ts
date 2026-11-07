@@ -36,7 +36,3 @@ export interface WritingSessionResult {
    */
   strokeMistakes?: StrokeMistake[];
 }
-
-export interface StoredWritingSession extends WritingSessionResult {
-  id: string;
-}

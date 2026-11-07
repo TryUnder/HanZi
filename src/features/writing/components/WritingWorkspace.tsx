@@ -5,16 +5,15 @@ import { CharacterCanvas } from "./CharacterCanvas";
 import { PracticeCanvas } from "./PracticeCanvas";
 import { useWritingSession } from "../hooks/useWritingSession";
 import styles from "../pages/WritingPage.module.css";
-import type {
-  StoredWritingSession,
-  WritingMode,
-  WritingSessionResult,
-} from "../types/writing";
+import type { WritingHistoryEntry } from "../types/writingHistory";
+import type { WritingMode, WritingSessionResult } from "../types/writing";
 
 interface WritingWorkspaceProps {
   character: ChineseCharacter;
   historyError: string | null;
-  addSession: (result: WritingSessionResult) => StoredWritingSession | null;
+  addSession: (
+    result: WritingSessionResult,
+  ) => Promise<WritingHistoryEntry | null>;
 }
 
 export function WritingWorkspace({
@@ -33,7 +32,7 @@ export function WritingWorkspace({
     handleMistake,
     handleComplete,
     getStrokeMistakes,
-  } = useWritingSession(character.id, character.simplified, character.strokes);
+  } = useWritingSession(character.strokes);
 
   const sessionKey = `${character.id}:${attempt}`;
 
@@ -42,6 +41,9 @@ export function WritingWorkspace({
       if (savedSessionKeyRef.current === sessionKey) {
         return;
       }
+
+      // Lock this attempt before starting the asynchronous save.
+      savedSessionKeyRef.current = sessionKey;
 
       handleComplete(totalMistakes);
 
@@ -55,11 +57,7 @@ export function WritingWorkspace({
         completedAt: new Date().toISOString(),
       };
 
-      const savedSession = addSession(result);
-
-      if (savedSession) {
-        savedSessionKeyRef.current = sessionKey;
-      }
+      void addSession(result);
     },
     [addSession, character, getStrokeMistakes, handleComplete, sessionKey],
   );

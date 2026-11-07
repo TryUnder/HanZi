@@ -1,4 +1,3 @@
-
 import vocabularyData from "./vocabulary.json";
 import learningData from "./vocabulary-learning.json";
 
@@ -109,9 +108,13 @@ const defaultRepository = createVocabularyLearningRepository(
 
 export const getAllVocabulary = defaultRepository.getAllVocabulary;
 export const getVocabularyById = defaultRepository.getVocabularyById;
-export const getVocabularyLearningData = defaultRepository.getVocabularyLearningData;
-export const getVocabularyByHskLevel = defaultRepository.getVocabularyByHskLevel;
+export const getVocabularyLearningData =
+  defaultRepository.getVocabularyLearningData;
+export const getVocabularyByHskLevel =
+  defaultRepository.getVocabularyByHskLevel;
 export const getVerifiedVocabulary = defaultRepository.getVerifiedVocabulary;
-export const getUnreviewedVocabulary = defaultRepository.getUnreviewedVocabulary;
+export const getUnreviewedVocabulary =
+  defaultRepository.getUnreviewedVocabulary;
 export const getVocabularyCount = defaultRepository.getVocabularyCount;
-export const getVerifiedVocabularyCount = defaultRepository.getVerifiedVocabularyCount;
+export const getVerifiedVocabularyCount =
+  defaultRepository.getVerifiedVocabularyCount;

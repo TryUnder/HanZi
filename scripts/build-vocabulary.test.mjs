@@ -197,10 +197,7 @@ describe("buildVocabulary", () => {
       { word: "爱", levels: [1], entries: [] },
     ]);
 
-    expect(result.map((entry) => entry.simplified)).toEqual([
-      "中国",
-      "爱",
-    ]);
+    expect(result.map((entry) => entry.simplified)).toEqual(["中国", "爱"]);
   });
 
   it("rejects invalid matcher input", () => {
@@ -242,27 +239,19 @@ describe("validateVocabulary", () => {
 
   it("rejects duplicate IDs", () => {
     expect(() =>
-      validateVocabulary([
-        validEntry,
-        { ...validEntry, simplified: "好" },
-      ]),
+      validateVocabulary([validEntry, { ...validEntry, simplified: "好" }]),
     ).toThrow(/Duplicate vocabulary ID/);
   });
 
   it("rejects duplicate simplified words", () => {
     expect(() =>
-      validateVocabulary([
-        validEntry,
-        { ...validEntry, id: "another-id" },
-      ]),
+      validateVocabulary([validEntry, { ...validEntry, id: "another-id" }]),
     ).toThrow(/Duplicate simplified word/);
   });
 
   it("rejects invalid HSK levels", () => {
     expect(() =>
-      validateVocabulary([
-        { ...validEntry, hskLevels: [7] },
-      ]),
+      validateVocabulary([{ ...validEntry, hskLevels: [7] }]),
     ).toThrow(/Invalid HSK level/);
   });
 

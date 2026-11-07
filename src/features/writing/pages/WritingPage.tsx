@@ -8,7 +8,7 @@ import styles from "./WritingPage.module.css";
 export function WritingPage() {
   const [selectedCharacterId, setSelectedCharacterId] = useState("ni");
 
-  const { history, error, addSession } = useWritingHistory();
+  const { history, error, addSession } = useWritingHistory(characters);
 
   const selectedCharacter =
     characters.find((character) => character.id === selectedCharacterId) ??

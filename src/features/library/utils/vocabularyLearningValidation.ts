@@ -1,11 +1,13 @@
-
 import type {
   VocabularyEntry,
   VocabularyLearningData,
   VocabularyLearningStatus,
 } from "../types/vocabulary";
 
-const VALID_STATUSES: readonly VocabularyLearningStatus[] = ["draft", "verified"];
+const VALID_STATUSES: readonly VocabularyLearningStatus[] = [
+  "draft",
+  "verified",
+];
 
 const LEARNING_DATA_KEYS = ["status", "meanings", "examples", "notes"] as const;
 const EXAMPLE_KEYS = ["simplified", "pinyin", "meaning"] as const;
@@ -14,7 +16,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function hasOnlyKeys(value: Record<string, unknown>, allowedKeys: readonly string[]): boolean {
+function hasOnlyKeys(
+  value: Record<string, unknown>,
+  allowedKeys: readonly string[],
+): boolean {
   return Object.keys(value).every((key) => allowedKeys.includes(key));
 }
 
@@ -27,10 +32,14 @@ function isNonEmptyStringArray(value: unknown): value is string[] {
 }
 
 function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
-function isVocabularyLearningStatus(value: unknown): value is VocabularyLearningStatus {
+function isVocabularyLearningStatus(
+  value: unknown,
+): value is VocabularyLearningStatus {
   return (
     typeof value === "string" &&
     VALID_STATUSES.includes(value as VocabularyLearningStatus)
@@ -102,7 +111,10 @@ export function validateVocabularyLearningDataset(
       });
     }
 
-    if (!isStringArray(rawEntry.notes) || !rawEntry.notes.every(isNonEmptyString)) {
+    if (
+      !isStringArray(rawEntry.notes) ||
+      !rawEntry.notes.every(isNonEmptyString)
+    ) {
       errors.push(`${path}.notes: expected an array of non-empty strings.`);
     }
 
@@ -110,7 +122,9 @@ export function validateVocabularyLearningDataset(
       rawEntry.status === "verified" &&
       (!Array.isArray(rawEntry.meanings) || rawEntry.meanings.length === 0)
     ) {
-      errors.push(`${path}: verified entries must contain at least one meaning.`);
+      errors.push(
+        `${path}: verified entries must contain at least one meaning.`,
+      );
     }
   }
 
@@ -120,7 +134,9 @@ export function validateVocabularyLearningDataset(
 /**
  * Type guard for an individual learning record.
  */
-export function isVocabularyLearningData(value: unknown): value is VocabularyLearningData {
+export function isVocabularyLearningData(
+  value: unknown,
+): value is VocabularyLearningData {
   if (!isRecord(value) || !hasOnlyKeys(value, LEARNING_DATA_KEYS)) {
     return false;
   }
@@ -129,7 +145,10 @@ export function isVocabularyLearningData(value: unknown): value is VocabularyLea
     return false;
   }
 
-  if (!isNonEmptyStringArray(value.meanings) || !Array.isArray(value.examples)) {
+  if (
+    !isNonEmptyStringArray(value.meanings) ||
+    !Array.isArray(value.examples)
+  ) {
     return false;
   }
 

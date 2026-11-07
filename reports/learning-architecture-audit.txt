@@ -1,0 +1,1465 @@
+HANZI LEARNING ARCHITECTURE AUDIT
+Generated: 2026-11-07 19:57:03
+Root: D:\P.R.I.V\Programowanie\Projects\HanZi
+
+
+====================================================================================================
+FILE: package.json
+====================================================================================================
+{
+  "name": "hanzi",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -b --pretty",
+    "preview": "vite preview",
+    "audio:download": "node scripts/download-audio.mjs",
+    "audio:download:force": "node scripts/download-audio.mjs --force",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cedict:parse": "node scripts/parse-cedict.mjs",
+    "hsk:analyze": "node scripts/analyze-hsk-cedict.mjs",
+    "vocabulary:build": "node scripts/build-vocabulary.mjs"
+  },
+  "dependencies": {
+    "hanzi-writer": "^3.7.3",
+    "lucide-react": "^1.66.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^8.5.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.0",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
+  }
+}
+
+====================================================================================================
+FILE: .gitignore
+====================================================================================================
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+
+====================================================================================================
+FILE: src\services\storage\localStorage.ts
+====================================================================================================
+const LEARNED_CHARACTERS_KEY = "hanzi:learned-characters";
+
+export function readLearnedCharacters(): string[] {
+  try {
+    const storedValue = localStorage.getItem(LEARNED_CHARACTERS_KEY);
+
+    if (!storedValue) {
+      return [];
+    }
+
+    const parsed: unknown = JSON.parse(storedValue);
+
+    if (
+      Array.isArray(parsed) &&
+      parsed.every((item): item is string => typeof item === "string")
+    ) {
+      return parsed;
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeLearnedCharacters(characterIds: string[]): void {
+  localStorage.setItem(LEARNED_CHARACTERS_KEY, JSON.stringify(characterIds));
+}
+
+====================================================================================================
+FILE: src\services\storage\writingStorage.ts
+====================================================================================================
+import type {
+  StoredWritingSession,
+  StrokeMistake,
+  WritingSessionResult,
+} from "../../features/writing/types/writing";
+
+const WRITING_HISTORY_KEY = "hanzi:writing-history:v1";
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+  return Number.isInteger(value) && typeof value === "number" && value >= 0;
+}
+
+function isStrokeMistake(
+  value: unknown,
+  totalStrokes: number,
+): value is StrokeMistake {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    isNonNegativeInteger(value.strokeIndex) &&
+    value.strokeIndex < totalStrokes &&
+    isNonNegativeInteger(value.mistakes) &&
+    value.mistakes > 0
+  );
+}
+
+function hasValidStrokeMistakes(value: unknown, totalStrokes: number): boolean {
+  if (value === undefined) {
+    return true;
+  }
+
+  if (!Array.isArray(value)) {
+    return false;
+  }
+
+  if (!value.every((item) => isStrokeMistake(item, totalStrokes))) {
+    return false;
+  }
+
+  const strokeIndexes = value.map((item) => item.strokeIndex);
+
+  return new Set(strokeIndexes).size === strokeIndexes.length;
+}
+
+function isStoredWritingSession(value: unknown): value is StoredWritingSession {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    isNonEmptyString(value.id) &&
+    isNonEmptyString(value.characterId) &&
+    isNonEmptyString(value.character) &&
+    isNonNegativeInteger(value.correctStrokes) &&
+    isNonNegativeInteger(value.totalStrokes) &&
+    isNonNegativeInteger(value.mistakes) &&
+    value.totalStrokes > 0 &&
+    value.correctStrokes <= value.totalStrokes &&
+    value.correctStrokes === value.totalStrokes &&
+    typeof value.completedAt === "string" &&
+    Number.isFinite(Date.parse(value.completedAt)) &&
+    hasValidStrokeMistakes(value.strokeMistakes, value.totalStrokes)
+  );
+}
+
+/**
+ * Returns valid writing sessions, newest first.
+ * Invalid or unavailable storage data results in an empty history.
+ */
+export function getWritingHistory(): StoredWritingSession[] {
+  try {
+    const storedValue = localStorage.getItem(WRITING_HISTORY_KEY);
+
+    if (!storedValue) {
+      return [];
+    }
+
+    const parsedValue: unknown = JSON.parse(storedValue);
+
+    if (!Array.isArray(parsedValue)) {
+      return [];
+    }
+
+    return parsedValue
+      .filter(isStoredWritingSession)
+      .sort(
+        (first, second) =>
+          Date.parse(second.completedAt) - Date.parse(first.completedAt),
+      );
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Saves a completed writing session and returns its persisted record.
+ */
+export function saveWritingSession(
+  result: WritingSessionResult,
+): StoredWritingSession {
+  if (
+    !isNonEmptyString(result.characterId) ||
+    !isNonEmptyString(result.character) ||
+    !isNonNegativeInteger(result.correctStrokes) ||
+    !isNonNegativeInteger(result.totalStrokes) ||
+    !isNonNegativeInteger(result.mistakes) ||
+    result.totalStrokes <= 0 ||
+    result.correctStrokes !== result.totalStrokes ||
+    !Number.isFinite(Date.parse(result.completedAt)) ||
+    !hasValidStrokeMistakes(result.strokeMistakes, result.totalStrokes)
+  ) {
+    throw new Error("Cannot save an invalid or incomplete writing session.");
+  }
+
+  const savedSession: StoredWritingSession = {
+    ...result,
+    id: crypto.randomUUID(),
+  };
+
+  try {
+    const history = getWritingHistory();
+    const updatedHistory = [savedSession, ...history];
+
+    localStorage.setItem(WRITING_HISTORY_KEY, JSON.stringify(updatedHistory));
+
+    return savedSession;
+  } catch {
+    throw new Error("Unable to save writing history to local storage.");
+  }
+}
+
+====================================================================================================
+FILE: src\features\library\hooks\useLibrary.ts
+====================================================================================================
+import { useMemo, useState } from "react";
+import { characters } from "../data/characters";
+import type { HskLevel } from "../types/character";
+import {
+  readLearnedCharacters,
+  writeLearnedCharacters,
+} from "../../../services/storage/localStorage";
+
+export function useLibrary() {
+  const [search, setSearch] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState<HskLevel | "all">("all");
+  const [learnedIds, setLearnedIds] = useState<string[]>(readLearnedCharacters);
+
+  const filteredCharacters = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase();
+
+    return characters.filter((character) => {
+      const matchesSearch =
+        query.length === 0 ||
+        character.simplified.includes(query) ||
+        character.pinyin.toLocaleLowerCase().includes(query) ||
+        character.meaning.toLocaleLowerCase().includes(query);
+
+      const matchesLevel =
+        selectedLevel === "all" || character.hskLevel === selectedLevel;
+
+      return matchesSearch && matchesLevel;
+    });
+  }, [search, selectedLevel]);
+
+  function toggleLearned(characterId: string) {
+    setLearnedIds((currentIds) => {
+      const nextIds = currentIds.includes(characterId)
+        ? currentIds.filter((id) => id !== characterId)
+        : [...currentIds, characterId];
+
+      writeLearnedCharacters(nextIds);
+      return nextIds;
+    });
+  }
+
+  return {
+    search,
+    setSearch,
+    selectedLevel,
+    setSelectedLevel,
+    filteredCharacters,
+    learnedIds,
+    toggleLearned,
+  };
+}
+
+====================================================================================================
+FILE: src\features\library\data\vocabularyLearningRepository.ts
+====================================================================================================
+
+import vocabularyData from "./vocabulary.json";
+import learningData from "./vocabulary-learning.json";
+
+import type {
+  VocabularyEntry,
+  VocabularyLearningData,
+  VocabularyLearningDataset,
+} from "../types/vocabulary";
+
+import { validateVocabularyLearningDataset } from "../utils/vocabularyLearningValidation";
+
+export interface VocabularyLearningRepository {
+  getAllVocabulary(): readonly VocabularyEntry[];
+  getVocabularyById(id: string): VocabularyEntry | undefined;
+  getVocabularyLearningData(id: string): VocabularyLearningData | undefined;
+  getVocabularyByHskLevel(
+    level: VocabularyEntry["hskLevels"][number],
+  ): VocabularyEntry[];
+  getVerifiedVocabulary(): VocabularyEntry[];
+  getUnreviewedVocabulary(): VocabularyEntry[];
+  getVocabularyCount(): number;
+  getVerifiedVocabularyCount(): number;
+}
+
+/**
+ * Creates a vocabulary repository from supplied datasets.
+ * This factory also allows the repository to be tested independently
+ * of the production JSON files.
+ */
+export function createVocabularyLearningRepository(
+  vocabulary: readonly VocabularyEntry[],
+  learningDataset: VocabularyLearningDataset,
+): VocabularyLearningRepository {
+  const validationErrors = validateVocabularyLearningDataset(
+    learningDataset,
+    vocabulary,
+  );
+
+  if (validationErrors.length > 0) {
+    throw new Error(
+      [
+        "Invalid vocabulary learning dataset:",
+        ...validationErrors.map((error) => `- ${error}`),
+      ].join("\n"),
+    );
+  }
+
+  const vocabularyById = new Map<string, VocabularyEntry>(
+    vocabulary.map((entry) => [entry.id, entry]),
+  );
+
+  function getAllVocabulary(): readonly VocabularyEntry[] {
+    return vocabulary;
+  }
+
+  function getVocabularyById(id: string): VocabularyEntry | undefined {
+    return vocabularyById.get(id);
+  }
+
+  function getVocabularyLearningData(
+    id: string,
+  ): VocabularyLearningData | undefined {
+    return learningDataset[id];
+  }
+
+  function getVocabularyByHskLevel(
+    level: VocabularyEntry["hskLevels"][number],
+  ): VocabularyEntry[] {
+    return vocabulary.filter((entry) => entry.hskLevels.includes(level));
+  }
+
+  function getVerifiedVocabulary(): VocabularyEntry[] {
+    return vocabulary.filter(
+      (entry) => learningDataset[entry.id]?.status === "verified",
+    );
+  }
+
+  function getUnreviewedVocabulary(): VocabularyEntry[] {
+    return vocabulary.filter((entry) => !learningDataset[entry.id]);
+  }
+
+  function getVocabularyCount(): number {
+    return vocabulary.length;
+  }
+
+  function getVerifiedVocabularyCount(): number {
+    return getVerifiedVocabulary().length;
+  }
+
+  return {
+    getAllVocabulary,
+    getVocabularyById,
+    getVocabularyLearningData,
+    getVocabularyByHskLevel,
+    getVerifiedVocabulary,
+    getUnreviewedVocabulary,
+    getVocabularyCount,
+    getVerifiedVocabularyCount,
+  };
+}
+
+const defaultRepository = createVocabularyLearningRepository(
+  vocabularyData as VocabularyEntry[],
+  learningData as VocabularyLearningDataset,
+);
+
+// Public API backed by the production datasets.
+
+export const getAllVocabulary = defaultRepository.getAllVocabulary;
+export const getVocabularyById = defaultRepository.getVocabularyById;
+export const getVocabularyLearningData = defaultRepository.getVocabularyLearningData;
+export const getVocabularyByHskLevel = defaultRepository.getVocabularyByHskLevel;
+export const getVerifiedVocabulary = defaultRepository.getVerifiedVocabulary;
+export const getUnreviewedVocabulary = defaultRepository.getUnreviewedVocabulary;
+export const getVocabularyCount = defaultRepository.getVocabularyCount;
+export const getVerifiedVocabularyCount = defaultRepository.getVerifiedVocabularyCount;
+
+====================================================================================================
+FILE: src\features\library\types\character.ts
+====================================================================================================
+export type HskLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface CharacterExample {
+  word: string;
+  pinyin: string;
+  meaning: string;
+}
+
+export interface ChineseCharacter {
+  id: string;
+  simplified: string;
+  traditional?: string;
+  pinyin: string;
+  tone: 1 | 2 | 3 | 4 | 5;
+  meaning: string;
+  radical: string;
+  strokes: number;
+  hskLevel: HskLevel;
+  audioUrl?: string | null;
+  examples: CharacterExample[];
+}
+
+====================================================================================================
+FILE: src\features\library\types\vocabulary.ts
+====================================================================================================
+import type { HskLevel } from "./character";
+
+export interface VocabularyDefinitionEntry {
+  traditional: string;
+  definitions: string[];
+}
+
+export interface VocabularyReading {
+  pinyin: string;
+  sourcePinyinVariants: string[];
+  entries: VocabularyDefinitionEntry[];
+}
+
+export interface VocabularyEntry {
+  id: string;
+  simplified: string;
+  traditionalVariants: string[];
+  hskLevels: HskLevel[];
+  readings: VocabularyReading[];
+  audioUrl: string | null;
+}
+
+export interface VocabularyExample {
+  simplified: string;
+  pinyin: string;
+  meaning: string;
+}
+
+export type VocabularyLearningStatus = "draft" | "verified";
+
+export interface VocabularyLearningData {
+  status: VocabularyLearningStatus;
+  meanings: string[];
+  examples: VocabularyExample[];
+  notes: string[];
+}
+
+/**
+ * Sparse dataset keyed by VocabularyEntry.id.
+ * Missing entries are treated as not yet reviewed.
+ */
+export type VocabularyLearningDataset = Record<string, VocabularyLearningData>;
+
+====================================================================================================
+FILE: src\features\writing\types\writing.ts
+====================================================================================================
+export type WritingMode = "learn" | "practice";
+
+export interface StrokeMistake {
+  /**
+   * Zero-based index returned by Hanzi Writer.
+   * Example: 0 represents the first stroke.
+   */
+  strokeIndex: number;
+  mistakes: number;
+}
+
+export interface WritingMistakeEvent {
+  strokeNum: number;
+  mistakesOnStroke: number;
+  totalMistakes: number;
+}
+
+export interface WritingProgress {
+  correctStrokes: number;
+  totalStrokes: number;
+  mistakes: number;
+  strokeMistakes: StrokeMistake[];
+  completed: boolean;
+}
+
+export interface WritingSessionResult {
+  characterId: string;
+  character: string;
+  correctStrokes: number;
+  totalStrokes: number;
+  mistakes: number;
+  completedAt: string;
+
+  /**
+   * Optional to support sessions saved by older versions of HanZi.
+   */
+  strokeMistakes?: StrokeMistake[];
+}
+
+export interface StoredWritingSession extends WritingSessionResult {
+  id: string;
+}
+
+====================================================================================================
+FILE: src\features\writing\hooks\useWritingSession.ts
+====================================================================================================
+import { useCallback, useRef, useState } from "react";
+import type {
+  StrokeMistake,
+  WritingMistakeEvent,
+  WritingProgress,
+  WritingSessionResult,
+} from "../types/writing";
+
+function createInitialProgress(totalStrokes: number): WritingProgress {
+  return {
+    correctStrokes: 0,
+    totalStrokes,
+    mistakes: 0,
+    strokeMistakes: [],
+    completed: false,
+  };
+}
+
+export function useWritingSession(
+  characterId: string,
+  character: string,
+  totalStrokes: number,
+) {
+  const [progress, setProgress] = useState<WritingProgress>(() =>
+    createInitialProgress(totalStrokes),
+  );
+
+  const strokeMistakesRef = useRef<StrokeMistake[]>([]);
+
+  const resetProgress = useCallback(() => {
+    strokeMistakesRef.current = [];
+    setProgress(createInitialProgress(totalStrokes));
+  }, [totalStrokes]);
+
+  const handleCorrectStroke = useCallback(() => {
+    setProgress((current) => ({
+      ...current,
+      correctStrokes: Math.min(
+        current.correctStrokes + 1,
+        current.totalStrokes,
+      ),
+    }));
+  }, []);
+
+  const handleMistake = useCallback(
+    (event: WritingMistakeEvent) => {
+      if (
+        !Number.isInteger(event.strokeNum) ||
+        event.strokeNum < 0 ||
+        event.strokeNum >= totalStrokes ||
+        !Number.isInteger(event.mistakesOnStroke) ||
+        event.mistakesOnStroke < 1 ||
+        !Number.isInteger(event.totalMistakes) ||
+        event.totalMistakes < 1
+      ) {
+        return;
+      }
+
+      const updatedMistakes = [...strokeMistakesRef.current];
+      const existingIndex = updatedMistakes.findIndex(
+        (item) => item.strokeIndex === event.strokeNum,
+      );
+
+      const strokeMistake: StrokeMistake = {
+        strokeIndex: event.strokeNum,
+        mistakes: event.mistakesOnStroke,
+      };
+
+      if (existingIndex >= 0) {
+        updatedMistakes[existingIndex] = strokeMistake;
+      } else {
+        updatedMistakes.push(strokeMistake);
+      }
+
+      updatedMistakes.sort(
+        (first, second) => first.strokeIndex - second.strokeIndex,
+      );
+
+      strokeMistakesRef.current = updatedMistakes;
+
+      setProgress((current) => ({
+        ...current,
+        mistakes: event.totalMistakes,
+        strokeMistakes: updatedMistakes,
+      }));
+    },
+    [totalStrokes],
+  );
+
+  const handleComplete = useCallback((totalMistakes: number) => {
+    setProgress((current) => ({
+      ...current,
+      correctStrokes: current.totalStrokes,
+      mistakes: totalMistakes,
+      completed: true,
+      strokeMistakes: strokeMistakesRef.current,
+    }));
+  }, []);
+
+  const getStrokeMistakes = useCallback(() => {
+    return strokeMistakesRef.current.map((item) => ({ ...item }));
+  }, []);
+
+  const createResult = useCallback((): WritingSessionResult => {
+    return {
+      characterId,
+      character,
+      correctStrokes: progress.correctStrokes,
+      totalStrokes: progress.totalStrokes,
+      mistakes: progress.mistakes,
+      strokeMistakes: getStrokeMistakes(),
+      completedAt: new Date().toISOString(),
+    };
+  }, [characterId, character, getStrokeMistakes, progress]);
+
+  return {
+    progress,
+    resetProgress,
+    handleCorrectStroke,
+    handleMistake,
+    handleComplete,
+    createResult,
+    getStrokeMistakes,
+  };
+}
+
+====================================================================================================
+FILE: src\features\writing\hooks\useWritingHistory.ts
+====================================================================================================
+import { useCallback, useState } from "react";
+import {
+  getWritingHistory,
+  saveWritingSession,
+} from "../../../services/storage/writingStorage";
+import type {
+  StoredWritingSession,
+  WritingSessionResult,
+} from "../types/writing";
+
+interface UseWritingHistoryReturn {
+  history: StoredWritingSession[];
+  error: string | null;
+  addSession: (result: WritingSessionResult) => StoredWritingSession | null;
+  refreshHistory: () => void;
+}
+
+export function useWritingHistory(): UseWritingHistoryReturn {
+  const [history, setHistory] = useState<StoredWritingSession[]>(() =>
+    getWritingHistory(),
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  const refreshHistory = useCallback(() => {
+    setHistory(getWritingHistory());
+  }, []);
+
+  const addSession = useCallback(
+    (result: WritingSessionResult): StoredWritingSession | null => {
+      try {
+        const savedSession = saveWritingSession(result);
+
+        setHistory((currentHistory) => [savedSession, ...currentHistory]);
+
+        setError(null);
+
+        return savedSession;
+      } catch (caughtError) {
+        const message =
+          caughtError instanceof Error
+            ? caughtError.message
+            : "An unexpected error occurred while saving writing history.";
+
+        setError(message);
+
+        return null;
+      }
+    },
+    [],
+  );
+
+  return {
+    history,
+    error,
+    addSession,
+    refreshHistory,
+  };
+}
+
+====================================================================================================
+FILE: src\features\speaking\types\speaking.ts
+====================================================================================================
+import type { ChineseCharacter } from "../../library/types/character";
+
+/**
+ * Mandarin Chinese tones.
+ */
+export type MandarinTone = 1 | 2 | 3 | 4 | 5;
+
+/**
+ * Relative pitch values used to visualize a tone.
+ */
+export type ToneContour = readonly number[];
+
+/**
+ * Available speaking exercise modes.
+ */
+export type ListeningExerciseMode = "character" | "pinyin" | "tone";
+
+/**
+ * Shared definition of a Mandarin tone.
+ */
+export interface ToneDefinition {
+  tone: MandarinTone;
+  name: string;
+  description: string;
+  contour: ToneContour;
+}
+
+/**
+ * Additional pronunciation examples used for tone-specific exercises.
+ */
+export interface PronunciationExample {
+  id: string;
+  character: string;
+  pinyin: string;
+  tone: MandarinTone;
+  meaning: string;
+  audioUrl: string | null;
+}
+
+/**
+ * A question generated from the character library.
+ */
+export interface ListeningQuestion {
+  id: string;
+  character: ChineseCharacter;
+  mode: ListeningExerciseMode;
+  options: string[];
+  correctAnswer: string;
+}
+
+====================================================================================================
+FILE: src\features\speaking\hooks\useListeningExercise.ts
+====================================================================================================
+import { useCallback, useMemo, useState } from "react";
+import type {
+  ListeningExerciseMode,
+  ListeningQuestion,
+} from "../types/speaking";
+import { generateListeningQuestions } from "../utils/ListeningQuestionGenerator";
+
+export type ListeningExercisePhase =
+  "intro" | "question" | "feedback" | "complete";
+
+interface UseListeningExerciseReturn {
+  phase: ListeningExercisePhase;
+  mode: ListeningExerciseMode;
+  questions: ListeningQuestion[];
+  currentQuestion: ListeningQuestion | undefined;
+  questionIndex: number;
+  score: number;
+  selectedAnswer: string | null;
+  isCorrect: boolean;
+  progress: number;
+  start: (selectedMode: ListeningExerciseMode) => void;
+  answer: (value: string) => void;
+  next: () => void;
+  reset: () => void;
+}
+
+export function useListeningExercise(): UseListeningExerciseReturn {
+  const [phase, setPhase] = useState<ListeningExercisePhase>("intro");
+  const [mode, setMode] = useState<ListeningExerciseMode>("character");
+  const [questions, setQuestions] = useState<ListeningQuestion[]>([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+
+  const currentQuestion = questions[questionIndex];
+
+  const isCorrect =
+    currentQuestion !== undefined &&
+    selectedAnswer === currentQuestion.correctAnswer;
+
+  const progress = useMemo(() => {
+    if (questions.length === 0) {
+      return 0;
+    }
+
+    return ((questionIndex + 1) / questions.length) * 100;
+  }, [questionIndex, questions.length]);
+
+  const start = useCallback((selectedMode: ListeningExerciseMode) => {
+    const generatedQuestions = generateListeningQuestions(selectedMode);
+
+    if (generatedQuestions.length === 0) {
+      return;
+    }
+
+    setMode(selectedMode);
+    setQuestions(generatedQuestions);
+    setQuestionIndex(0);
+    setScore(0);
+    setSelectedAnswer(null);
+    setPhase("question");
+  }, []);
+
+  const answer = useCallback(
+    (value: string) => {
+      if (phase !== "question" || !currentQuestion) {
+        return;
+      }
+
+      setSelectedAnswer(value);
+
+      if (value === currentQuestion.correctAnswer) {
+        setScore((previousScore) => previousScore + 1);
+      }
+
+      setPhase("feedback");
+    },
+    [currentQuestion, phase],
+  );
+
+  const next = useCallback(() => {
+    if (phase !== "feedback") {
+      return;
+    }
+
+    if (questionIndex + 1 >= questions.length) {
+      setPhase("complete");
+      return;
+    }
+
+    setQuestionIndex((previousIndex) => previousIndex + 1);
+    setSelectedAnswer(null);
+    setPhase("question");
+  }, [phase, questionIndex, questions.length]);
+
+  const reset = useCallback(() => {
+    setPhase("intro");
+    setQuestions([]);
+    setQuestionIndex(0);
+    setScore(0);
+    setSelectedAnswer(null);
+  }, []);
+
+  return {
+    phase,
+    mode,
+    questions,
+    currentQuestion,
+    questionIndex,
+    score,
+    selectedAnswer,
+    isCorrect,
+    progress,
+    start,
+    answer,
+    next,
+    reset,
+  };
+}
+
+====================================================================================================
+FILE: src\features\speaking\utils\toneAssessment.ts
+====================================================================================================
+import type { MandarinTone } from "../types/speaking";
+import type { PitchNormalizationResult } from "./pitchNormalization";
+
+export type ToneAssessmentStatus =
+  "matched" | "ambiguous" | "uncertain" | "insufficient-data";
+
+export interface ToneMatch {
+  tone: MandarinTone;
+  score: number;
+}
+
+export interface ToneAssessmentResult {
+  status: ToneAssessmentStatus;
+  matchedTone: MandarinTone | null;
+  confidence: number;
+  candidates: ToneMatch[];
+}
+
+interface ToneTemplate {
+  tone: MandarinTone;
+  getValue: (position: number) => number;
+}
+
+const MINIMUM_POINTS = 10;
+const MINIMUM_DURATION = 0.25;
+const MINIMUM_SCORE = 65;
+const AMBIGUITY_MARGIN = 8;
+
+const TONE_TEMPLATES: readonly ToneTemplate[] = [
+  {
+    tone: 1,
+    getValue: () => 0.5,
+  },
+  {
+    tone: 2,
+    getValue: (position) => 0.15 + position * 0.7,
+  },
+  {
+    tone: 3,
+    getValue: (position) => {
+      if (position < 0.45) {
+        return 0.75 - (position / 0.45) * 0.6;
+      }
+
+      return 0.15 + ((position - 0.45) / 0.55) * 0.7;
+    },
+  },
+  {
+    tone: 4,
+    getValue: (position) => 0.85 - position * 0.7,
+  },
+  {
+    tone: 5,
+    getValue: () => 0.5,
+  },
+];
+
+function calculateDistance(values: number[], template: ToneTemplate): number {
+  let squaredError = 0;
+
+  for (let index = 0; index < values.length; index += 1) {
+    const position = index / (values.length - 1);
+    const difference = values[index]! - template.getValue(position);
+
+    squaredError += difference * difference;
+  }
+
+  return Math.sqrt(squaredError / values.length);
+}
+
+export function assessTone(
+  normalization: PitchNormalizationResult,
+): ToneAssessmentResult {
+  const { points, duration } = normalization;
+
+  if (points.length < MINIMUM_POINTS || duration < MINIMUM_DURATION) {
+    return {
+      status: "insufficient-data",
+      matchedTone: null,
+      confidence: 0,
+      candidates: [],
+    };
+  }
+
+  const values = points.map((point) => point.normalizedPitch);
+
+  if (
+    values.some((value) => !Number.isFinite(value) || value < 0 || value > 1)
+  ) {
+    return {
+      status: "insufficient-data",
+      matchedTone: null,
+      confidence: 0,
+      candidates: [],
+    };
+  }
+
+  const matches = TONE_TEMPLATES.map((template) => {
+    const distance = calculateDistance(values, template);
+
+    return {
+      tone: template.tone,
+      score: Math.round(Math.max(0, 1 - distance) * 100),
+    };
+  }).sort((first, second) => second.score - first.score);
+
+  const bestMatch = matches[0]!;
+  const secondMatch = matches[1]!;
+
+  // A low score means that none of the templates describes the contour well.
+  if (bestMatch.score < MINIMUM_SCORE) {
+    return {
+      status: "uncertain",
+      matchedTone: null,
+      confidence: bestMatch.score,
+      candidates: matches.slice(0, 2),
+    };
+  }
+
+  // Tones 1 and 5 have the same contour template at this stage.
+  // Do not pretend that contour shape alone can distinguish them.
+  if (
+    matches.some(
+      (match) =>
+        (match.tone === 1 || match.tone === 5) &&
+        bestMatch.score - match.score < AMBIGUITY_MARGIN,
+    )
+  ) {
+    const flatToneMatches = matches.filter(
+      (match) =>
+        (match.tone === 1 || match.tone === 5) &&
+        bestMatch.score - match.score < AMBIGUITY_MARGIN,
+    );
+
+    if (flatToneMatches.length === 2) {
+      return {
+        status: "ambiguous",
+        matchedTone: null,
+        confidence: bestMatch.score,
+        candidates: flatToneMatches,
+      };
+    }
+  }
+
+  if (bestMatch.score - secondMatch.score < AMBIGUITY_MARGIN) {
+    return {
+      status: "ambiguous",
+      matchedTone: null,
+      confidence: bestMatch.score,
+      candidates: matches.filter(
+        (match) => bestMatch.score - match.score < AMBIGUITY_MARGIN,
+      ),
+    };
+  }
+
+  return {
+    status: "matched",
+    matchedTone: bestMatch.tone,
+    confidence: bestMatch.score,
+    candidates: matches.slice(0, 2),
+  };
+}
+
+====================================================================================================
+FILE: src\features\dashboard\pages\DashboardPage.tsx
+====================================================================================================
+import { ContinueLearning } from "../components/ContinueLearning";
+import { DailyChallenge } from "../components/DailyChallenge";
+import { LearningPath } from "../components/LearningPath";
+import { StatsGrid } from "../components/StatsGrid";
+import { WelcomeSection } from "../components/WelcomeSection";
+import styles from "./DashboardPage.module.css";
+
+export function DashboardPage() {
+  return (
+    <div className={styles.dashboard}>
+      <WelcomeSection />
+      <StatsGrid />
+
+      <section className={styles.contentGrid}>
+        <div className={styles.mainColumn}>
+          <ContinueLearning />
+          <LearningPath />
+        </div>
+
+        <div className={styles.rightColumn}>
+          <DailyChallenge />
+        </div>
+      </section>
+
+      <footer className={styles.footer}>
+        <span>HanZi Chinese Learning Studio</span>
+        <span>慢慢来 · Take it one step at a time</span>
+      </footer>
+    </div>
+  );
+}
+
+====================================================================================================
+FILE: src\features\dashboard\components\StatsGrid.tsx
+====================================================================================================
+import { BookOpen, Flame, Layers, Target } from "lucide-react";
+import styles from "./StatsGrid.module.css";
+
+export function StatsGrid() {
+  return (
+    <section className={styles.statsGrid} aria-label="Learning statistics">
+      <article className={styles.statCard}>
+        <div className={styles.statTop}>
+          <div className={`${styles.statIcon} ${styles.purple}`}>
+            <Flame size={19} />
+          </div>
+          <span className={styles.statCaption}>DAILY STREAK</span>
+        </div>
+        <div className={styles.statValue}>
+          0 <span>days</span>
+        </div>
+        <p>Start your learning streak today</p>
+      </article>
+
+      <article className={styles.statCard}>
+        <div className={styles.statTop}>
+          <div className={`${styles.statIcon} ${styles.orange}`}>
+            <Target size={19} />
+          </div>
+          <span className={styles.statCaption}>DAILY GOAL</span>
+        </div>
+        <div className={styles.statValue}>
+          0 <span>/ 20 min</span>
+        </div>
+        <div className={styles.progressTrack}>
+          <div className={styles.progressFill} style={{ width: "0%" }} />
+        </div>
+        <p>20 minutes of focused learning</p>
+      </article>
+
+      <article className={styles.statCard}>
+        <div className={styles.statTop}>
+          <div className={`${styles.statIcon} ${styles.green}`}>
+            <BookOpen size={19} />
+          </div>
+          <span className={styles.statCaption}>CHARACTERS LEARNED</span>
+        </div>
+        <div className={styles.statValue}>
+          0 <span>characters</span>
+        </div>
+        <p>Your vocabulary starts here</p>
+      </article>
+
+      <article className={styles.statCard}>
+        <div className={styles.statTop}>
+          <div className={`${styles.statIcon} ${styles.blue}`}>
+            <Layers size={19} />
+          </div>
+          <span className={styles.statCaption}>REVIEW QUEUE</span>
+        </div>
+        <div className={styles.statValue}>
+          12 <span>cards</span>
+        </div>
+        <p>Ready when you are</p>
+      </article>
+    </section>
+  );
+}
+
+====================================================================================================
+FILE: src\features\dashboard\components\ContinueLearning.tsx
+====================================================================================================
+import { BookOpen, ChevronRight, Layers, Play } from "lucide-react";
+import { Link } from "react-router";
+import shared from "./DashboardShared.module.css";
+import styles from "./ContinueLearning.module.css";
+
+export function ContinueLearning() {
+  return (
+    <>
+      <div className={shared.sectionHeading}>
+        <div>
+          <span className={shared.sectionKicker}>
+            PICK UP WHERE YOU LEFT OFF
+          </span>
+          <h2>Continue learning</h2>
+        </div>
+
+        <Link className={shared.textButton} to="/library">
+          View all <ChevronRight size={16} />
+        </Link>
+      </div>
+
+      <article className={styles.continueCard}>
+        <div className={styles.continueArt}>
+          <span className={styles.artSmall}>你好</span>
+          <span className={styles.artCharacter}>学</span>
+          <span className={styles.artCaption}>LEARN SOMETHING NEW</span>
+        </div>
+
+        <div className={styles.continueInfo}>
+          <div className={styles.lessonTag}>YOUR FIRST LESSON</div>
+          <h3>Getting started with Chinese</h3>
+          <p>
+            Learn the basics of Mandarin, discover Pinyin and meet your first
+            Chinese characters.
+          </p>
+
+          <div className={styles.lessonMeta}>
+            <span>
+              <BookOpen size={15} /> 5 min
+            </span>
+            <span>
+              <Layers size={15} /> Beginner
+            </span>
+          </div>
+
+          <Link className={styles.primaryButton} to="/library">
+            Start learning <Play size={15} fill="currentColor" />
+          </Link>
+        </div>
+      </article>
+    </>
+  );
+}
+
+====================================================================================================
+FILE: src\features\dashboard\components\DailyChallenge.tsx
+====================================================================================================
+import { Plus, Volume2 } from "lucide-react";
+import shared from "./DashboardShared.module.css";
+import styles from "./DailyChallenge.module.css";
+
+export function DailyChallenge() {
+  return (
+    <>
+      <div className={`${shared.sectionHeading} ${styles.challengeHeader}`}>
+        <div>
+          <span className={shared.sectionKicker}>A LITTLE EVERY DAY</span>
+          <h2>Daily challenge</h2>
+        </div>
+      </div>
+
+      <article className={styles.challengeCard}>
+        <div className={styles.challengeTop}>
+          <span className={styles.challengeLabel}>CHARACTER OF THE DAY</span>
+          <span className={styles.challengeBadge}>HSK 1</span>
+        </div>
+
+        <div className={styles.characterDisplay}>好</div>
+        <h3>hǎo</h3>
+        <p className={styles.characterMeaning}>good · well</p>
+
+        <div className={styles.characterDivider} />
+
+        <div className={styles.characterDetails}>
+          <div>
+            <span>PINYIN</span>
+            <strong>hǎo</strong>
+          </div>
+          <div>
+            <span>STROKES</span>
+            <strong>6</strong>
+          </div>
+          <div>
+            <span>RADICAL</span>
+            <strong>女</strong>
+          </div>
+        </div>
+
+        <button className={styles.audioButton} type="button">
+          <Volume2 size={17} />
+          Listen to pronunciation
+        </button>
+      </article>
+
+      <article className={styles.quoteCard}>
+        <div className={styles.quoteIcon}>“</div>
+        <p>千里之行，始于足下。</p>
+        <span>A journey of a thousand miles begins with a single step.</span>
+        <div className={styles.quoteAuthor}>— Chinese proverb</div>
+      </article>
+
+      <button className={styles.addGoalButton} type="button">
+        <Plus size={17} />
+        Customize your daily goal
+      </button>
+    </>
+  );
+}
+
+====================================================================================================
+FILE: src\features\library\components\LibraryTabs.tsx
+====================================================================================================
+import { NavLink } from "react-router";
+import { BookOpen, Languages } from "lucide-react";
+import styles from "./LibraryTabs.module.css";
+
+export function LibraryTabs() {
+  return (
+    <nav className={styles.tabs} aria-label="Library sections">
+      <NavLink
+        to="/library/characters"
+        className={({ isActive }) =>
+          `${styles.tab} ${isActive ? styles.active : ""}`
+        }
+      >
+        <Languages size={17} />
+        <span>Characters</span>
+      </NavLink>
+
+      <NavLink
+        to="/library/vocabulary"
+        className={({ isActive }) =>
+          `${styles.tab} ${isActive ? styles.active : ""}`
+        }
+      >
+        <BookOpen size={17} />
+        <span>Vocabulary</span>
+      </NavLink>
+    </nav>
+  );
+}
+
+====================================================================================================
+FILE: src\features\library\pages\VocabularyPage.tsx
+====================================================================================================
+import { BookOpen } from "lucide-react";
+import { LibraryTabs } from "../components/LibraryTabs";
+import styles from "./VocabularyPage.module.css";
+
+export function VocabularyPage() {
+  return (
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div>
+          <span className={styles.eyebrow}>YOUR CHINESE KNOWLEDGE BASE</span>
+          <h1>Vocabulary</h1>
+          <p>
+            Explore Chinese words, their pronunciation, meanings and examples.
+          </p>
+        </div>
+      </header>
+
+      <LibraryTabs />
+
+      <section className={styles.emptyState}>
+        <BookOpen size={32} />
+
+        <h2>Vocabulary library</h2>
+
+        <p>
+          Your vocabulary database is ready to be connected. We will add
+          searching, HSK filters and learning information here.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+====================================================================================================
+FILE: src\app\router.tsx
+====================================================================================================
+import { Navigate, Route, Routes } from "react-router";
+import { AppLayout } from "../components/layout/AppLayout";
+import { DashboardPage } from "../features/dashboard/pages/DashboardPage";
+import { PlaceholderPage } from "../features/shared/pages/PlaceholderPage";
+import { LibraryPage } from "../features/library/pages/LibraryPage";
+import { VocabularyPage } from "../features/library/pages/VocabularyPage";
+import { WritingPage } from "../features/writing/pages/WritingPage";
+import SpeakingPage from "../features/speaking/pages/SpeakingPage";
+
+export function AppRouter() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/writing" element={<WritingPage />} />
+        <Route path="/speaking" element={<SpeakingPage />} />
+
+        <Route path="/library" element={<Navigate to="/library/characters" replace />} />
+        <Route path="/library/characters" element={<LibraryPage />} />
+        <Route path="/library/vocabulary" element={<VocabularyPage />} />
+
+        <Route
+          path="/flashcards"
+          element={<PlaceholderPage title="Flashcards" />}
+        />
+        <Route
+          path="/settings"
+          element={<PlaceholderPage title="Settings" />}
+        />
+        <Route path="/help" element={<PlaceholderPage title="Help center" />} />
+
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Route>
+    </Routes>
+  );
+}
+
+====================================================================================================
+FILE: src\main.tsx
+====================================================================================================
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./app/App";
+import "./styles/index.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
+
+====================================================================================================
+FILE: src\App.tsx
+====================================================================================================
+export { default } from "./app/App";
+
+====================================================================================================
+FILE: src\styles\index.css
+====================================================================================================
+@import "./tokens.css";
+@import "./globals.css";
+
+====================================================================================================
+FILE: src\index.css
+====================================================================================================
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
+
+:root {
+  font-family: "DM Sans", "Noto Sans SC", sans-serif;
+  color: #26243a;
+  background: #f7f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
+}

@@ -9,23 +9,14 @@ import { matchHskWithCedict } from "./hskCedictMatcher.mjs";
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const SOURCE_DIRECTORY = resolve(PROJECT_ROOT, "data/sources");
-const CEDICT_PATH = resolve(
-  SOURCE_DIRECTORY,
-  "cedict_1_0_ts_utf-8_mdbg.txt",
-);
+const CEDICT_PATH = resolve(SOURCE_DIRECTORY, "cedict_1_0_ts_utf-8_mdbg.txt");
 const HSK_DIRECTORY = resolve(SOURCE_DIRECTORY, "hsk2012");
 
-const OUTPUT_DIRECTORY = resolve(
-  PROJECT_ROOT,
-  "src/features/library/data",
-);
+const OUTPUT_DIRECTORY = resolve(PROJECT_ROOT, "src/features/library/data");
 const OUTPUT_PATH = resolve(OUTPUT_DIRECTORY, "vocabulary.json");
 
 const REPORT_DIRECTORY = resolve(PROJECT_ROOT, "reports");
-const REPORT_PATH = resolve(
-  REPORT_DIRECTORY,
-  "vocabulary-build-report.json",
-);
+const REPORT_PATH = resolve(REPORT_DIRECTORY, "vocabulary-build-report.json");
 
 const compareText = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -241,11 +232,7 @@ async function writeJsonAtomically(filePath, data) {
 
   const temporaryPath = `${filePath}.tmp`;
 
-  await writeFile(
-    temporaryPath,
-    `${JSON.stringify(data, null, 2)}\n`,
-    "utf8",
-  );
+  await writeFile(temporaryPath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 
   await rename(temporaryPath, filePath);
 }

@@ -16,7 +16,10 @@ export function AppRouter() {
         <Route path="/writing" element={<WritingPage />} />
         <Route path="/speaking" element={<SpeakingPage />} />
 
-        <Route path="/library" element={<Navigate to="/library/characters" replace />} />
+        <Route
+          path="/library"
+          element={<Navigate to="/library/characters" replace />}
+        />
         <Route path="/library/characters" element={<LibraryPage />} />
         <Route path="/library/vocabulary" element={<VocabularyPage />} />
 

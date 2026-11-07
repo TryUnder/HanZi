@@ -49,7 +49,9 @@ describe("validateVocabularyLearningDataset", () => {
       vocabulary,
     );
 
-    expect(errors).toContain('Learning dataset["vocab-unknown"]: unknown vocabulary ID.');
+    expect(errors).toContain(
+      'Learning dataset["vocab-unknown"]: unknown vocabulary ID.',
+    );
   });
 
   it("rejects an invalid status", () => {
@@ -83,7 +85,9 @@ describe("validateVocabularyLearningDataset", () => {
       {
         "vocab-7231": {
           ...validEntry,
-          examples: [{ simplified: "我爱你。", pinyin: "", meaning: "Kocham cię." }],
+          examples: [
+            { simplified: "我爱你。", pinyin: "", meaning: "Kocham cię." },
+          ],
         },
       },
       vocabulary,
@@ -140,7 +144,9 @@ describe("isVocabularyLearningData", () => {
     expect(
       isVocabularyLearningData({
         ...validEntry,
-        examples: [{ simplified: "我爱你。", pinyin: "", meaning: "Kocham cię." }],
+        examples: [
+          { simplified: "我爱你。", pinyin: "", meaning: "Kocham cię." },
+        ],
       }),
     ).toBe(false);
   });
