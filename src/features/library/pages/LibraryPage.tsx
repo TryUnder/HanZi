@@ -4,6 +4,7 @@ import { CharacterCard } from "../components/CharacterCard";
 import { CharacterDetails } from "../components/CharacterDetails";
 import { useLibrary } from "../hooks/useLibrary";
 import type { HskLevel } from "../types/character";
+import { LibraryTabs } from "../components/LibraryTabs";
 import styles from "./LibraryPage.module.css";
 
 export function LibraryPage() {
@@ -48,6 +49,8 @@ export function LibraryPage() {
           </div>
         </div>
       </header>
+
+      <LibraryTabs />
 
       <section className={styles.toolbar} aria-label="Library filters">
         <label className={styles.searchBox}>
