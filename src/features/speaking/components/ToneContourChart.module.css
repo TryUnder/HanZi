@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+}
+
+.axisLabels {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 0 10px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+
+.gridLine {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+
+.contour {
+  stroke: var(--color-brand-600);
+  stroke-width: 4;
+}
+
+.point {
+  fill: var(--color-surface);
+  stroke: var(--color-brand-600);
+  stroke-width: 2.5;
+}

@@ -1,0 +1,194 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.description {
+  margin: 5px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.toneSelector {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.toneButton {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 6px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.toneButton:hover {
+  background: var(--color-brand-50);
+}
+
+.toneButtonActive {
+  color: var(--color-brand-700);
+  background: var(--color-brand-50);
+  border-color: var(--color-brand-300);
+}
+
+.toneNumber {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.toneName {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 28px;
+}
+
+.chartSection,
+.examplesSection {
+  min-width: 0;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionHeading h3,
+.examplesTitle {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.toneBadge {
+  padding: 5px 9px;
+  color: var(--color-brand-700);
+  background: var(--color-brand-50);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.toneDescription {
+  margin: 12px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.exampleList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.example {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-md);
+}
+
+.character {
+  display: grid;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: var(--color-brand-700);
+  background: var(--color-brand-50);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-chinese);
+  font-size: 25px;
+}
+
+.exampleInfo {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pinyin {
+  color: var(--color-text-heading);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.meaning {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.emptyExamples {
+  margin: 14px 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 18px;
+  }
+
+  .toneSelector {
+    gap: 5px;
+  }
+
+  .toneButton {
+    padding: 11px 3px;
+  }
+
+  .toneName {
+    font-size: 10px;
+  }
+}
