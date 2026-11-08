@@ -6,12 +6,14 @@ import styles from "../pages/LibraryPage.module.css";
 interface CharacterDetailsProps {
   character: ChineseCharacter;
   isLearned: boolean;
+  isDisabled?: boolean;
   onToggleLearned: () => void;
 }
 
 export function CharacterDetails({
   character,
   isLearned,
+  isDisabled = false,
   onToggleLearned,
 }: CharacterDetailsProps) {
   return (
@@ -53,9 +55,15 @@ export function CharacterDetails({
         className={styles.learnButton}
         onClick={onToggleLearned}
         type="button"
+        disabled={isDisabled}
+        aria-busy={isDisabled}
       >
         {isLearned ? <Check size={16} /> : <Plus size={16} />}
-        {isLearned ? "Remove from learning list" : "Add to learning list"}
+        {isDisabled
+          ? "Loading..."
+          : isLearned
+            ? "Remove from learning list"
+            : "Add to learning list"}
       </button>
 
       <div className={styles.examples}>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, RefreshCw } from "lucide-react";
 import { CharacterCard } from "../components/CharacterCard";
 import { CharacterDetails } from "../components/CharacterDetails";
 import { useLibrary } from "../hooks/useLibrary";
@@ -16,6 +16,9 @@ export function LibraryPage() {
     filteredCharacters,
     learnedIds,
     toggleLearned,
+    isLoading,
+    error,
+    refreshStatuses,
   } = useLibrary();
 
   const [selectedId, setSelectedId] = useState<string | null>("ni");
@@ -44,13 +47,28 @@ export function LibraryPage() {
         <div className={styles.libraryCount}>
           <BookOpen size={19} />
           <div>
-            <strong>{learnedIds.length}</strong>
+            <strong>{isLoading ? "…" : learnedIds.length}</strong>
             <span>in your learning list</span>
           </div>
         </div>
       </header>
 
       <LibraryTabs />
+
+      {error && (
+        <div className={styles.errorMessage} role="alert">
+          <p>{error}</p>
+          <button
+            type="button"
+            className={styles.retryButton}
+            onClick={() => void refreshStatuses()}
+            disabled={isLoading}
+          >
+            <RefreshCw size={14} />
+            Try again
+          </button>
+        </div>
+      )}
 
       <section className={styles.toolbar} aria-label="Library filters">
         <label className={styles.searchBox}>
@@ -112,7 +130,8 @@ export function LibraryPage() {
           <CharacterDetails
             character={selectedCharacter}
             isLearned={learnedIds.includes(selectedCharacter.id)}
-            onToggleLearned={() => toggleLearned(selectedCharacter.id)}
+            isDisabled={isLoading}
+            onToggleLearned={() => void toggleLearned(selectedCharacter.id)}
           />
         )}
       </div>
