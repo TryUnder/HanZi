@@ -1,6 +1,10 @@
+
 import { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
-import type { WritingMistakeEvent } from "../types/writing";
+import type {
+  PracticeCharacterResult,
+  WritingMistakeEvent,
+} from "../types/writing";
 import styles from "./CharacterCanvas.module.css";
 
 interface PracticeCanvasProps {
@@ -8,6 +12,7 @@ interface PracticeCanvasProps {
   onCorrectStroke: () => void;
   onMistake: (event: WritingMistakeEvent) => void;
   onComplete: (totalMistakes: number) => void;
+  onCompleteDetails?: (result: PracticeCharacterResult) => void;
 }
 
 export function PracticeCanvas({
@@ -15,8 +20,12 @@ export function PracticeCanvas({
   onCorrectStroke,
   onMistake,
   onComplete,
+  onCompleteDetails,
 }: PracticeCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const correctStrokesRef = useRef(0);
+  const totalStrokesRef = useRef(0);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +37,9 @@ export function PracticeCanvas({
     }
 
     let isActive = true;
+
+    correctStrokesRef.current = 0;
+    totalStrokesRef.current = 0;
 
     setIsLoading(true);
     setError(null);
@@ -45,36 +57,52 @@ export function PracticeCanvas({
       strokeColor: "#6558bf",
       drawingWidth: 5,
       showHintAfterMisses: 3,
-      onLoadCharDataSuccess: () => {
+
+      onLoadCharDataSuccess: (data) => {
         if (!isActive) {
           return;
         }
 
+        totalStrokesRef.current = data.strokes.length;
         setIsLoading(false);
 
-        writer.quiz({
+        void writer.quiz({
           showHintAfterMisses: 3,
 
           onCorrectStroke: () => {
-            if (isActive) {
-              onCorrectStroke();
+            if (!isActive) {
+              return;
             }
+
+            correctStrokesRef.current += 1;
+            onCorrectStroke();
           },
 
           onMistake: (data) => {
-            if (isActive) {
-              onMistake({
-                strokeNum: data.strokeNum,
-                mistakesOnStroke: data.mistakesOnStroke,
-                totalMistakes: data.totalMistakes,
-              });
+            if (!isActive) {
+              return;
             }
+
+            onMistake({
+              strokeNum: data.strokeNum,
+              mistakesOnStroke: data.mistakesOnStroke,
+              totalMistakes: data.totalMistakes,
+            });
           },
 
           onComplete: (data) => {
-            if (isActive) {
-              onComplete(data.totalMistakes);
+            if (!isActive) {
+              return;
             }
+
+            onComplete(data.totalMistakes);
+
+            onCompleteDetails?.({
+              character: data.character,
+              correctStrokes: correctStrokesRef.current,
+              totalStrokes: totalStrokesRef.current,
+              totalMistakes: data.totalMistakes,
+            });
           },
         });
       },
@@ -96,7 +124,13 @@ export function PracticeCanvas({
       writer.cancelQuiz();
       container.replaceChildren();
     };
-  }, [character, onCorrectStroke, onMistake, onComplete]);
+  }, [
+    character,
+    onCorrectStroke,
+    onMistake,
+    onComplete,
+    onCompleteDetails,
+  ]);
 
   return (
     <section className={styles.canvasSection}>

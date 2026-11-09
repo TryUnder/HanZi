@@ -23,4 +23,8 @@ export type {
   ToneCandidate,
   WritingAttemptDetails,
   WritingLearningAttempt,
+  CharacterWritingAttemptDetails,
+  LearningRecordContext,
+  VocabularyWritingAttemptDetails,
+  WritingCharacterResult,
 } from "./learningRecord";

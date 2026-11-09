@@ -36,3 +36,10 @@ export interface WritingSessionResult {
    */
   strokeMistakes?: StrokeMistake[];
 }
+
+export interface PracticeCharacterResult {
+  readonly character: string;
+  readonly correctStrokes: number;
+  readonly totalStrokes: number;
+  readonly totalMistakes: number;
+}

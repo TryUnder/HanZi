@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { learningRecordService } from "../../../app/services/learningRecordService";
-import type { LearningRecord } from "../../learning/domain/types";
+import type {
+  CharacterWritingAttemptDetails,
+  LearningItemReference,
+  LearningRecord,
+} from "../../learning/domain/types";
 import type { ChineseCharacter } from "../../library/types/character";
 import type { WritingHistoryEntry } from "../types/writingHistory";
 import type { WritingSessionResult } from "../types/writing";
@@ -20,14 +24,24 @@ type WritingAttemptRecord = Extract<
   { recordType: "attempt"; activity: "writing" }
 >;
 
-function isWritingAttempt(
+type CharacterWritingAttemptRecord = WritingAttemptRecord & {
+  readonly item: Extract<LearningItemReference, { kind: "character" }>;
+  readonly details: CharacterWritingAttemptDetails;
+};
+
+function isCharacterWritingAttempt(
   record: LearningRecord,
-): record is WritingAttemptRecord {
-  return record.recordType === "attempt" && record.activity === "writing";
+): record is CharacterWritingAttemptRecord {
+  return (
+    record.recordType === "attempt" &&
+    record.activity === "writing" &&
+    record.item.kind === "character" &&
+    !("kind" in record.details)
+  );
 }
 
 function toWritingHistoryEntry(
-  record: WritingAttemptRecord,
+  record: CharacterWritingAttemptRecord,
   characters: readonly ChineseCharacter[],
 ): WritingHistoryEntry | null {
   const character = characters.find((item) => item.id === record.item.id);
@@ -68,16 +82,8 @@ export function useWritingHistory(
       const records = await learningRecordService.getAllRecords();
 
       const writingHistory = records
-        .filter(isWritingAttempt)
-        .map((record) =>
-          toWritingHistoryEntry(
-            record as Extract<
-              LearningRecord,
-              { recordType: "attempt"; activity: "writing" }
-            >,
-            characters,
-          ),
-        )
+        .filter(isCharacterWritingAttempt)
+        .map((record) => toWritingHistoryEntry(record, characters))
         .filter((entry): entry is WritingHistoryEntry => entry !== null)
         .sort(
           (first, second) =>
@@ -102,7 +108,7 @@ export function useWritingHistory(
         const records = await learningRecordService.getAllRecords();
 
         const writingHistory = records
-          .filter(isWritingAttempt)
+          .filter(isCharacterWritingAttempt)
           .map((record) => toWritingHistoryEntry(record, characters))
           .filter((entry): entry is WritingHistoryEntry => entry !== null)
           .sort(
@@ -162,8 +168,10 @@ export function useWritingHistory(
           },
         });
 
-        if (!isWritingAttempt(record)) {
-          throw new Error("The saved record is not a writing attempt.");
+        if (!isCharacterWritingAttempt(record)) {
+          throw new Error(
+            "The saved record is not a character writing attempt.",
+          );
         }
 
         const entry = toWritingHistoryEntry(record, characters);

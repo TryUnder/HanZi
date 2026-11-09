@@ -3,15 +3,34 @@ import type { LearningItemReference } from "./learningItem";
 export type MandarinTone = 1 | 2 | 3 | 4 | 5;
 
 export type LearningActivity =
-  "writing" | "speaking" | "listening" | "recognition" | "flashcard";
+  | "writing"
+  | "speaking"
+  | "listening"
+  | "recognition"
+  | "flashcard";
 
 export type LearningStatus =
-  "learning" | "known" | "needs-practice" | "not-learning";
+  | "learning"
+  | "known"
+  | "needs-practice"
+  | "not-learning";
+
+/**
+ * Context connecting an attempt with a course activity.
+ * Optional for independent learning outside courses.
+ */
+export interface LearningRecordContext {
+  readonly courseId: string;
+  readonly lessonId: string;
+  readonly activityId: string;
+  readonly sessionId: string;
+}
 
 export interface LearningRecordBase {
   readonly id: string;
   readonly item: LearningItemReference;
   readonly occurredAt: string;
+  readonly context?: LearningRecordContext;
 }
 
 export interface StrokeMistake {
@@ -19,15 +38,49 @@ export interface StrokeMistake {
   readonly mistakes: number;
 }
 
-export interface WritingAttemptDetails {
+/**
+ * Result of writing one Chinese character.
+ */
+export interface WritingCharacterResult {
+  readonly character: string;
   readonly correctStrokes: number;
   readonly totalStrokes: number;
   readonly mistakes: number;
   readonly strokeMistakes?: readonly StrokeMistake[];
 }
 
+/**
+ * Existing format for independent character-writing sessions.
+ */
+export interface CharacterWritingAttemptDetails {
+  readonly correctStrokes: number;
+  readonly totalStrokes: number;
+  readonly mistakes: number;
+  readonly strokeMistakes?: readonly StrokeMistake[];
+}
+
+/**
+ * New format for writing a complete vocabulary item.
+ * Aggregate fields describe the entire word.
+ * Character results preserve individual progress.
+ */
+export interface VocabularyWritingAttemptDetails {
+  readonly kind: "vocabulary";
+  readonly correctStrokes: number;
+  readonly totalStrokes: number;
+  readonly mistakes: number;
+  readonly characters: readonly WritingCharacterResult[];
+}
+
+export type WritingAttemptDetails =
+  | CharacterWritingAttemptDetails
+  | VocabularyWritingAttemptDetails;
+
 export type ToneAssessmentStatus =
-  "matched" | "ambiguous" | "uncertain" | "insufficient-data";
+  | "matched"
+  | "ambiguous"
+  | "uncertain"
+  | "insufficient-data";
 
 export interface ToneCandidate {
   readonly tone: MandarinTone;

@@ -77,6 +77,19 @@ function isLearningItemReference(value: unknown): boolean {
   return value.kind === "character" || value.kind === "vocabulary";
 }
 
+function isLearningRecordContext(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    isNonEmptyString(value.courseId) &&
+    isNonEmptyString(value.lessonId) &&
+    isNonEmptyString(value.activityId) &&
+    isNonEmptyString(value.sessionId)
+  );
+}
+
 function isStrokeMistake(value: unknown, totalStrokes: number): boolean {
   if (!isRecord(value)) {
     return false;
@@ -109,11 +122,7 @@ function hasValidStrokeMistakes(value: unknown, totalStrokes: number): boolean {
   return new Set(indexes).size === indexes.length;
 }
 
-function isWritingDetails(value: unknown): boolean {
-  if (!isRecord(value)) {
-    return false;
-  }
-
+function hasValidWritingStatistics(value: UnknownRecord): boolean {
   return (
     isNonNegativeInteger(value.correctStrokes) &&
     isPositiveInteger(value.totalStrokes) &&
@@ -121,6 +130,69 @@ function isWritingDetails(value: unknown): boolean {
     isNonNegativeInteger(value.mistakes) &&
     hasValidStrokeMistakes(value.strokeMistakes, value.totalStrokes)
   );
+}
+
+function isCharacterWritingResult(value: unknown): boolean {
+  if (!isRecord(value) || !isNonEmptyString(value.character)) {
+    return false;
+  }
+
+  return hasValidWritingStatistics(value);
+}
+
+function isCharacterWritingDetails(value: UnknownRecord): boolean {
+  return hasValidWritingStatistics(value);
+}
+
+function isVocabularyWritingDetails(value: UnknownRecord): boolean {
+  if (value.kind !== "vocabulary" || !Array.isArray(value.characters)) {
+    return false;
+  }
+
+  if (
+    value.characters.length === 0 ||
+    !value.characters.every(isCharacterWritingResult)
+  ) {
+    return false;
+  }
+
+  const characters = value.characters as UnknownRecord[];
+
+  const totalStrokes = characters.reduce(
+    (sum, character) => sum + (character.totalStrokes as number),
+    0,
+  );
+
+  const correctStrokes = characters.reduce(
+    (sum, character) => sum + (character.correctStrokes as number),
+    0,
+  );
+
+  const mistakes = characters.reduce(
+    (sum, character) => sum + (character.mistakes as number),
+    0,
+  );
+
+  return (
+    isPositiveInteger(value.totalStrokes) &&
+    isNonNegativeInteger(value.correctStrokes) &&
+    isNonNegativeInteger(value.mistakes) &&
+    value.totalStrokes === totalStrokes &&
+    value.correctStrokes === correctStrokes &&
+    value.mistakes === mistakes
+  );
+}
+
+function isWritingDetails(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  if (value.kind === "vocabulary") {
+    return isVocabularyWritingDetails(value);
+  }
+
+  return isCharacterWritingDetails(value);
 }
 
 function isToneCandidate(value: unknown): boolean {
@@ -206,7 +278,8 @@ export function isLearningRecord(value: unknown): value is LearningRecord {
     !isRecord(value) ||
     !isNonEmptyString(value.id) ||
     !isLearningItemReference(value.item) ||
-    !isValidDate(value.occurredAt)
+    !isValidDate(value.occurredAt) ||
+    (value.context !== undefined && !isLearningRecordContext(value.context))
   ) {
     return false;
   }

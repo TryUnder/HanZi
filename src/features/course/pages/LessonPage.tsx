@@ -1,3 +1,4 @@
+
 import {
   ArrowLeft,
   BookOpen,
@@ -9,8 +10,9 @@ import { Link, useParams } from "react-router";
 import { resolveLessonItems } from "../application/services/lessonContentService";
 import { getCourseById, getLessonById } from "../repositories/courseRepository";
 import { LessonVocabulary } from "../components/LessonVocabulary";
-import styles from "./LessonPage.module.css";
 import { VocabularyExercise } from "../components/exercises/VocabularyExercise";
+import { VocabularyWritingExercise } from "../components/exercises/VocabularyWritingExercise";
+import styles from "./LessonPage.module.css";
 
 const activityIcons = {
   vocabulary: BookOpen,
@@ -50,9 +52,14 @@ export function LessonPage() {
   }
 
   const content = resolveLessonItems(lesson.items);
+
   const vocabularyCount = content.items.filter(
     (item) => item.kind === "vocabulary",
   ).length;
+
+  const writingActivity = lesson.activities.find(
+    (activity) => activity.type === "writing",
+  );
 
   return (
     <main className={styles.page}>
@@ -114,6 +121,15 @@ export function LessonPage() {
       </section>
 
       <VocabularyExercise items={content.items} />
+
+      {writingActivity && (
+        <VocabularyWritingExercise
+          items={content.items}
+          courseId={course.id}
+          lessonId={lesson.id}
+          activityId={writingActivity.id}
+        />
+      )}
 
       {content.missingItems.length > 0 && (
         <div className={styles.warning} role="status">

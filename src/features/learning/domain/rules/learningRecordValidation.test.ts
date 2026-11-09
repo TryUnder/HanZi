@@ -10,6 +10,13 @@ const baseRecord = {
   occurredAt: "2026-11-07T18:00:00.000Z",
 };
 
+const validContext = {
+  courseId: "hsk-1",
+  lessonId: "hsk-1-lesson-01",
+  activityId: "practice-writing",
+  sessionId: "session-001",
+};
+
 describe("isLearningRecord", () => {
   it("accepts a valid writing attempt", () => {
     const record = {
@@ -30,6 +37,133 @@ describe("isLearningRecord", () => {
     };
 
     expect(isLearningRecord(record)).toBe(true);
+  });
+
+  it("accepts a valid vocabulary writing attempt", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      context: validContext,
+      details: {
+        kind: "vocabulary",
+        correctStrokes: 9,
+        totalStrokes: 10,
+        mistakes: 3,
+        characters: [
+          {
+            character: "名",
+            correctStrokes: 6,
+            totalStrokes: 6,
+            mistakes: 1,
+            strokeMistakes: [{ strokeIndex: 2, mistakes: 1 }],
+          },
+          {
+            character: "字",
+            correctStrokes: 3,
+            totalStrokes: 4,
+            mistakes: 2,
+            strokeMistakes: [{ strokeIndex: 1, mistakes: 2 }],
+          },
+        ],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(true);
+  });
+
+  it("rejects vocabulary writing without character results", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        kind: "vocabulary",
+        correctStrokes: 0,
+        totalStrokes: 0,
+        mistakes: 0,
+        characters: [],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
+  });
+
+  it("rejects vocabulary writing with inconsistent aggregate statistics", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        kind: "vocabulary",
+        correctStrokes: 8,
+        totalStrokes: 10,
+        mistakes: 3,
+        characters: [
+          {
+            character: "名",
+            correctStrokes: 6,
+            totalStrokes: 6,
+            mistakes: 1,
+          },
+          {
+            character: "字",
+            correctStrokes: 3,
+            totalStrokes: 4,
+            mistakes: 2,
+          },
+        ],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
+  });
+
+  it("rejects vocabulary writing with an invalid character result", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        kind: "vocabulary",
+        correctStrokes: 9,
+        totalStrokes: 10,
+        mistakes: 3,
+        characters: [
+          {
+            character: "名",
+            correctStrokes: 6,
+            totalStrokes: 6,
+            mistakes: 1,
+          },
+          {
+            character: "字",
+            correctStrokes: 3,
+            totalStrokes: 4,
+            mistakes: 2,
+            strokeMistakes: [{ strokeIndex: 4, mistakes: 1 }],
+          },
+        ],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
   });
 
   it("accepts a valid speaking attempt", () => {
@@ -112,6 +246,32 @@ describe("isLearningRecord", () => {
     };
 
     expect(isLearningRecord(record)).toBe(true);
+  });
+
+  it("accepts a record with valid learning context", () => {
+    const record = {
+      ...baseRecord,
+      recordType: "status-changed",
+      status: "known",
+      context: validContext,
+    };
+
+    expect(isLearningRecord(record)).toBe(true);
+  });
+
+  it("rejects a record with incomplete learning context", () => {
+    const record = {
+      ...baseRecord,
+      recordType: "status-changed",
+      status: "known",
+      context: {
+        courseId: "hsk-1",
+        lessonId: "hsk-1-lesson-01",
+        activityId: "practice-writing",
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
   });
 
   it("rejects an unknown item kind", () => {
