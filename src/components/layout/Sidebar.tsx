@@ -1,4 +1,5 @@
 import {
+  GraduationCap,
   Headphones,
   HelpCircle,
   LayoutDashboard,
@@ -18,6 +19,7 @@ interface SidebarProps {
 
 const navigation = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { label: "Courses", path: "/courses", icon: GraduationCap },
   { label: "Writing", path: "/writing", icon: PenLine },
   { label: "Speaking", path: "/speaking", icon: Headphones },
   { label: "Flashcards", path: "/flashcards", icon: Layers },

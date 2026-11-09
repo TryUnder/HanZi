@@ -8,6 +8,8 @@ interface VocabularyDetailsProps {
 }
 
 export function VocabularyDetails({ vocabulary }: VocabularyDetailsProps) {
+  const primaryReading = vocabulary.readings[0];
+
   return (
     <aside className={styles.detailsPanel}>
       <div className={styles.detailsHeader}>
@@ -22,15 +24,15 @@ export function VocabularyDetails({ vocabulary }: VocabularyDetailsProps) {
       <div className={styles.detailsCharacter}>{vocabulary.simplified}</div>
 
       <div className={styles.detailsPronunciation}>
+        <PronunciationPlayer
+          audioUrl={vocabulary.audioUrl}
+          text={vocabulary.simplified}
+          label={primaryReading?.pinyin ?? vocabulary.simplified}
+        />
+
         {vocabulary.readings.map((reading) => (
           <div className={styles.reading} key={reading.pinyin}>
             <h2>{reading.pinyin}</h2>
-
-            <PronunciationPlayer
-              audioUrl={vocabulary.audioUrl}
-              text={vocabulary.simplified}
-              label={reading.pinyin}
-            />
 
             {reading.traditionalForms.length > 0 && (
               <p className={styles.traditionalForms}>

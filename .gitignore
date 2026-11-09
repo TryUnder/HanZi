@@ -8,3 +8,7 @@ coverage/
 # Local development TLS certificates
 localhost+ip.pem
 localhost+ip-key.pem
+
+# Downloaded pronunciation audio (run `npm run audio:sync` to fetch)
+# Local pronunciation audio (downloaded separately)
+public/audio/

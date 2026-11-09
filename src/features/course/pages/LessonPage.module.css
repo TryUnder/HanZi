@@ -1,0 +1,242 @@
+.page {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 28px 46px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.backLink:hover {
+  color: var(--color-brand-600);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eyebrow {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 30px;
+  letter-spacing: -0.7px;
+}
+
+.header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.stats span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.levelBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 90px;
+  height: 90px;
+  border-radius: var(--radius-lg);
+  background: var(--color-purple-background);
+  color: var(--color-brand-700);
+}
+
+.levelBadge span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.levelBadge strong {
+  font-size: 34px;
+  line-height: 1.2;
+}
+
+.activitiesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeading h2 {
+  margin: 6px 0 0;
+  color: var(--color-text-heading);
+  font-size: 21px;
+  letter-spacing: -0.5px;
+}
+
+.activityList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.activityCard {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.activityIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+}
+
+.activityContent {
+  min-width: 0;
+}
+
+.activityContent h3 {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 13px;
+}
+
+.activityContent p {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.warning {
+  padding: 12px 15px;
+  border: 1px solid var(--color-orange-background);
+  border-radius: var(--radius-md);
+  background: var(--color-orange-background);
+  color: var(--color-text-primary);
+  font-size: 12px;
+}
+
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 55px 20px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.notFound h1,
+.notFound p {
+  margin: 0;
+}
+
+.notFound h1 {
+  color: var(--color-text-heading);
+  font-size: 21px;
+}
+
+.notFound p {
+  font-size: 13px;
+}
+
+@media (max-width: 1100px) {
+  .page {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+@media (max-width: 800px) {
+  .page {
+    padding: 30px 20px;
+  }
+
+  .header {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 25px 15px;
+    gap: 24px;
+  }
+
+  .header {
+    padding: 20px;
+    align-items: flex-start;
+  }
+
+  .header h1 {
+    font-size: 25px;
+  }
+
+  .levelBadge {
+    width: 65px;
+    height: 65px;
+  }
+
+  .levelBadge strong {
+    font-size: 26px;
+  }
+
+  .activityList {
+    grid-template-columns: 1fr;
+  }
+}

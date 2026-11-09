@@ -6,6 +6,9 @@ import { LibraryPage } from "../features/library/pages/LibraryPage";
 import { VocabularyPage } from "../features/library/pages/VocabularyPage";
 import { WritingPage } from "../features/writing/pages/WritingPage";
 import SpeakingPage from "../features/speaking/pages/SpeakingPage";
+import { CoursesPage } from "../features/course/pages/CoursePage";
+import { CourseDetailPage } from "../features/course/pages/CourseDetailPage";
+import { LessonPage } from "../features/course/pages/LessonPage";
 
 export function AppRouter() {
   return (
@@ -13,6 +16,15 @@ export function AppRouter() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+
+        <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+
+        <Route
+          path="/courses/:courseId/lessons/:lessonId"
+          element={<LessonPage />}
+        />
+
         <Route path="/writing" element={<WritingPage />} />
         <Route path="/speaking" element={<SpeakingPage />} />
 

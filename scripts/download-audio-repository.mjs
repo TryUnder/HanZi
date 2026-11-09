@@ -1,14 +1,15 @@
-
 import { createHash } from "node:crypto";
 import {
   mkdir,
+  readdir,
   readFile,
   rename,
   rm,
   writeFile,
 } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createAudioUrl, normalizePinyinSyllable } from "./audioManifest.mjs";
 
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -19,11 +20,6 @@ const VOCABULARY_PATH = resolve(
 
 const AUDIO_DIRECTORY = resolve(PROJECT_ROOT, "public/audio");
 
-const MANIFEST_PATH = resolve(
-  PROJECT_ROOT,
-  "src/features/library/data/audio-manifest.json",
-);
-
 const REPORT_PATH = resolve(
   PROJECT_ROOT,
   "reports/audio-repository-import-report.json",
@@ -33,24 +29,34 @@ const REPOSITORY = "hugolpz/audio-cmn";
 const BRANCH = "master";
 const QUALITY = "64k";
 
-const TREE_URL =
-  `https://api.github.com/repos/${REPOSITORY}/git/trees/${BRANCH}?recursive=1`;
+const TREE_URL = `https://api.github.com/repos/${REPOSITORY}/git/trees/${BRANCH}?recursive=1`;
 
-const RAW_BASE_URL =
-  `https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}`;
-
-const FORCE_DOWNLOAD = process.argv.includes("--force");
-
-const LIMIT_ARGUMENT = process.argv.find((argument) =>
-  argument.startsWith("--limit="),
-);
-
-const DOWNLOAD_LIMIT = LIMIT_ARGUMENT
-  ? Number(LIMIT_ARGUMENT.split("=")[1])
-  : Infinity;
+const RAW_BASE_URL = `https://raw.githubusercontent.com/${REPOSITORY}/${BRANCH}`;
 
 const CONCURRENCY = 8;
 const MAX_ATTEMPTS = 3;
+
+const CATEGORY_DIRECTORIES = {
+  hsk: "hsk",
+  syllables: "syllables",
+};
+
+const ARGUMENTS = process.argv.slice(2);
+
+function getOption(name) {
+  const prefix = `--${name}=`;
+  const argument = ARGUMENTS.find((value) => value.startsWith(prefix));
+
+  return argument ? argument.slice(prefix.length) : null;
+}
+
+const FORCE_DOWNLOAD = ARGUMENTS.includes("--force");
+const DRY_RUN = ARGUMENTS.includes("--dry-run");
+const SYNC_VOCABULARY = ARGUMENTS.includes("--sync-vocabulary");
+const CATEGORY = getOption("category");
+const LIMIT_ARGUMENT = getOption("limit");
+
+const DOWNLOAD_LIMIT = LIMIT_ARGUMENT ? Number(LIMIT_ARGUMENT) : Infinity;
 
 function isValidMp3(buffer) {
   if (buffer.length < 4) {
@@ -58,40 +64,47 @@ function isValidMp3(buffer) {
   }
 
   const hasId3Header =
-    buffer[0] === 0x49 &&
-    buffer[1] === 0x44 &&
-    buffer[2] === 0x33;
+    buffer[0] === 0x49 && buffer[1] === 0x44 && buffer[2] === 0x33;
 
-  const hasMpegFrameHeader =
-    buffer[0] === 0xff &&
-    (buffer[1] & 0xe0) === 0xe0;
+  const hasMpegFrameHeader = buffer[0] === 0xff && (buffer[1] & 0xe0) === 0xe0;
 
   return hasId3Header || hasMpegFrameHeader;
 }
 
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes)) {
+    return "unknown size";
+  }
+
+  return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
 function getAudioFileFromTree(entry) {
-  const match = entry.path.match(
-    /^64k\/(hsk|syllabs)\/([^/]+\.mp3)$/i,
-  );
+  const match = entry.path.match(/^64k\/(hsk|syllabs)\/([^/]+\.mp3)$/i);
 
   if (!match) {
     return null;
   }
 
-  const category = match[1] === "hsk" ? "hsk" : "syllables";
+  const category = match[1].toLowerCase() === "hsk" ? "hsk" : "syllables";
   const filename = match[2];
 
   return {
     category,
     filename,
     key: filename.replace(/^cmn-/i, "").replace(/\.mp3$/i, ""),
+    sizeBytes: typeof entry.size === "number" ? entry.size : null,
     sourcePath: entry.path,
     sourceUrl: `${RAW_BASE_URL}/${entry.path
       .split("/")
       .map(encodeURIComponent)
       .join("/")}`,
-    destination: resolve(AUDIO_DIRECTORY, category, filename),
-    audioUrl: `/audio/${category}/${encodeURIComponent(filename)}`,
+    destination: resolve(
+      AUDIO_DIRECTORY,
+      CATEGORY_DIRECTORIES[category],
+      filename,
+    ),
+    audioUrl: createAudioUrl(category, filename),
   };
 }
 
@@ -130,15 +143,280 @@ async function fetchSourceFiles() {
     .sort((a, b) => a.sourcePath.localeCompare(b.sourcePath));
 
   const hskFiles = files.filter((file) => file.category === "hsk");
-  const syllableFiles = files.filter(
-    (file) => file.category === "syllables",
+  const syllableFiles = files.filter((file) => file.category === "syllables");
+  const totalBytes = files.reduce(
+    (total, file) => total + (file.sizeBytes ?? 0),
+    0,
   );
 
-  console.log(`HSK recordings: ${hskFiles.length}`);
-  console.log(`Syllable recordings: ${syllableFiles.length}`);
-  console.log(`Total recordings: ${files.length}\n`);
+  console.log(
+    `HSK recordings:      ${hskFiles.length} (${formatBytes(
+      hskFiles.reduce((total, file) => total + (file.sizeBytes ?? 0), 0),
+    )})`,
+  );
+  console.log(
+    `Syllable recordings: ${syllableFiles.length} (${formatBytes(
+      syllableFiles.reduce((total, file) => total + (file.sizeBytes ?? 0), 0),
+    )})`,
+  );
+  console.log(
+    `Total recordings:    ${files.length} (${formatBytes(totalBytes)})\n`,
+  );
 
   return files;
+}
+
+/**
+ * Builds lookup maps from remote or local file entries.
+ * Invalid syllable filenames are excluded from the pronunciation catalog.
+ */
+function buildCatalog(files) {
+  const hskAudio = {};
+  const syllableAudio = {};
+  const invalidSyllableFiles = [];
+
+  for (const file of files) {
+    if (file.category === "hsk") {
+      hskAudio[file.key] = file.audioUrl;
+      continue;
+    }
+
+    try {
+      const key = normalizePinyinSyllable(file.key);
+      syllableAudio[key] = file.audioUrl;
+    } catch {
+      invalidSyllableFiles.push({
+        filename: file.filename,
+        key: file.key,
+        sourcePath: file.sourcePath ?? null,
+      });
+    }
+  }
+
+  return {
+    hskAudio,
+    syllableAudio,
+    invalidSyllableFiles,
+  };
+}
+
+/**
+ * Scans local audio files and validates their MP3 headers.
+ */
+async function scanLocalCategory(category) {
+  const directory = join(AUDIO_DIRECTORY, CATEGORY_DIRECTORIES[category]);
+
+  let filenames;
+
+  try {
+    filenames = await readdir(directory);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return {
+        files: [],
+        invalidFiles: [],
+      };
+    }
+
+    throw error;
+  }
+
+  const files = [];
+  const invalidFiles = [];
+
+  for (const filename of filenames) {
+    if (!/^cmn-.+\.mp3$/i.test(filename)) {
+      continue;
+    }
+
+    const filePath = join(directory, filename);
+
+    try {
+      const buffer = await readFile(filePath);
+
+      if (!isValidMp3(buffer)) {
+        invalidFiles.push({
+          category,
+          filename,
+          reason: "Invalid MP3 header or incomplete file.",
+          sizeBytes: buffer.length,
+        });
+
+        continue;
+      }
+
+      files.push({
+        category,
+        filename,
+        key: filename.replace(/^cmn-/i, "").replace(/\.mp3$/i, ""),
+        audioUrl: createAudioUrl(category, filename),
+        sizeBytes: buffer.length,
+      });
+    } catch (error) {
+      invalidFiles.push({
+        category,
+        filename,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  return {
+    files,
+    invalidFiles,
+  };
+}
+
+async function scanLocalCatalog() {
+  const [hskResult, syllableResult] = await Promise.all([
+    scanLocalCategory("hsk"),
+    scanLocalCategory("syllables"),
+  ]);
+
+  const hskFiles = hskResult.files;
+  const syllableFiles = syllableResult.files;
+
+  return {
+    hskFiles,
+    syllableFiles,
+    invalidFiles: [...hskResult.invalidFiles, ...syllableResult.invalidFiles],
+    ...buildCatalog([...hskFiles, ...syllableFiles]),
+  };
+}
+
+function createCoverageReport(
+  vocabulary,
+  hskAudio,
+  syllableAudio,
+  { includeMissingWords = true } = {},
+) {
+  const missingWords = [];
+  const missingSyllables = new Set();
+
+  let matchedReadings = 0;
+  let totalReadings = 0;
+  let matchedSyllables = 0;
+  let totalSyllables = 0;
+  let matchedWords = 0;
+  let multiReadingEntries = 0;
+  let entriesWithoutReadings = 0;
+
+  const hskLevels = {};
+
+  for (let level = 1; level <= 6; level += 1) {
+    hskLevels[level] = {
+      total: 0,
+      matched: 0,
+      missing: 0,
+    };
+  }
+
+  for (const entry of vocabulary) {
+    const hasAudio = Boolean(hskAudio[entry.simplified]);
+
+    if (hasAudio) {
+      matchedWords += 1;
+    } else if (includeMissingWords) {
+      missingWords.push({
+        id: entry.id,
+        simplified: entry.simplified,
+        hskLevels: entry.hskLevels,
+      });
+    }
+
+    if ((entry.readings ?? []).length > 1) {
+      multiReadingEntries += 1;
+    }
+
+    if ((entry.readings ?? []).length === 0) {
+      entriesWithoutReadings += 1;
+    }
+
+    for (const level of entry.hskLevels ?? []) {
+      if (hskLevels[level]) {
+        hskLevels[level].total += 1;
+
+        if (hasAudio) {
+          hskLevels[level].matched += 1;
+        } else {
+          hskLevels[level].missing += 1;
+        }
+      }
+    }
+
+    for (const reading of entry.readings ?? []) {
+      totalReadings += 1;
+
+      const syllables = reading.pinyin.trim().split(/\s+/).filter(Boolean);
+
+      let readingComplete = true;
+
+      for (const pinyin of syllables) {
+        totalSyllables += 1;
+
+        const key = normalizePinyinSyllable(pinyin);
+
+        if (syllableAudio[key]) {
+          matchedSyllables += 1;
+        } else {
+          readingComplete = false;
+          missingSyllables.add(key);
+        }
+      }
+
+      if (readingComplete && syllables.length > 0) {
+        matchedReadings += 1;
+      }
+    }
+  }
+
+  return {
+    vocabularyTotal: vocabulary.length,
+    vocabularyMatched: matchedWords,
+    vocabularyMissing: vocabulary.length - matchedWords,
+    vocabularyCoveragePercent: Number(
+      ((matchedWords / vocabulary.length) * 100).toFixed(2),
+    ),
+    multiReadingEntries,
+    entriesWithoutReadings,
+    readingsTotal: totalReadings,
+    readingsWithAllSyllables: matchedReadings,
+    syllablesTotal: totalSyllables,
+    syllablesMatched: matchedSyllables,
+    syllablesMissing: totalSyllables - matchedSyllables,
+    missingSyllableKeys: [...missingSyllables].sort(),
+    hskLevels,
+    missingWords,
+  };
+}
+
+async function formatJsonFile(data) {
+  const { format } = await import("prettier");
+
+  return format(JSON.stringify(data), { parser: "json" });
+}
+
+async function syncVocabularyAudio(vocabulary, hskAudio) {
+  let updated = 0;
+  let unchanged = 0;
+
+  for (const entry of vocabulary) {
+    const audioUrl = hskAudio[entry.simplified] ?? null;
+
+    if (entry.audioUrl === audioUrl) {
+      unchanged += 1;
+      continue;
+    }
+
+    entry.audioUrl = audioUrl;
+    updated += 1;
+  }
+
+  if (updated > 0) {
+    await writeFile(VOCABULARY_PATH, await formatJsonFile(vocabulary), "utf8");
+  }
+
+  return { updated, unchanged };
 }
 
 async function downloadFile(file) {
@@ -156,7 +434,7 @@ async function downloadFile(file) {
         };
       }
     } catch {
-      // File does not exist. Continue with download.
+      // File is missing or unreadable. Continue with download.
     }
   }
 
@@ -173,9 +451,7 @@ async function downloadFile(file) {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status} ${response.statusText}`,
-        );
+        throw new Error(`HTTP ${response.status} ${response.statusText}`);
       }
 
       const buffer = Buffer.from(await response.arrayBuffer());
@@ -184,9 +460,7 @@ async function downloadFile(file) {
         throw new Error("Downloaded file is not a valid MP3.");
       }
 
-      const sha256 = createHash("sha256")
-        .update(buffer)
-        .digest("hex");
+      const sha256 = createHash("sha256").update(buffer).digest("hex");
 
       await mkdir(dirname(file.destination), {
         recursive: true,
@@ -207,8 +481,7 @@ async function downloadFile(file) {
         attempts: attempt,
       };
     } catch (error) {
-      lastError =
-        error instanceof Error ? error.message : String(error);
+      lastError = error instanceof Error ? error.message : String(error);
 
       if (temporaryPath) {
         await rm(temporaryPath, { force: true }).catch(() => {});
@@ -241,6 +514,10 @@ async function downloadFiles(files) {
   console.log(`Files selected for download: ${selectedFiles.length}`);
   console.log(`Concurrency: ${CONCURRENCY}\n`);
 
+  if (selectedFiles.length === 0) {
+    return results;
+  }
+
   async function worker() {
     while (true) {
       const index = nextIndex;
@@ -257,9 +534,7 @@ async function downloadFiles(files) {
       completed += 1;
 
       if (completed % 100 === 0 || completed === selectedFiles.length) {
-        console.log(
-          `Progress: ${completed}/${selectedFiles.length}`,
-        );
+        console.log(`Progress: ${completed}/${selectedFiles.length}`);
       }
     }
   }
@@ -274,156 +549,37 @@ async function downloadFiles(files) {
   return results;
 }
 
-function normalizePinyinSyllable(pinyin) {
-  return pinyin
-    .trim()
-    .toLowerCase()
-    .replace(/u:/g, "v")
-    .replace(/ü/g, "v");
-}
-
-function createVocabularyManifest(vocabulary, hskAudio, syllableAudio) {
-  const result = {};
-
-  for (const entry of vocabulary) {
-    const readings = (entry.readings ?? []).map((reading) => {
-      const syllables = reading.pinyin
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean)
-        .map((pinyin) => {
-          const key = normalizePinyinSyllable(pinyin);
-
-          return {
-            pinyin,
-            audioUrl: syllableAudio[key] ?? null,
-          };
-        });
-
-      return {
-        pinyin: reading.pinyin,
-        syllables,
-      };
-    });
-
-    result[entry.id] = {
-      audioUrl: hskAudio[entry.simplified] ?? null,
-      readings,
-    };
-  }
-
-  return result;
-}
-
-function createCoverageReport(vocabulary, hskAudio, syllableAudio) {
-  const missingWords = [];
-  const missingSyllables = new Set();
-
-  let matchedReadings = 0;
-  let totalReadings = 0;
-  let matchedSyllables = 0;
-  let totalSyllables = 0;
-
-  const hskLevels = {};
-
-  for (let level = 1; level <= 6; level += 1) {
-    hskLevels[level] = {
-      total: 0,
-      matched: 0,
-      missing: 0,
-    };
-  }
-
-  for (const entry of vocabulary) {
-    const hasAudio = Boolean(hskAudio[entry.simplified]);
-
-    if (!hasAudio) {
-      missingWords.push({
-        id: entry.id,
-        simplified: entry.simplified,
-        hskLevels: entry.hskLevels,
-      });
-    }
-
-    for (const level of entry.hskLevels ?? []) {
-      if (hskLevels[level]) {
-        hskLevels[level].total += 1;
-
-        if (hasAudio) {
-          hskLevels[level].matched += 1;
-        } else {
-          hskLevels[level].missing += 1;
-        }
-      }
-    }
-
-    for (const reading of entry.readings ?? []) {
-      totalReadings += 1;
-
-      const syllables = reading.pinyin
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
-
-      let readingComplete = true;
-
-      for (const pinyin of syllables) {
-        totalSyllables += 1;
-
-        const key = normalizePinyinSyllable(pinyin);
-
-        if (syllableAudio[key]) {
-          matchedSyllables += 1;
-        } else {
-          readingComplete = false;
-          missingSyllables.add(key);
-        }
-      }
-
-      if (readingComplete && syllables.length > 0) {
-        matchedReadings += 1;
-      }
-    }
-  }
-
-  return {
-    vocabularyTotal: vocabulary.length,
-    vocabularyMatched: vocabulary.length - missingWords.length,
-    vocabularyMissing: missingWords.length,
-    vocabularyCoveragePercent: Number(
-      (
-        ((vocabulary.length - missingWords.length) / vocabulary.length) *
-        100
-      ).toFixed(2),
-    ),
-    readingsTotal: totalReadings,
-    readingsWithAllSyllables: matchedReadings,
-    syllablesTotal: totalSyllables,
-    syllablesMatched: matchedSyllables,
-    syllablesMissing: totalSyllables - matchedSyllables,
-    missingSyllableKeys: [...missingSyllables].sort(),
-    hskLevels,
-    missingWords,
-  };
-}
-
-async function writeJsonFile(path, data) {
-  await mkdir(dirname(path), { recursive: true });
-
-  await writeFile(
-    path,
-    `${JSON.stringify(data, null, 2)}\n`,
-    "utf8",
+function printCoverage(label, coverage) {
+  console.log(`\n${label}`);
+  console.log(
+    `Word recordings:    ${coverage.vocabularyMatched}/${coverage.vocabularyTotal} (${coverage.vocabularyCoveragePercent}%)`,
   );
+  console.log(
+    `Complete readings:  ${coverage.readingsWithAllSyllables}/${coverage.readingsTotal}`,
+  );
+  console.log(
+    `Syllable hits:      ${coverage.syllablesMatched}/${coverage.syllablesTotal} (missing: ${coverage.syllablesMissing})`,
+  );
+
+  console.log("HSK coverage:");
+
+  for (const [level, data] of Object.entries(coverage.hskLevels)) {
+    console.log(
+      `  HSK ${level}: ${data.matched}/${data.total} (missing: ${data.missing})`,
+    );
+  }
 }
 
 async function main() {
   console.log("Starting audio repository import...\n");
 
-  if (
-    !Number.isInteger(DOWNLOAD_LIMIT) &&
-    DOWNLOAD_LIMIT !== Infinity
-  ) {
+  if (CATEGORY !== null && !Object.hasOwn(CATEGORY_DIRECTORIES, CATEGORY)) {
+    throw new Error(
+      `Invalid --category value "${CATEGORY}". Use --category=hsk or --category=syllables.`,
+    );
+  }
+
+  if (!Number.isInteger(DOWNLOAD_LIMIT) && DOWNLOAD_LIMIT !== Infinity) {
     throw new Error("Invalid --limit value. Use --limit=5, for example.");
   }
 
@@ -442,105 +598,140 @@ async function main() {
     throw new Error("Invalid vocabulary database: expected an array.");
   }
 
-  const hskFiles = files.filter((file) => file.category === "hsk");
-  const syllableFiles = files.filter(
-    (file) => file.category === "syllables",
-  );
+  const sourceCatalog = buildCatalog(files);
 
-  const hskAudio = Object.fromEntries(
-    hskFiles.map((file) => [file.key, file.audioUrl]),
-  );
+  if (sourceCatalog.invalidSyllableFiles.length > 0) {
+    console.warn(
+      `Ignoring ${sourceCatalog.invalidSyllableFiles.length} syllable files with invalid Pinyin filenames.`,
+    );
+  }
 
-  const syllableAudio = Object.fromEntries(
-    syllableFiles.map((file) => [
-      normalizePinyinSyllable(file.key),
-      file.audioUrl,
-    ]),
-  );
-
-  const vocabularyManifest = createVocabularyManifest(
+  const sourceCoverage = createCoverageReport(
     vocabulary,
-    hskAudio,
-    syllableAudio,
+    sourceCatalog.hskAudio,
+    sourceCatalog.syllableAudio,
   );
 
-  const coverage = createCoverageReport(
-    vocabulary,
-    hskAudio,
-    syllableAudio,
+  // Invalid syllable filenames remain in the source report but are not downloaded.
+  const invalidSourcePaths = new Set(
+    sourceCatalog.invalidSyllableFiles.map((file) => file.sourcePath),
   );
 
-  const manifest = {
-    generatedAt: new Date().toISOString(),
-    source: REPOSITORY,
-    quality: QUALITY,
-    hskAudio,
-    syllableAudio,
-    vocabulary: vocabularyManifest,
-  };
+  const downloadableFiles = files.filter(
+    (file) => !invalidSourcePaths.has(file.sourcePath),
+  );
 
-  console.log("Downloading audio files...\n");
+  const selectedFiles = CATEGORY
+    ? downloadableFiles.filter((file) => file.category === CATEGORY)
+    : downloadableFiles;
 
-  const results = await downloadFiles(files);
+  let results = [];
+
+  if (DRY_RUN) {
+    console.log("Dry run: skipping downloads.\n");
+  } else {
+    console.log("Downloading audio files...\n");
+    results = await downloadFiles(selectedFiles);
+  }
 
   const downloaded = results.filter(
     (result) => result.status === "downloaded",
   ).length;
-
   const skipped = results.filter(
     (result) => result.status === "skipped",
   ).length;
+  const failed = results.filter((result) => result.status === "failed");
 
-  const failed = results.filter(
-    (result) => result.status === "failed",
+  const localCatalog = await scanLocalCatalog();
+
+  const localCoverage = createCoverageReport(
+    vocabulary,
+    localCatalog.hskAudio,
+    localCatalog.syllableAudio,
+    { includeMissingWords: false },
   );
+
+  let sync = null;
+
+  if (SYNC_VOCABULARY && !DRY_RUN) {
+    sync = await syncVocabularyAudio(vocabulary, localCatalog.hskAudio);
+  } else if (SYNC_VOCABULARY && DRY_RUN) {
+    console.log(
+      "Dry run: skipping vocabulary synchronization to avoid modifying vocabulary.json.",
+    );
+  }
 
   const report = {
     generatedAt: new Date().toISOString(),
     source: REPOSITORY,
     quality: QUALITY,
+    dryRun: DRY_RUN,
+    category: CATEGORY,
     sourceFileCount: files.length,
-    selectedForDownload: results.length,
+    downloadableFileCount: downloadableFiles.length,
+    invalidSyllableFiles: sourceCatalog.invalidSyllableFiles,
+    selectedForDownload: DRY_RUN ? selectedFiles.length : results.length,
     downloaded,
     skipped,
     failed: failed.length,
-    coverage,
+    localFiles: {
+      hsk: localCatalog.hskFiles.length,
+      syllables: localCatalog.syllableFiles.length,
+      invalid: localCatalog.invalidFiles.length,
+    },
+    invalidLocalFiles: localCatalog.invalidFiles,
+    sourceCoverage,
+    localCoverage,
+    vocabularySync: sync,
     failedFiles: failed,
   };
 
-  await writeJsonFile(MANIFEST_PATH, manifest);
-  await writeJsonFile(REPORT_PATH, report);
+  await mkdir(dirname(REPORT_PATH), { recursive: true });
+  await writeFile(REPORT_PATH, `${JSON.stringify(report, null, 2)}\n`, "utf8");
 
   console.log("\nImport summary:");
   console.log(`Source files:       ${files.length}`);
-  console.log(`Selected:           ${results.length}`);
+  console.log(`Downloadable:       ${downloadableFiles.length}`);
+  console.log(`Selected:           ${selectedFiles.length}`);
   console.log(`Downloaded:         ${downloaded}`);
   console.log(`Skipped:            ${skipped}`);
   console.log(`Failed:             ${failed.length}`);
-
-  console.log("\nVocabulary coverage:");
   console.log(
-    `Matched:            ${coverage.vocabularyMatched}/${coverage.vocabularyTotal}`,
+    `Local files:        ${localCatalog.hskFiles.length} HSK, ${localCatalog.syllableFiles.length} syllables`,
   );
   console.log(
-    `Coverage:           ${coverage.vocabularyCoveragePercent}%`,
+    `Invalid syllables:  ${sourceCatalog.invalidSyllableFiles.length}`,
   );
-  console.log(
-    `Missing syllables:  ${coverage.missingSyllables}`,
+  console.log(`Invalid local:      ${localCatalog.invalidFiles.length}`);
+
+  if (localCatalog.invalidFiles.length > 0) {
+    console.warn("\nInvalid local audio files:");
+
+    for (const file of localCatalog.invalidFiles) {
+      console.warn(`  ${file.category}/${file.filename}: ${file.reason}`);
+    }
+  }
+
+  printCoverage(
+    "Source coverage (what the repository offers):",
+    sourceCoverage,
   );
 
-  console.log("\nHSK coverage:");
+  printCoverage("Local coverage (what the app can serve now):", localCoverage);
 
-  for (const [level, data] of Object.entries(coverage.hskLevels)) {
+  if (sync) {
     console.log(
-      `HSK ${level}: ${data.matched}/${data.total} (missing: ${data.missing})`,
+      `\nvocabulary.json:    ${sync.updated} updated, ${sync.unchanged} unchanged`,
+    );
+  } else {
+    console.log(
+      "\nHint: run with --sync-vocabulary to write local audio URLs into vocabulary.json.",
     );
   }
 
-  console.log(`\nManifest: ${MANIFEST_PATH}`);
-  console.log(`Report:    ${REPORT_PATH}`);
+  console.log(`\nReport: ${REPORT_PATH}`);
 
-  if (failed.length > 0) {
+  if (failed.length > 0 || localCatalog.invalidFiles.length > 0) {
     process.exitCode = 1;
   }
 }

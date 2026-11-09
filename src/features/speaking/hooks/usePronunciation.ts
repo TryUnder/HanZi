@@ -25,48 +25,12 @@ export function usePronunciation({
 }: UsePronunciationOptions): UsePronunciationReturn {
   const audioRef = useRef<HTMLAudioElement>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioUnavailableRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const play = useCallback(async (): Promise<void> => {
-    setError(null);
-
-    // Local MP3 playback
-    if (audioUrl) {
-      const audio = audioRef.current;
-
-      if (!audio) {
-        setError("Audio player is unavailable.");
-        return;
-      }
-
-      // Stop speech synthesis before playing an audio file.
-      if (utteranceRef.current && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        utteranceRef.current = null;
-      }
-
-      if (!audio.paused) {
-        audio.pause();
-        return;
-      }
-
-      try {
-        if (audio.ended) {
-          audio.currentTime = 0;
-        }
-
-        await audio.play();
-      } catch {
-        setIsPlaying(false);
-        setError("Audio playback failed.");
-      }
-
-      return;
-    }
-
-    // Browser speech synthesis
+  const speakWithSynthesis = useCallback(() => {
     if (!("speechSynthesis" in window)) {
       setError("Speech synthesis is not supported in this browser.");
       return;
@@ -129,7 +93,49 @@ export function usePronunciation({
 
     utteranceRef.current = utterance;
     speech.speak(utterance);
-  }, [audioUrl, text]);
+  }, [text]);
+
+  const play = useCallback(async (): Promise<void> => {
+    setError(null);
+
+    // Local MP3 playback, falling back to speech synthesis when the file
+    // is missing (for example after a clone without downloaded audio).
+    if (audioUrl && !audioUnavailableRef.current) {
+      const audio = audioRef.current;
+
+      if (!audio) {
+        setError("Audio player is unavailable.");
+        return;
+      }
+
+      // Stop speech synthesis before playing an audio file.
+      if (utteranceRef.current && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        utteranceRef.current = null;
+      }
+
+      if (!audio.paused) {
+        audio.pause();
+        return;
+      }
+
+      try {
+        if (audio.ended) {
+          audio.currentTime = 0;
+        }
+
+        await audio.play();
+      } catch {
+        audioUnavailableRef.current = true;
+        setIsPlaying(false);
+        speakWithSynthesis();
+      }
+
+      return;
+    }
+
+    speakWithSynthesis();
+  }, [audioUrl, speakWithSynthesis]);
 
   // Listen for local audio events.
   useEffect(() => {
@@ -147,7 +153,7 @@ export function usePronunciation({
 
     const handleError = () => {
       setIsPlaying(false);
-      setError("Could not load the audio file.");
+      audioUnavailableRef.current = true;
     };
 
     audio.addEventListener("play", handlePlay);
@@ -167,6 +173,7 @@ export function usePronunciation({
   useEffect(() => {
     const audio = audioRef.current;
 
+    audioUnavailableRef.current = false;
     audio?.pause();
 
     if (audio) {

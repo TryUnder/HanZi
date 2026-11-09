@@ -1,6 +1,34 @@
-
 const HSK_AUDIO_PREFIX = "cmn-";
 const HSK_AUDIO_EXTENSION = ".mp3";
+
+/**
+ * Normalizes a Pinyin syllable to the audio repository notation.
+ *
+ * - ü and u: are represented as v.
+ * - j, q, x and y + v are normalized to standard u spelling.
+ * - The neutral tone (5) is preserved.
+ *
+ * @param {string} pinyin
+ * @returns {string}
+ */
+export function normalizePinyinSyllable(pinyin) {
+  if (typeof pinyin !== "string") {
+    throw new TypeError(`Invalid Pinyin syllable: ${pinyin}`);
+  }
+
+  const normalized = pinyin
+    .trim()
+    .toLowerCase()
+    .replace(/u:/g, "v")
+    .replace(/ü/g, "v")
+    .replace(/^([jqxy])v/, "$1u");
+
+  if (!/^[a-zv]+[1-5]$/.test(normalized)) {
+    throw new TypeError(`Invalid toned Pinyin syllable: ${pinyin}`);
+  }
+
+  return normalized;
+}
 
 /**
  * Creates the source filename for a Chinese vocabulary item.
@@ -19,24 +47,11 @@ export function getHskAudioFilename(simplified) {
 /**
  * Creates the source filename for a toned Pinyin syllable.
  *
- * Supports ü, u:, and v notation for the same sound.
- *
  * @param {string} pinyin
  * @returns {string}
  */
 export function getSyllableAudioFilename(pinyin) {
-  if (typeof pinyin !== "string") {
-    throw new TypeError(`Invalid toned Pinyin syllable: ${pinyin}`);
-  }
-
-  const normalized = pinyin
-    .replace(/u:/gi, "v")
-    .replace(/[üÜ]/g, "v")
-    .toLowerCase();
-
-  if (!/^[a-zv]+[1-5]$/.test(normalized)) {
-    throw new TypeError(`Invalid toned Pinyin syllable: ${pinyin}`);
-  }
+  const normalized = normalizePinyinSyllable(pinyin);
 
   return `${HSK_AUDIO_PREFIX}${normalized}${HSK_AUDIO_EXTENSION}`;
 }
@@ -62,5 +77,5 @@ export function createAudioUrl(category, filename) {
     throw new TypeError("Audio filename must be a non-empty filename.");
   }
 
-  return `/audio/${category}/${filename}`;
+  return `/audio/${category}/${encodeURIComponent(filename)}`;
 }

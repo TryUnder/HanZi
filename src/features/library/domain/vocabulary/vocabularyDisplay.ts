@@ -36,7 +36,6 @@ function normalizePinyinVowels(value: string): string {
   return value.replace(/u:/gi, "ü").replace(/v/gi, "ü");
 }
 
-
 function getToneMarkPosition(syllable: string): number {
   // a and e always have priority.
   for (const vowel of ["a", "e"]) {
@@ -76,7 +75,6 @@ function getToneMarkPosition(syllable: string): number {
     syllable.lastIndexOf("ü"),
   );
 }
-
 
 function formatPinyinSyllable(syllable: string): string {
   const match = syllable.match(/^([a-züv:]+)([1-5])$/i);

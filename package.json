@@ -14,11 +14,17 @@
     "preview": "vite preview",
     "audio:download": "node scripts/download-audio.mjs",
     "audio:download:force": "node scripts/download-audio.mjs --force",
+    "audio:sync": "node scripts/download-audio-repository.mjs --sync-vocabulary",
+    "audio:sync:hsk": "node scripts/download-audio-repository.mjs --category=hsk --sync-vocabulary",
+    "audio:sync:syllables": "node scripts/download-audio-repository.mjs --category=syllables",
+    "audio:sync:dry": "node scripts/download-audio-repository.mjs --dry-run",
     "test": "vitest run",
     "test:watch": "vitest",
     "cedict:parse": "node scripts/parse-cedict.mjs",
     "hsk:analyze": "node scripts/analyze-hsk-cedict.mjs",
-    "vocabulary:build": "node scripts/build-vocabulary.mjs"
+    "vocabulary:build": "node scripts/build-vocabulary.mjs",
+    "audio:sync:tones": "node scripts/sync-tone-audio.mjs",
+    "audio:sync:all": "npm run audio:sync && npm run audio:download && npm run audio:sync:tones"
   },
   "dependencies": {
     "hanzi-writer": "^3.7.3",

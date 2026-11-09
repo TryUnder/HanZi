@@ -1,22 +1,175 @@
 {
-  "generatedAt": "2026-11-08T12:01:33.398Z",
+  "generatedAt": "2026-11-08T18:06:10.194Z",
   "source": "hugolpz/audio-cmn",
   "quality": "64k",
+  "dryRun": true,
+  "category": null,
   "sourceFileCount": 10303,
-  "selectedForDownload": 5,
-  "downloaded": 5,
+  "downloadableFileCount": 10275,
+  "invalidSyllableFiles": [
+    {
+      "filename": "cmn-_hm1.mp3",
+      "key": "_hm1",
+      "sourcePath": "64k/syllabs/cmn-_hm1.mp3"
+    },
+    {
+      "filename": "cmn-_hm2.mp3",
+      "key": "_hm2",
+      "sourcePath": "64k/syllabs/cmn-_hm2.mp3"
+    },
+    {
+      "filename": "cmn-_hm3.mp3",
+      "key": "_hm3",
+      "sourcePath": "64k/syllabs/cmn-_hm3.mp3"
+    },
+    {
+      "filename": "cmn-_hm4.mp3",
+      "key": "_hm4",
+      "sourcePath": "64k/syllabs/cmn-_hm4.mp3"
+    },
+    {
+      "filename": "cmn-_hng1.mp3",
+      "key": "_hng1",
+      "sourcePath": "64k/syllabs/cmn-_hng1.mp3"
+    },
+    {
+      "filename": "cmn-_hng2.mp3",
+      "key": "_hng2",
+      "sourcePath": "64k/syllabs/cmn-_hng2.mp3"
+    },
+    {
+      "filename": "cmn-_hng3.mp3",
+      "key": "_hng3",
+      "sourcePath": "64k/syllabs/cmn-_hng3.mp3"
+    },
+    {
+      "filename": "cmn-_hng4.mp3",
+      "key": "_hng4",
+      "sourcePath": "64k/syllabs/cmn-_hng4.mp3"
+    },
+    {
+      "filename": "cmn-_lvan1.mp3",
+      "key": "_lvan1",
+      "sourcePath": "64k/syllabs/cmn-_lvan1.mp3"
+    },
+    {
+      "filename": "cmn-_lvan2.mp3",
+      "key": "_lvan2",
+      "sourcePath": "64k/syllabs/cmn-_lvan2.mp3"
+    },
+    {
+      "filename": "cmn-_lvan3.mp3",
+      "key": "_lvan3",
+      "sourcePath": "64k/syllabs/cmn-_lvan3.mp3"
+    },
+    {
+      "filename": "cmn-_lvan4.mp3",
+      "key": "_lvan4",
+      "sourcePath": "64k/syllabs/cmn-_lvan4.mp3"
+    },
+    {
+      "filename": "cmn-_m1.mp3",
+      "key": "_m1",
+      "sourcePath": "64k/syllabs/cmn-_m1.mp3"
+    },
+    {
+      "filename": "cmn-_m2.mp3",
+      "key": "_m2",
+      "sourcePath": "64k/syllabs/cmn-_m2.mp3"
+    },
+    {
+      "filename": "cmn-_m3.mp3",
+      "key": "_m3",
+      "sourcePath": "64k/syllabs/cmn-_m3.mp3"
+    },
+    {
+      "filename": "cmn-_m4.mp3",
+      "key": "_m4",
+      "sourcePath": "64k/syllabs/cmn-_m4.mp3"
+    },
+    {
+      "filename": "cmn-_n1.mp3",
+      "key": "_n1",
+      "sourcePath": "64k/syllabs/cmn-_n1.mp3"
+    },
+    {
+      "filename": "cmn-_n2.mp3",
+      "key": "_n2",
+      "sourcePath": "64k/syllabs/cmn-_n2.mp3"
+    },
+    {
+      "filename": "cmn-_n3.mp3",
+      "key": "_n3",
+      "sourcePath": "64k/syllabs/cmn-_n3.mp3"
+    },
+    {
+      "filename": "cmn-_n4.mp3",
+      "key": "_n4",
+      "sourcePath": "64k/syllabs/cmn-_n4.mp3"
+    },
+    {
+      "filename": "cmn-_ng1.mp3",
+      "key": "_ng1",
+      "sourcePath": "64k/syllabs/cmn-_ng1.mp3"
+    },
+    {
+      "filename": "cmn-_ng2.mp3",
+      "key": "_ng2",
+      "sourcePath": "64k/syllabs/cmn-_ng2.mp3"
+    },
+    {
+      "filename": "cmn-_ng3.mp3",
+      "key": "_ng3",
+      "sourcePath": "64k/syllabs/cmn-_ng3.mp3"
+    },
+    {
+      "filename": "cmn-_ng4.mp3",
+      "key": "_ng4",
+      "sourcePath": "64k/syllabs/cmn-_ng4.mp3"
+    },
+    {
+      "filename": "cmn-_nia1.mp3",
+      "key": "_nia1",
+      "sourcePath": "64k/syllabs/cmn-_nia1.mp3"
+    },
+    {
+      "filename": "cmn-_nia2.mp3",
+      "key": "_nia2",
+      "sourcePath": "64k/syllabs/cmn-_nia2.mp3"
+    },
+    {
+      "filename": "cmn-_nia3.mp3",
+      "key": "_nia3",
+      "sourcePath": "64k/syllabs/cmn-_nia3.mp3"
+    },
+    {
+      "filename": "cmn-_nia4.mp3",
+      "key": "_nia4",
+      "sourcePath": "64k/syllabs/cmn-_nia4.mp3"
+    }
+  ],
+  "selectedForDownload": 10275,
+  "downloaded": 0,
   "skipped": 0,
   "failed": 0,
-  "coverage": {
+  "localFiles": {
+    "hsk": 8596,
+    "syllables": 1684,
+    "invalid": 0
+  },
+  "invalidLocalFiles": [],
+  "sourceCoverage": {
     "vocabularyTotal": 4995,
     "vocabularyMatched": 4419,
     "vocabularyMissing": 576,
     "vocabularyCoveragePercent": 88.47,
+    "multiReadingEntries": 218,
+    "entriesWithoutReadings": 5,
     "readingsTotal": 5251,
-    "readingsWithAllSyllables": 4907,
+    "readingsWithAllSyllables": 4939,
     "syllablesTotal": 9950,
-    "syllablesMatched": 9600,
-    "syllablesMissing": 350,
+    "syllablesMatched": 9633,
+    "syllablesMissing": 317,
     "missingSyllableKeys": [
       "bia1",
       "bo5",
@@ -56,7 +209,6 @@
       "jie5",
       "jing5",
       "jiu5",
-      "ju4",
       "ju5",
       "kuai5",
       "la5",
@@ -166,4036 +318,3043 @@
       {
         "id": "vocab-4e00-4e1d-4e0d-82df",
         "simplified": "一丝不苟",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e00-4e3e-4e24-5f97",
         "simplified": "一举两得",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e00-5982-65e2-5f80",
         "simplified": "一如既往",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e00-6d41",
         "simplified": "一流",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e00-76ee-4e86-7136",
         "simplified": "一目了然",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e0a-763e",
         "simplified": "上瘾",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e0a-7f51",
         "simplified": "上网",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-4e0b-5c5e",
         "simplified": "下属",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e0b-8f7d",
         "simplified": "下载",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-4e0b-96e8",
         "simplified": "下雨",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-4e0d-53ef-601d-8bae",
         "simplified": "不可思议",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e0d-5ba2-6c14",
         "simplified": "不客气",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-4e0d-5c51-4e00-987e",
         "simplified": "不屑一顾",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e0d-62e9-624b-6bb5",
         "simplified": "不择手段",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e0d-8010-70e6",
         "simplified": "不耐烦",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-4e0e-65e5-4ff1-589e",
         "simplified": "与日俱增",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e1c-5f20-897f-671b",
         "simplified": "东张西望",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e1d-7ef8",
         "simplified": "丝绸",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-4e22-4e09-843d-56db",
         "simplified": "丢三落四",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e2d-4ecb",
         "simplified": "中介",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-4e2d-56fd",
         "simplified": "中国",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-4e30-76db",
         "simplified": "丰盛",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e3e-8db3-8f7b-91cd",
         "simplified": "举足轻重",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e4b-9645",
         "simplified": "之际",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e4c-9ed1",
         "simplified": "乌黑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e50-8c31",
         "simplified": "乐谱",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e58-5750",
         "simplified": "乘坐",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-4e5e-4e10",
         "simplified": "乞丐",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e61-9547",
         "simplified": "乡镇",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4e92-8054-7f51",
         "simplified": "互联网",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-4e9a-6d32",
         "simplified": "亚洲",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-4eba-9053",
         "simplified": "人道",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4efb-91cd-9053-8fdc",
         "simplified": "任重道远",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f11-95f2",
         "simplified": "休闲",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-4f18-80dc-52a3-6c70",
         "simplified": "优胜劣汰",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f53-88c1",
         "simplified": "体裁",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f5c-5f0a",
         "simplified": "作弊",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f5c-606f",
         "simplified": "作息",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f73-80b4",
         "simplified": "佳肴",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f7f",
         "simplified": "使",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-4f7f-52b2-513f",
         "simplified": "使劲儿",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-4f83-4f83-800c-8c08",
         "simplified": "侃侃而谈",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4f9d-6258",
         "simplified": "依托",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4fa5-5e78",
         "simplified": "侥幸",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-4fe1-7528-5361",
         "simplified": "信用卡",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-4fef-89c6",
         "simplified": "俯视",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5014-5f3a",
         "simplified": "倔强",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5019-9009",
         "simplified": "候选",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5021-5bfc",
         "simplified": "倡导",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-503a-5238",
         "simplified": "债券",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-505a-4e3b",
         "simplified": "做主",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5065-8eab",
         "simplified": "健身",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5076-50cf",
         "simplified": "偶像",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-50f5-786c",
         "simplified": "僵硬",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5112-5bb6",
         "simplified": "儒家",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5143-5bb5-8282",
         "simplified": "元宵节",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5145-7535-5668",
         "simplified": "充电器",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5149-76d8",
         "simplified": "光盘",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-514b-5236",
         "simplified": "克制",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-514d-75ab",
         "simplified": "免疫",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-516c-4e3b",
         "simplified": "公主",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-516c-5143",
         "simplified": "公元",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-516c-5b89-5c40",
         "simplified": "公安局",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-516c-5bd3",
         "simplified": "公寓",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-516c-6b63",
         "simplified": "公正",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5174-81f4-52c3-52c3",
         "simplified": "兴致勃勃",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5174-9686",
         "simplified": "兴隆",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-517c-804c",
         "simplified": "兼职",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5185-6db5",
         "simplified": "内涵",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-518d-63a5-518d-5389",
         "simplified": "再接再厉",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5192-5145",
         "simplified": "冒充",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5192-72af",
         "simplified": "冒犯",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-519c-5386",
         "simplified": "农历",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51b0-6fc0-51cc",
         "simplified": "冰激凌",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-51b0-7bb1",
         "simplified": "冰箱",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-51b0-96f9",
         "simplified": "冰雹",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51b2-52a8",
         "simplified": "冲动",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51b7-843d",
         "simplified": "冷落",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51b7-9177",
         "simplified": "冷酷",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51cf-80a5",
         "simplified": "减肥",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-51dd-805a",
         "simplified": "凝聚",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51f6-624b",
         "simplified": "凶手",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51f9-51f8",
         "simplified": "凹凸",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-51fa-793a",
         "simplified": "出示",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-51fa-79df-8f66",
         "simplified": "出租车",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-5206-624b",
         "simplified": "分手",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5220-9664",
         "simplified": "删除",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5229-5bb3",
         "simplified": "利害",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-522b-5885",
         "simplified": "别墅",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-522b-81f4",
         "simplified": "别致",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-522e-98ce",
         "simplified": "刮风",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-5237-7259",
         "simplified": "刷牙",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-523b-4e0d-5bb9-7f13",
         "simplified": "刻不容缓",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5251",
         "simplified": "剑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-52a0-6cb9-7ad9",
         "simplified": "加油站",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-52a8-753b-7247",
         "simplified": "动画片",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5305-5e87",
         "simplified": "包庇",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5317-4eac",
         "simplified": "北京",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-5317-6781",
         "simplified": "北极",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-534e-88d4",
         "simplified": "华裔",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5357-8f95-5317-8f99",
         "simplified": "南辕北辙",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-535a-5927-7cbe-6df1",
         "simplified": "博大精深",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5360-7ebf",
         "simplified": "占线",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5361-901a",
         "simplified": "卡通",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-536b-751f-95f4",
         "simplified": "卫生间",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-538b-5c81-94b1",
         "simplified": "压岁钱",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-538b-69a8",
         "simplified": "压榨",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53cc-80de-80ce",
         "simplified": "双胞胎",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53d1-5446",
         "simplified": "发呆",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53d6-7f14",
         "simplified": "取缔",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53d7-4e0d-4e86",
         "simplified": "受不了",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-53d7-5230",
         "simplified": "受到",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-53d7-7f6a",
         "simplified": "受罪",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53d8-6545",
         "simplified": "变故",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53e3-5473",
         "simplified": "口味",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-53e3-97f3",
         "simplified": "口音",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-53e4-8463",
         "simplified": "古董",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5404-6292-5df1-89c1",
         "simplified": "各抒己见",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5408-5f71",
         "simplified": "合影",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-540d-7247",
         "simplified": "名片",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-540d-80dc-53e4-8ff9",
         "simplified": "名胜古迹",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-540e-80cc",
         "simplified": "后背",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-540e-987e-4e4b-5fe7",
         "simplified": "后顾之忧",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-541b-5b50",
         "simplified": "君子",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-541d-556c",
         "simplified": "吝啬",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-541e-541e-5410-5410",
         "simplified": "吞吞吐吐",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-542f-8499",
         "simplified": "启蒙",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5458-5de5",
         "simplified": "员工",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5468-8fb9",
         "simplified": "周边",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-547c-5524",
         "simplified": "呼唤",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5480-56bc",
         "simplified": "咀嚼",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-54c8",
         "simplified": "哈",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-54ea-513f",
         "simplified": "哪儿",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-54ed-6ce3",
         "simplified": "哭泣",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-54fa-4e73",
         "simplified": "哺乳",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5520-53e8",
         "simplified": "唠叨",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-552e-8d27-5458",
         "simplified": "售货员",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-552f-4e00",
         "simplified": "唯一",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-552f-72ec",
         "simplified": "唯独",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5531-6b4c",
         "simplified": "唱歌",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-553e-5f03",
         "simplified": "唾弃",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5546-52a1",
         "simplified": "商务",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5565",
         "simplified": "啥",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5570-5506",
         "simplified": "啰唆",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5598-6c14",
         "simplified": "喘气",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-559c-95fb-4e50-89c1",
         "simplified": "喜闻乐见",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-55a7-54d7",
         "simplified": "喧哗",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-55c5-89c9",
         "simplified": "嗅觉",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-55e8",
         "simplified": "嗨",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5608-6742",
         "simplified": "嘈杂",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5609-5bbe",
         "simplified": "嘉宾",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-56de-62a5",
         "simplified": "回报",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5760",
         "simplified": "坠",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5766-7387",
         "simplified": "坦率",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5783-573e-6876",
         "simplified": "垃圾桶",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-57cb-4f0f",
         "simplified": "埋伏",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-57cb-846c",
         "simplified": "埋葬",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-57ce-5821",
         "simplified": "城堡",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-57fa-56e0",
         "simplified": "基因",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5824-575d",
         "simplified": "堤坝",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5835-8f66",
         "simplified": "堵车",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5851-6599-888b",
         "simplified": "塑料袋",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-586b-7a7a",
         "simplified": "填空",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5907-4efd",
         "simplified": "备份",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5907-5fd8-5f55",
         "simplified": "备忘录",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-590f-4ee4-8425",
         "simplified": "夏令营",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5915-9633",
         "simplified": "夕阳",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5916-516c",
         "simplified": "外公",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5916-5411",
         "simplified": "外向",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-591a-5143-5316",
         "simplified": "多元化",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5927-4e0d-4e86",
         "simplified": "大不了",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5927-8c61",
         "simplified": "大象",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5929-4f26-4e4b-4e50",
         "simplified": "天伦之乐",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5929-8d4b",
         "simplified": "天赋",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-592a-6781-62f3",
         "simplified": "太极拳",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5938-5f20",
         "simplified": "夸张",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5954-6ce2",
         "simplified": "奔波",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5956-8d4f",
         "simplified": "奖赏",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5a5a-793c",
         "simplified": "婚礼",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5a92-4f53",
         "simplified": "媒体",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5b57-5e55",
         "simplified": "字幕",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5b63-519b",
         "simplified": "季军",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5b88-62a4",
         "simplified": "守护",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5b8c-7f8e",
         "simplified": "完美",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5b8f-89c2",
         "simplified": "宏观",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5b9e-9a8c",
         "simplified": "实验",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5ba0-7269",
         "simplified": "宠物",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5ba2-6237",
         "simplified": "客户",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5bb9-8c8c",
         "simplified": "容貌",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5bbd-5bb9",
         "simplified": "宽容",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5bc6-7801",
         "simplified": "密码",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5bfa-5e99",
         "simplified": "寺庙",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5bfb-89c5",
         "simplified": "寻觅",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5bfc-5411",
         "simplified": "导向",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5c06-5c31",
         "simplified": "将就",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5c0f-5403",
         "simplified": "小吃",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5c0f-6c14",
         "simplified": "小气",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5c1a-4e14",
         "simplified": "尚且",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5c34-5c2c",
         "simplified": "尴尬",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5c4f-5e55",
         "simplified": "屏幕",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5c55-793a",
         "simplified": "展示",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5cb3-6bcd",
         "simplified": "岳母",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5de2-7a74",
         "simplified": "巢穴",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5de7-514b-529b",
         "simplified": "巧克力",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5df4-4e0d-5f97",
         "simplified": "巴不得",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5e10-7bf7",
         "simplified": "帐篷",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5e73-5eb8",
         "simplified": "平庸",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5e94-8058",
         "simplified": "应聘",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5e9f-5bdd-5fd8-98df",
         "simplified": "废寝忘食",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5f00-5e55-5f0f",
         "simplified": "开幕式",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5f15-64ce",
         "simplified": "引擎",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5f39-6027",
         "simplified": "弹性",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5f39-94a2-7434",
         "simplified": "弹钢琴",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-5f53-52a1-4e4b-6025",
         "simplified": "当务之急",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5f69-7968",
         "simplified": "彩票",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5f69-8679",
         "simplified": "彩虹",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-5f97-5929-72ec-539a",
         "simplified": "得天独厚",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5fc3-6001",
         "simplified": "心态",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5fc3-7518-60c5-613f",
         "simplified": "心甘情愿",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5fcc-8bb3",
         "simplified": "忌讳",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-5fd7-613f-8005",
         "simplified": "志愿者",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6025-4e8e-6c42-6210",
         "simplified": "急于求成",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6025-529f-8fd1-5229",
         "simplified": "急功近利",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6025-8bca",
         "simplified": "急诊",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6027-611f",
         "simplified": "性感",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-603b-88c1",
         "simplified": "总裁",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-604d-7136-5927-609f",
         "simplified": "恍然大悟",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6050-5413",
         "simplified": "恐吓",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6069-6028",
         "simplified": "恩怨",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-606d-559c",
         "simplified": "恭喜",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-60ac-5d16-5ced-58c1",
         "simplified": "悬崖峭壁",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-60ac-6b8a",
         "simplified": "悬殊",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-60f9-7978",
         "simplified": "惹祸",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6148-5584",
         "simplified": "慈善",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6212",
         "simplified": "戒",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6212-5907",
         "simplified": "戒备",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6212-6307",
         "simplified": "戒指",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-622a-81f3",
         "simplified": "截至",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-624b-673a",
         "simplified": "手机",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-6253-5305",
         "simplified": "打包",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6253-5370",
         "simplified": "打印",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-6253-55b7-568f",
         "simplified": "打喷嚏",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6253-5b98-53f8",
         "simplified": "打官司",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6253-5de5",
         "simplified": "打工",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6253-6298",
         "simplified": "打折",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-6253-7535-8bdd",
         "simplified": "打电话",
-        "hskLevels": [
-          1
-        ]
+        "hskLevels": [1]
       },
       {
         "id": "vocab-6253-7bee-7403",
         "simplified": "打篮球",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-6258-8fd0",
         "simplified": "托运",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6267-7740",
         "simplified": "执着",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-627f-8bfa",
         "simplified": "承诺",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6295-8bc9",
         "simplified": "投诉",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-629a-6478",
         "simplified": "抚摸",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-62a5-8b66",
         "simplified": "报警",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-62bc-91d1",
         "simplified": "押金",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-62bd-70df",
         "simplified": "抽烟",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-62d0-5f2f",
         "simplified": "拐弯",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-62d0-6756",
         "simplified": "拐杖",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-62d4-82d7-52a9-957f",
         "simplified": "拔苗助长",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-62db-6807",
         "simplified": "招标",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-62dc-6258",
         "simplified": "拜托",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-62fc-97f3",
         "simplified": "拼音",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-62ff-624b",
         "simplified": "拿手",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6307-8d23",
         "simplified": "指责",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6309-6469",
         "simplified": "按摩",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6311-5254",
         "simplified": "挑剔",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-633d-56de",
         "simplified": "挽回",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6346-7ed1",
         "simplified": "捆绑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6392-653e",
         "simplified": "排放",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6392-7ec3",
         "simplified": "排练",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-63d2-5ea7",
         "simplified": "插座",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-642d-6863",
         "simplified": "搭档",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6444-6c0f-5ea6",
         "simplified": "摄氏度",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6447-6eda",
         "simplified": "摇滚",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6454-5012",
         "simplified": "摔倒",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-652f-6d41",
         "simplified": "支流",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6536-636e",
         "simplified": "收据",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-653e-6691-5047",
         "simplified": "放暑假",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-6551-62a4-8f66",
         "simplified": "救护车",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-656c-4e1a",
         "simplified": "敬业",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6570-7801",
         "simplified": "数码",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6587-5177",
         "simplified": "文具",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-659f-914c",
         "simplified": "斟酌",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65b9-4f4d",
         "simplified": "方位",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65b9-5706",
         "simplified": "方圆",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65b9-8a00",
         "simplified": "方言",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-52a8-4e8e-8877",
         "simplified": "无动于衷",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-5948",
         "simplified": "无奈",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-65e0-5fe7-65e0-8651",
         "simplified": "无忧无虑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-7406-53d6-95f9",
         "simplified": "无理取闹",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-7a77-65e0-5c3d",
         "simplified": "无穷无尽",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-7cbe-6253-91c7",
         "simplified": "无精打采",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-8d56",
         "simplified": "无赖",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e0-8f9c",
         "simplified": "无辜",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e5-5386",
         "simplified": "日历",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-65e5-65b0-6708-5f02",
         "simplified": "日新月异",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-65e9-4e0a",
         "simplified": "早上",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-65f6-5c1a",
         "simplified": "时尚",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-65f6-5dee",
         "simplified": "时差",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-660e-667a",
         "simplified": "明智",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6614-65e5",
         "simplified": "昔日",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-667a-5546",
         "simplified": "智商",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-66a7-6627",
         "simplified": "暧昧",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-66dd-5149",
         "simplified": "曝光",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6709-6761-4e0d-7d0a",
         "simplified": "有条不紊",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-672c-79d1",
         "simplified": "本科",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6743-8861",
         "simplified": "权衡",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-679c-6c41",
         "simplified": "果汁",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-67af-840e",
         "simplified": "枯萎",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6807-8bb0",
         "simplified": "标记",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-680f-76ee",
         "simplified": "栏目",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6837-5f0f",
         "simplified": "样式",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6846-67b6",
         "simplified": "框架",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6848-4f8b",
         "simplified": "案例",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6854-5b50",
         "simplified": "桔子",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-68cd-68d2",
         "simplified": "棍棒",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6a21-7279",
         "simplified": "模特",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6a59",
         "simplified": "橙",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6b23-6170",
         "simplified": "欣慰",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6b27-6d32",
         "simplified": "欧洲",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6b3e-5f0f",
         "simplified": "款式",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6b63-5b97",
         "simplified": "正宗",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6b63-8d1f",
         "simplified": "正负",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6b66-4fa0",
         "simplified": "武侠",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6b8b-7559",
         "simplified": "残留",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6bcd-8bed",
         "simplified": "母语",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6c14-8272",
         "simplified": "气色",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6c14-8d28",
         "simplified": "气质",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6c34-9f99-5934",
         "simplified": "水龙头",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6c38-6052",
         "simplified": "永恒",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6c90-6d74",
         "simplified": "沐浴",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6cae-4e27",
         "simplified": "沮丧",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6cb9-70b8",
         "simplified": "油炸",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6cb9-817b",
         "simplified": "油腻",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6cf0-6597",
         "simplified": "泰斗",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6d17-624b-95f4",
         "simplified": "洗手间",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-6d41-6cea",
         "simplified": "流泪",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6d4f-89c8",
         "simplified": "浏览",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6d77-9c9c",
         "simplified": "海鲜",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6d78-6ce1",
         "simplified": "浸泡",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6d82-62b9",
         "simplified": "涂抹",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6d88-9632",
         "simplified": "消防",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6dae-706b-9505",
         "simplified": "涮火锅",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6df1-60c5-539a-8c0a",
         "simplified": "深情厚谊",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6e05-6de1",
         "simplified": "清淡",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-6e05-6f88",
         "simplified": "清澈",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6e05-771f",
         "simplified": "清真",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6e2f-6e7e",
         "simplified": "港湾",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6e56-6cca",
         "simplified": "湖泊",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6ecb-6da6",
         "simplified": "滋润",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6ede-7559",
         "simplified": "滞留",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6f02-6d6e",
         "simplified": "漂浮",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6f14-7ece",
         "simplified": "演绎",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6f2b-753b",
         "simplified": "漫画",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6f47-6d12",
         "simplified": "潇洒",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6f5c-6c34",
         "simplified": "潜水",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6f5c-79fb-9ed8-5316",
         "simplified": "潜移默化",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-6fd2-4e34",
         "simplified": "濒临",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-706b-8f66-7ad9",
         "simplified": "火车站",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-7075-611f",
         "simplified": "灵感",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7089-7076",
         "simplified": "炉灶",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-708a-70df",
         "simplified": "炊烟",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-70ab-8000",
         "simplified": "炫耀",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-70df-82b1-7206-7af9",
         "simplified": "烟花爆竹",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-70e4-9e2d",
         "simplified": "烤鸭",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-70ed-95e8",
         "simplified": "热门",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7164-70ad",
         "simplified": "煤炭",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-718f-9676",
         "simplified": "熏陶",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-71a8",
         "simplified": "熨",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-71ac-591c",
         "simplified": "熬夜",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-722c-5c71",
         "simplified": "爬山",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-7231-4e0d-91ca-624b",
         "simplified": "爱不释手",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7231-5fc3",
         "simplified": "爱心",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7247-65ad",
         "simplified": "片断",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7248-672c",
         "simplified": "版本",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-725b-4ed4-88e4",
         "simplified": "牛仔裤",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7269-4e1a",
         "simplified": "物业",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7269-7f8e-4ef7-5ec9",
         "simplified": "物美价廉",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7279-957f",
         "simplified": "特长",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-72fc-541e-864e-54bd",
         "simplified": "狼吞虎咽",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-738b-5b50",
         "simplified": "王子",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-73a9",
         "simplified": "玩",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-73cd-7a00",
         "simplified": "珍稀",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7406-667a",
         "simplified": "理智",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-751f-8096",
         "simplified": "生肖",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-751f-9508",
         "simplified": "生锈",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7535-5b50-90ae-4ef6",
         "simplified": "电子邮件",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-758f-5ffd",
         "simplified": "疏忽",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-758f-8fdc",
         "simplified": "疏远",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-75bc-7231",
         "simplified": "疼爱",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-764c-75c7",
         "simplified": "癌症",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-767b-5f55",
         "simplified": "登录",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-767b-673a-724c",
         "simplified": "登机牌",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-767e-5206-4e4b",
         "simplified": "百分之",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-76ae-978b",
         "simplified": "皮鞋",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-76d2-5b50",
         "simplified": "盒子",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-76d6-7ae0",
         "simplified": "盖章",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-76f8-5904",
         "simplified": "相处",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-76f8-8f85-76f8-6210",
         "simplified": "相辅相成",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-771f-631a",
         "simplified": "真挚",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7740-706b",
         "simplified": "着火",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7740-8ff7",
         "simplified": "着迷",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7784-51c6",
         "simplified": "瞄准",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-77ac-95f4",
         "simplified": "瞬间",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-77e5-8db3-5e38-4e50",
         "simplified": "知足常乐",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-77ed-4fe1",
         "simplified": "短信",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-77ff-6cc9-6c34",
         "simplified": "矿泉水",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-780d-4f10",
         "simplified": "砍伐",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7834-4f8b",
         "simplified": "破例",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7855-58eb",
         "simplified": "硕士",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-78e8-5408",
         "simplified": "磨合",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-793a-610f",
         "simplified": "示意",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-793c-5c1a-5f80-6765",
         "simplified": "礼尚往来",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-793e-533a",
         "simplified": "社区",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-79df-8d41",
         "simplified": "租赁",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-79f0-5fc3-5982-610f",
         "simplified": "称心如意",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7a3b-8c37",
         "simplified": "稻谷",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7a7a-524d-7edd-540e",
         "simplified": "空前绝后",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7a7a-95f2",
         "simplified": "空闲",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7a7f-8d8a",
         "simplified": "穿越",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7a8d-95e8",
         "simplified": "窍门",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7acb-8db3",
         "simplified": "立足",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7ae5-8bdd",
         "simplified": "童话",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7aed-5c3d-5168-529b",
         "simplified": "竭尽全力",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7aef-5348-8282",
         "simplified": "端午节",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7b14-8bb0-672c",
         "simplified": "笔记本",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-7b2c-4e00",
         "simplified": "第一",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-7b54-8fa9",
         "simplified": "答辩",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7b5b-9009",
         "simplified": "筛选",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7b7e",
         "simplified": "签",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7b80-5386",
         "simplified": "简历",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7ba1-7406",
         "simplified": "管理",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-7c89-8272",
         "simplified": "粉色",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7c97-7cd9",
         "simplified": "粗糙",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7c98-8d34",
         "simplified": "粘贴",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7cfb-9886-5e26",
         "simplified": "系领带",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7d20-98df",
         "simplified": "素食",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7d22-53d6",
         "simplified": "索取",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7eaa-5f55",
         "simplified": "纪录",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7ecf-7eac",
         "simplified": "经纬",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7ed3-8d26",
         "simplified": "结账",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7edc-7ece-4e0d-7edd",
         "simplified": "络绎不绝",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7edf-7b79-517c-987e",
         "simplified": "统筹兼顾",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7f13-89e3",
         "simplified": "缓解",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7f16-7ec7",
         "simplified": "编织",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7f20-7ed5",
         "simplified": "缠绕",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-7f51-7ad9",
         "simplified": "网站",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-7f51-7edc",
         "simplified": "网络",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-7f8a-8089",
         "simplified": "羊肉",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-7fbd-7ed2-670d",
         "simplified": "羽绒服",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8033-73af",
         "simplified": "耳环",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-804b-54d1",
         "simplified": "聋哑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-804c-4f4d",
         "simplified": "职位",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8086-65e0-5fcc-60ee",
         "simplified": "肆无忌惮",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-80c3-53e3",
         "simplified": "胃口",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-80c6-5c0f-9b3c",
         "simplified": "胆小鬼",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-80dc-8d1f",
         "simplified": "胜负",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-80e1-987b",
         "simplified": "胡须",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-80f6-6c34",
         "simplified": "胶水",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8179-6cfb",
         "simplified": "腹泻",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-81c2",
         "simplified": "臂",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-81f4-529b",
         "simplified": "致力",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-81f4-8f9e",
         "simplified": "致辞",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8214",
         "simplified": "舔",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8230-8247",
         "simplified": "舰艇",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-826f-5fc3",
         "simplified": "良心",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8282-5236",
         "simplified": "节制",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-82b1-74e3",
         "simplified": "花瓣",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-82b1-857e",
         "simplified": "花蕾",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-82d7-6761",
         "simplified": "苗条",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-82e6-5c3d-7518-6765",
         "simplified": "苦尽甘来",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-82e6-6da9",
         "simplified": "苦涩",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8364",
         "simplified": "荤",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8463-4e8b-957f",
         "simplified": "董事长",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-851a-84dd",
         "simplified": "蔚蓝",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-85aa-6c34",
         "simplified": "薪水",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-85d0-89c6",
         "simplified": "藐视",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8650-5f85",
         "simplified": "虐待",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-865a-8363",
         "simplified": "虚荣",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-884c-674e-7bb1",
         "simplified": "行李箱",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-8868-51b3",
         "simplified": "表决",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8868-6001",
         "simplified": "表态",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8868-683c",
         "simplified": "表格",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-886c-6258",
         "simplified": "衬托",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-88c1-5458",
         "simplified": "裁员",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-88c5-4fee",
         "simplified": "装修",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-89c1-4e49-52c7-4e3a",
         "simplified": "见义勇为",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-89c1-591a-8bc6-5e7f",
         "simplified": "见多识广",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-89c1-95fb",
         "simplified": "见闻",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-89c6-9891",
         "simplified": "视频",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-89d2-8272",
         "simplified": "角色",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-89e3-4f53",
         "simplified": "解体",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8ba8-597d",
         "simplified": "讨好",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8bba-575b",
         "simplified": "论坛",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8bcd-8bed",
         "simplified": "词语",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-8bd5-56fe",
         "simplified": "试图",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8bdd-7b52",
         "simplified": "话筒",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8bf4-8bdd",
         "simplified": "说话",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-8c03-6599",
         "simplified": "调料",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8c61-68cb",
         "simplified": "象棋",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8c6a-8fc8",
         "simplified": "豪迈",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8d26-6237",
         "simplified": "账户",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8d2a-5a6a",
         "simplified": "贪婪",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8d2d-7269",
         "simplified": "购物",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-8d44-6df1",
         "simplified": "资深",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8d85-5e02",
         "simplified": "超市",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-8e22-8db3-7403",
         "simplified": "踢足球",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-8f66-5e93",
         "simplified": "车库",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8f6e-80ce",
         "simplified": "轮胎",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fa8-8ba4",
         "simplified": "辨认",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fc1-5f99",
         "simplified": "迁徙",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fc4-4eca-4e3a-6b62",
         "simplified": "迄今为止",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fc7-5956",
         "simplified": "过奖",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fc7-654f",
         "simplified": "过敏",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8fc7-671f",
         "simplified": "过期",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8fc7-763e",
         "simplified": "过瘾",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fde-9501",
         "simplified": "连锁",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8fdf-65e9",
         "simplified": "迟早",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-8fdf-949d",
         "simplified": "迟钝",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8feb-4e0d-53ca-5f85",
         "simplified": "迫不及待",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8ff7-4eba",
         "simplified": "迷人",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-8ff7-8def",
         "simplified": "迷路",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-8ff8-53d1",
         "simplified": "迸发",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9006-884c",
         "simplified": "逆行",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-900f-9732",
         "simplified": "透露",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-901a-7f09",
         "simplified": "通缉",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9020-6210",
         "simplified": "造成",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-904d-5e03",
         "simplified": "遍布",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-904f-5236",
         "simplified": "遏制",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-906e-6321",
         "simplified": "遮挡",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9119-89c6",
         "simplified": "鄙视",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9152-5427",
         "simplified": "酒吧",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-91cc-7a0b-7891",
         "simplified": "里程碑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-94a2-94c1",
         "simplified": "钢铁",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9526-4e0a-6dfb-82b1",
         "simplified": "锦上添花",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9532-800c-4e0d-820d",
         "simplified": "锲而不舍",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9576-5d4c",
         "simplified": "镶嵌",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-957f-57ce",
         "simplified": "长城",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-957f-6c5f",
         "simplified": "长江",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-957f-8f88",
         "simplified": "长辈",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-95f4-8c0d",
         "simplified": "间谍",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9633-53f0",
         "simplified": "阳台",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9644-4ef6",
         "simplified": "附件",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9661-5ced",
         "simplified": "陡峭",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9664-4e86",
         "simplified": "除了",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-9676-9189",
         "simplified": "陶醉",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9677-9631",
         "simplified": "陷阱",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-968f-8eab",
         "simplified": "随身",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9690-60a3",
         "simplified": "隐患",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9690-79c1",
         "simplified": "隐私",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-96be-80fd-53ef-8d35",
         "simplified": "难能可贵",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-96cc-96c4",
         "simplified": "雌雄",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-96ea-4e0a-52a0-971c",
         "simplified": "雪上加霜",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-96f6-98df",
         "simplified": "零食",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9707-64bc",
         "simplified": "震撼",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9752-5c11-5e74",
         "simplified": "青少年",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9760-62e2",
         "simplified": "靠拢",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9762-6761",
         "simplified": "面条",
-        "hskLevels": [
-          2
-        ]
+        "hskLevels": [2]
       },
       {
         "id": "vocab-9884-5146",
         "simplified": "预兆",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9886-4e8b-9986",
         "simplified": "领事馆",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9886-609f",
         "simplified": "领悟",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9888-690e",
         "simplified": "颈椎",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9891-9053",
         "simplified": "频道",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-98ce-571f-4eba-60c5",
         "simplified": "风土人情",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-98de-79bd-8d70-517d",
         "simplified": "飞禽走兽",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9971-7ecf-6ca7-6851",
         "simplified": "饱经沧桑",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9976-6055",
         "simplified": "饶恕",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9996-9970",
         "simplified": "首饰",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9a9a-6270",
         "simplified": "骚扰",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9ad8-901f-516c-8def",
         "simplified": "高速公路",
-        "hskLevels": [
-          4
-        ]
+        "hskLevels": [4]
       },
       {
         "id": "vocab-9b44-529b",
         "simplified": "魄力",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9b45-529b",
         "simplified": "魅力",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9e26-96c0-65e0-58f0",
         "simplified": "鸦雀无声",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       },
       {
         "id": "vocab-9ea6-514b-98ce",
         "simplified": "麦克风",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9ec4-6cb3",
         "simplified": "黄河",
-        "hskLevels": [
-          3
-        ]
+        "hskLevels": [3]
       },
       {
         "id": "vocab-9f20-6807",
         "simplified": "鼠标",
-        "hskLevels": [
-          5
-        ]
+        "hskLevels": [5]
       },
       {
         "id": "vocab-9f50-5fc3-534f-529b",
         "simplified": "齐心协力",
-        "hskLevels": [
-          6
-        ]
+        "hskLevels": [6]
       }
     ]
   },
+  "localCoverage": {
+    "vocabularyTotal": 4995,
+    "vocabularyMatched": 4419,
+    "vocabularyMissing": 576,
+    "vocabularyCoveragePercent": 88.47,
+    "multiReadingEntries": 218,
+    "entriesWithoutReadings": 5,
+    "readingsTotal": 5251,
+    "readingsWithAllSyllables": 4939,
+    "syllablesTotal": 9950,
+    "syllablesMatched": 9633,
+    "syllablesMissing": 317,
+    "missingSyllableKeys": [
+      "bia1",
+      "bo5",
+      "bu5",
+      "chang5",
+      "chou5",
+      "chu5",
+      "cun5",
+      "da5",
+      "dai5",
+      "dang5",
+      "dao5",
+      "de5",
+      "di5",
+      "du5",
+      "duo5",
+      "en5",
+      "fa5",
+      "fan5",
+      "fang5",
+      "fen5",
+      "feng5",
+      "fu5",
+      "ge5",
+      "gu5",
+      "guo5",
+      "hai5",
+      "he5",
+      "hng5",
+      "hou5",
+      "hu5",
+      "hua5",
+      "huan5",
+      "huo5",
+      "ji5",
+      "jia5",
+      "jie5",
+      "jing5",
+      "jiu5",
+      "ju5",
+      "kuai5",
+      "la5",
+      "lai5",
+      "lao5",
+      "le5",
+      "li5",
+      "liang5",
+      "ling5",
+      "ma5",
+      "mao5",
+      "me5",
+      "mei5",
+      "men5",
+      "mian5",
+      "ming5",
+      "mo5",
+      "na5",
+      "nai5",
+      "nan5",
+      "nao5",
+      "ne5",
+      "niang5",
+      "niu5",
+      "o5",
+      "peng5",
+      "po5",
+      "qi5",
+      "qian5",
+      "qing5",
+      "qu5",
+      "r5",
+      "ren5",
+      "shang5",
+      "shao5",
+      "shen5",
+      "sheng5",
+      "shi5",
+      "shou5",
+      "shu5",
+      "si5",
+      "sou5",
+      "su5",
+      "suo5",
+      "tai5",
+      "tao5",
+      "teng5",
+      "ti5",
+      "tiao5",
+      "ting5",
+      "tong5",
+      "tou5",
+      "tu5",
+      "wa5",
+      "wang5",
+      "wu5",
+      "xi5",
+      "xie5",
+      "xin5",
+      "xing5",
+      "xun5",
+      "ya5",
+      "yang5",
+      "ye5",
+      "yi5",
+      "yin5",
+      "ying5",
+      "you5",
+      "zhe5",
+      "zhi5",
+      "zi5",
+      "zui5"
+    ],
+    "hskLevels": {
+      "1": {
+        "total": 150,
+        "matched": 143,
+        "missing": 7
+      },
+      "2": {
+        "total": 151,
+        "matched": 140,
+        "missing": 11
+      },
+      "3": {
+        "total": 300,
+        "matched": 286,
+        "missing": 14
+      },
+      "4": {
+        "total": 600,
+        "matched": 559,
+        "missing": 41
+      },
+      "5": {
+        "total": 1300,
+        "matched": 1183,
+        "missing": 117
+      },
+      "6": {
+        "total": 2500,
+        "matched": 2114,
+        "missing": 386
+      }
+    },
+    "missingWords": []
+  },
+  "vocabularySync": null,
   "failedFiles": []
 }
