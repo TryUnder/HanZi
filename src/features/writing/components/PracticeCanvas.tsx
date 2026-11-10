@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
 import type {
@@ -124,13 +123,7 @@ export function PracticeCanvas({
       writer.cancelQuiz();
       container.replaceChildren();
     };
-  }, [
-    character,
-    onCorrectStroke,
-    onMistake,
-    onComplete,
-    onCompleteDetails,
-  ]);
+  }, [character, onCorrectStroke, onMistake, onComplete, onCompleteDetails]);
 
   return (
     <section className={styles.canvasSection}>

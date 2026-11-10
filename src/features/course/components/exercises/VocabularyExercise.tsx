@@ -7,12 +7,16 @@ import {
   Trophy,
 } from "lucide-react";
 import { learningRecordService } from "../../../../app/services/learningRecordService";
+import type { LearningRecord } from "../../../learning/domain/types";
 import type { ResolvedLessonItem } from "../../application/services/lessonContentService";
 import { generateVocabularyExercise } from "../../application/services/vocabularyExerciseService";
 import styles from "./VocabularyExercise.module.css";
 
 interface VocabularyExerciseProps {
   readonly items: readonly ResolvedLessonItem[];
+  readonly courseId: string;
+  readonly lessonId: string;
+  readonly activityId: string;
 }
 
 interface AnswerResult {
@@ -23,27 +27,107 @@ interface AnswerResult {
 
 type ExercisePhase = "ready" | "active" | "completed";
 
-export function VocabularyExercise({ items }: VocabularyExerciseProps) {
+type VocabularyItem = Extract<ResolvedLessonItem, { kind: "vocabulary" }>;
+
+function createSeededRandom(seed: number): () => number {
+  let state = seed >>> 0;
+
+  return () => {
+    state += 0x6d2b79f5;
+
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function getMasteredWordIds(
+  records: readonly LearningRecord[],
+  courseId: string,
+  lessonId: string,
+  activityId: string,
+): Set<string> {
+  const masteredIds = new Set<string>();
+
+  for (const record of records) {
+    if (
+      record.recordType !== "attempt" ||
+      record.activity !== "recognition" ||
+      record.item.kind !== "vocabulary" ||
+      record.context?.courseId !== courseId ||
+      record.context?.lessonId !== lessonId ||
+      record.context?.activityId !== activityId
+    ) {
+      continue;
+    }
+
+    if (record.details.isCorrect) {
+      masteredIds.add(record.item.id);
+    }
+  }
+
+  return masteredIds;
+}
+
+export function VocabularyExercise({
+  items,
+  courseId,
+  lessonId,
+  activityId,
+}: VocabularyExerciseProps) {
+  const vocabularyItems = useMemo(
+    () =>
+      items.filter(
+        (item): item is VocabularyItem => item.kind === "vocabulary",
+      ),
+    [items],
+  );
+
   const [phase, setPhase] = useState<ExercisePhase>("ready");
+  const [roundItems, setRoundItems] = useState<readonly VocabularyItem[]>([]);
   const [runId, setRunId] = useState(0);
+  const [roundNumber, setRoundNumber] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswerResult[]>([]);
+
+  const [roundAnswers, setRoundAnswers] = useState<AnswerResult[]>([]);
+
+  const [masteredWordIds, setMasteredWordIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  const [roundMasteredWordIds, setRoundMasteredWordIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  const [totalAnswered, setTotalAnswered] = useState(0);
+  const [totalMistakes, setTotalMistakes] = useState(0);
+
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveErrors, setSaveErrors] = useState(0);
+  const [historyError, setHistoryError] = useState<string | null>(null);
 
   const questionStartedAt = useRef(0);
+  const sessionIdRef = useRef<string | null>(null);
+  const isAnswerSavingRef = useRef(false);
 
   const questions = useMemo(
-    () => generateVocabularyExercise(items),
-    // runId intentionally regenerates questions when the user restarts.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [items, runId],
+    () =>
+      generateVocabularyExercise(roundItems, {
+        distractorItems: vocabularyItems,
+        random: createSeededRandom(runId),
+      }),
+    [roundItems, vocabularyItems, runId],
   );
 
   const currentQuestion = questions[currentIndex];
-  const currentAnswer = answers[currentIndex];
+  const currentAnswer = roundAnswers[currentIndex];
 
-  const correctAnswers = answers.filter((answer) => answer.isCorrect).length;
+  const masteredCount = vocabularyItems.filter((item) =>
+    masteredWordIds.has(item.reference.id),
+  ).length;
 
   useEffect(() => {
     if (phase === "active") {
@@ -51,17 +135,79 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
     }
   }, [currentIndex, phase, runId]);
 
-  function startExercise() {
-    setCurrentIndex(0);
-    setAnswers([]);
-    setSaveErrors(0);
-    setPhase("active");
-  }
-
-  async function selectAnswer(choiceId: string, answeredAt: number) {
-    if (!currentQuestion || currentAnswer || isSaving) {
+  /**
+   * Starts the exercise.
+   *
+   * Historical recognition records are loaded first.
+   * Previously mastered words are skipped unless the user
+   * explicitly chooses to practise the complete vocabulary again.
+   */
+  async function startExercise(practiseAll = false) {
+    if (isLoadingHistory) {
       return;
     }
+
+    setIsLoadingHistory(true);
+    setHistoryError(null);
+
+    try {
+      const records = await learningRecordService.getAllRecords();
+
+      const previouslyMastered = getMasteredWordIds(
+        records,
+        courseId,
+        lessonId,
+        activityId,
+      );
+
+      const initialQueue = practiseAll
+        ? vocabularyItems
+        : vocabularyItems.filter(
+            (item) => !previouslyMastered.has(item.reference.id),
+          );
+
+      setMasteredWordIds(previouslyMastered);
+      setRoundMasteredWordIds(
+        practiseAll ? new Set() : new Set(previouslyMastered),
+      );
+
+      setRoundItems(initialQueue);
+      setRoundAnswers([]);
+      setCurrentIndex(0);
+      setRoundNumber(1);
+      setTotalAnswered(0);
+      setTotalMistakes(0);
+      setSaveErrors(0);
+
+      sessionIdRef.current = crypto.randomUUID();
+
+      setRunId((previous) => previous + 1);
+      setPhase(initialQueue.length === 0 ? "completed" : "active");
+    } catch {
+      setHistoryError(
+        "Learning history could not be loaded. Please try again.",
+      );
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }
+
+  /**
+   * Saves one answer as an independent recognition attempt.
+   */
+  async function selectAnswer(choiceId: string, answeredAt: number) {
+    const sessionId = sessionIdRef.current;
+
+    if (
+      !currentQuestion ||
+      currentAnswer ||
+      isAnswerSavingRef.current ||
+      !sessionId
+    ) {
+      return;
+    }
+
+    isAnswerSavingRef.current = true;
 
     const isCorrect = choiceId === currentQuestion.correctChoiceId;
 
@@ -76,7 +222,25 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
       isCorrect,
     };
 
-    setAnswers((previous) => [...previous, answer]);
+    setRoundAnswers((previous) => [...previous, answer]);
+    setTotalAnswered((previous) => previous + 1);
+
+    if (isCorrect) {
+      setMasteredWordIds((previous) => {
+        const next = new Set(previous);
+        next.add(currentQuestion.item.id);
+        return next;
+      });
+
+      setRoundMasteredWordIds((previous) => {
+        const next = new Set(previous);
+        next.add(currentQuestion.item.id);
+        return next;
+      });
+    } else {
+      setTotalMistakes((previous) => previous + 1);
+    }
+
     setIsSaving(true);
 
     try {
@@ -84,6 +248,12 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
         recordType: "attempt",
         activity: "recognition",
         item: currentQuestion.item,
+        context: {
+          courseId,
+          lessonId,
+          activityId,
+          sessionId,
+        },
         details: {
           isCorrect,
           responseTimeMs,
@@ -92,41 +262,50 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
     } catch {
       setSaveErrors((previous) => previous + 1);
     } finally {
+      isAnswerSavingRef.current = false;
       setIsSaving(false);
     }
   }
 
+  /**
+   * Finishes the current round or moves to the next one.
+   *
+   * Only words not correctly recognized in this exercise
+   * are included in the next round.
+   */
   function goToNextQuestion() {
     if (!currentQuestion || !currentAnswer || isSaving) {
       return;
     }
 
-    if (currentIndex >= questions.length - 1) {
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex((previous) => previous + 1);
+      return;
+    }
+
+    const failedItems = roundItems.filter(
+      (item) => !roundMasteredWordIds.has(item.reference.id),
+    );
+
+    if (failedItems.length === 0) {
       setPhase("completed");
       return;
     }
 
-    setCurrentIndex((previous) => previous + 1);
-  }
-
-  function restartExercise() {
-    setRunId((previous) => previous + 1);
+    setRoundItems(failedItems);
+    setRoundAnswers([]);
     setCurrentIndex(0);
-    setAnswers([]);
-    setSaveErrors(0);
-    setPhase("active");
+    setRoundNumber((previous) => previous + 1);
+    setRunId((previous) => previous + 1);
   }
 
-  if (questions.length === 0) {
+  if (vocabularyItems.length === 0) {
     return (
       <section className={styles.section}>
         <div className={styles.emptyState}>
           <CircleX size={24} />
           <h2>Vocabulary exercise unavailable</h2>
-          <p>
-            There are not enough vocabulary entries with distinct meanings to
-            create this exercise.
-          </p>
+          <p>This lesson does not contain vocabulary entries to practise.</p>
         </div>
       </section>
     );
@@ -143,17 +322,29 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
           <div className={styles.introContent}>
             <span className={styles.eyebrow}>PRACTICE</span>
             <h2>Vocabulary recognition</h2>
+
             <p>
               Choose the correct Polish meaning for each Chinese word.
-              You will answer {questions.length} questions.
+              Incorrectly answered words return in the next round until every
+              word is recognized correctly.
             </p>
           </div>
 
-          <button className={styles.primaryButton} onClick={startExercise}>
-            Start exercise
-            <ArrowRight size={16} />
+          <button
+            className={styles.primaryButton}
+            onClick={() => void startExercise()}
+            disabled={isLoadingHistory}
+          >
+            {isLoadingHistory ? "Loading history..." : "Start exercise"}
+            {!isLoadingHistory && <ArrowRight size={16} />}
           </button>
         </div>
+
+        {historyError && (
+          <p className={styles.saveWarning} role="alert">
+            {historyError}
+          </p>
+        )}
       </section>
     );
   }
@@ -167,44 +358,36 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
           </div>
 
           <span className={styles.eyebrow}>EXERCISE COMPLETED</span>
-          <h2>Your result</h2>
+          <h2>All words recognized!</h2>
 
           <div className={styles.score}>
-            <strong>{correctAnswers}</strong>
-            <span>/ {questions.length}</span>
+            <strong>{masteredCount}</strong>
+            <span>/ {vocabularyItems.length}</span>
           </div>
 
           <p>
-            {correctAnswers === questions.length
-              ? "Perfect! You answered every question correctly."
-              : "Good work! Keep practising to improve your vocabulary."}
+            Every vocabulary item has been recognized correctly at least once.
+            You can now continue with the next learning activity.
           </p>
 
-          {answers.some((answer) => !answer.isCorrect) && (
-            <div className={styles.mistakes}>
-              <h3>Words to practise</h3>
+          <div className={styles.mistakes}>
+            <h3>Exercise summary</h3>
 
-              {answers
-                .filter((answer) => !answer.isCorrect)
-                .map((answer) => {
-                  const question = questions.find(
-                    (item) => item.id === answer.questionId,
-                  );
-
-                  const correctChoice = question?.choices.find(
-                    (choice) => choice.id === question.correctChoiceId,
-                  );
-
-                  return (
-                    <div className={styles.mistake} key={answer.questionId}>
-                      <strong>{question?.character}</strong>
-                      <span>{question?.pinyin}</span>
-                      <span>{correctChoice?.text}</span>
-                    </div>
-                  );
-                })}
+            <div className={styles.mistake}>
+              <span>Answers given</span>
+              <strong>{totalAnswered}</strong>
             </div>
-          )}
+
+            <div className={styles.mistake}>
+              <span>Incorrect answers</span>
+              <strong>{totalMistakes}</strong>
+            </div>
+
+            <div className={styles.mistake}>
+              <span>Rounds completed</span>
+              <strong>{roundNumber}</strong>
+            </div>
+          </div>
 
           {saveErrors > 0 && (
             <p className={styles.saveWarning} role="status">
@@ -213,17 +396,41 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
             </p>
           )}
 
-          <button className={styles.primaryButton} onClick={restartExercise}>
+          <button
+            className={styles.primaryButton}
+            onClick={() => void startExercise(true)}
+            disabled={isLoadingHistory}
+          >
             <RotateCcw size={16} />
-            Try again
+            {isLoadingHistory
+              ? "Loading history..."
+              : "Practise all words again"}
           </button>
+
+          {historyError && (
+            <p className={styles.saveWarning} role="alert">
+              {historyError}
+            </p>
+          )}
         </div>
       </section>
     );
   }
 
-  if (!currentQuestion) {
-    return null;
+  if (questions.length !== roundItems.length || !currentQuestion) {
+    return (
+      <section className={styles.section}>
+        <div className={styles.emptyState}>
+          <CircleX size={24} />
+          <h2>Exercise could not continue</h2>
+          <p>
+            Some vocabulary items do not have enough distinct meanings to
+            generate answer choices. Check the vocabulary entries for this
+            lesson before continuing.
+          </p>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -231,7 +438,9 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
       <div className={styles.exercise}>
         <div className={styles.exerciseHeader}>
           <div>
-            <span className={styles.eyebrow}>VOCABULARY PRACTICE</span>
+            <span className={styles.eyebrow}>
+              VOCABULARY PRACTICE · ROUND {roundNumber}
+            </span>
             <h2>Choose the correct meaning</h2>
           </div>
 
@@ -261,14 +470,11 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
 
         <div className={styles.choices}>
           {currentQuestion.choices.map((choice, index) => {
-            const isSelected =
-              currentAnswer?.selectedChoiceId === choice.id;
+            const isSelected = currentAnswer?.selectedChoiceId === choice.id;
             const isCorrect = choice.id === currentQuestion.correctChoiceId;
 
             const isIncorrectSelection =
-              Boolean(currentAnswer) &&
-              isSelected &&
-              !currentAnswer?.isCorrect;
+              Boolean(currentAnswer) && isSelected && !currentAnswer?.isCorrect;
 
             let choiceClass = styles.choice;
 
@@ -283,18 +489,15 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
                 className={choiceClass}
                 key={choice.id}
                 disabled={Boolean(currentAnswer) || isSaving}
-                onClick={(event) =>
-                  void selectAnswer(choice.id, event.timeStamp)
-                }
+                onClick={() => void selectAnswer(choice.id, performance.now())}
               >
                 <span className={styles.choiceLetter}>
                   {String.fromCharCode(65 + index)}
                 </span>
+
                 <span>{choice.text}</span>
 
-                {currentAnswer && isCorrect && (
-                  <CheckCircle2 size={18} />
-                )}
+                {currentAnswer && isCorrect && <CheckCircle2 size={18} />}
 
                 {isIncorrectSelection && <CircleX size={18} />}
               </button>
@@ -314,15 +517,15 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
             <strong>
               {currentAnswer.isCorrect ? "Correct!" : "Not quite!"}
             </strong>
+
             <span>
               {currentAnswer.isCorrect
-                ? "Well done."
+                ? "Well done. This word will not return in the next round."
                 : `The correct answer is ${
                     currentQuestion.choices.find(
-                      (choice) =>
-                        choice.id === currentQuestion.correctChoiceId,
+                      (choice) => choice.id === currentQuestion.correctChoiceId,
                     )?.text ?? ""
-                  }.`}
+                  }. You will practise this word again.`}
             </span>
           </div>
         )}
@@ -342,8 +545,9 @@ export function VocabularyExercise({ items }: VocabularyExerciseProps) {
             {isSaving
               ? "Saving..."
               : currentIndex === questions.length - 1
-                ? "See results"
+                ? "Finish round"
                 : "Next question"}
+
             {!isSaving && <ArrowRight size={16} />}
           </button>
         )}

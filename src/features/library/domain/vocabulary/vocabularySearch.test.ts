@@ -12,6 +12,7 @@ const vocabulary: VocabularyDisplay = {
   hskLevels: [1],
   readings: [
     {
+      sourcePinyin: "ni3",
       pinyin: "nǐ",
       definitions: ["you", "your"],
       traditionalForms: ["你"],

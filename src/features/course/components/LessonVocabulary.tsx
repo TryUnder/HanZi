@@ -1,5 +1,6 @@
 import { BookOpen, CheckCircle2 } from "lucide-react";
 import { PronunciationPlayer } from "../../speaking/components/PronunciationPlayer";
+import { VocabularyStrokeOrder } from "./VocabularyStrokeOrder";
 import type { ResolvedLessonItem } from "../application/services/lessonContentService";
 import styles from "./LessonVocabulary.module.css";
 
@@ -87,12 +88,15 @@ export function LessonVocabulary({ items }: LessonVocabularyProps) {
                   {data.hskLevels.map((level) => (
                     <span key={level}>HSK {level}</span>
                   ))}
+
                   {data.traditionalVariants.length > 0 && (
                     <span>
                       Traditional: {data.traditionalVariants.join(", ")}
                     </span>
                   )}
                 </div>
+
+                <VocabularyStrokeOrder word={data.simplified} />
               </div>
 
               <div className={styles.audio}>

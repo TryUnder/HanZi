@@ -5,7 +5,18 @@ import type {
 } from "../../types/vocabulary";
 
 export interface VocabularyDisplayReading {
+  /**
+   * Original numbered Pinyin from the vocabulary dataset.
+   * Example: "ni3 hao3".
+   */
+  readonly sourcePinyin: string;
+
+  /**
+   * User-facing Pinyin with tone marks.
+   * Example: "nǐ hǎo".
+   */
   readonly pinyin: string;
+
   readonly definitions: readonly string[];
   readonly traditionalForms: readonly string[];
 }
@@ -90,7 +101,7 @@ function formatPinyinSyllable(syllable: string): string {
     return syllable;
   }
 
-  const normalized = normalizePinyinVowels(initial);
+  const normalized = normalizePinyinVowels(initial.toLowerCase());
   const tone = Number(toneValue);
 
   if (tone === 5) {
@@ -138,6 +149,7 @@ function getReadingDisplay(
   reading: VocabularyReading,
 ): VocabularyDisplayReading {
   return {
+    sourcePinyin: reading.pinyin,
     pinyin: formatPinyin(reading.pinyin),
     definitions: [
       ...new Set(reading.entries.flatMap((entry) => entry.definitions)),

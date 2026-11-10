@@ -5,9 +5,9 @@ import type {
 } from "../../domain/types/vocabularyExercise";
 
 interface VocabularyExerciseOptions {
-  readonly questionCount?: number;
   readonly choiceCount?: number;
   readonly random?: () => number;
+  readonly distractorItems?: readonly ResolvedLessonItem[];
 }
 
 interface VocabularyCandidate {
@@ -17,7 +17,6 @@ interface VocabularyCandidate {
   readonly pinyin: string;
 }
 
-const DEFAULT_QUESTION_COUNT = 5;
 const DEFAULT_CHOICE_COUNT = 4;
 
 function shuffle<T>(items: readonly T[], random: () => number): T[] {
@@ -25,7 +24,6 @@ function shuffle<T>(items: readonly T[], random: () => number): T[] {
 
   for (let index = result.length - 1; index > 0; index -= 1) {
     const randomIndex = Math.floor(random() * (index + 1));
-
     const current = result[index];
     const randomItem = result[randomIndex];
 
@@ -65,6 +63,26 @@ function getCandidate(
   };
 }
 
+function getUniqueCandidates(
+  items: readonly ResolvedLessonItem[],
+): VocabularyCandidate[] {
+  const candidates = items
+    .filter(
+      (item): item is Extract<ResolvedLessonItem, { kind: "vocabulary" }> =>
+        item.kind === "vocabulary",
+    )
+    .map(getCandidate)
+    .filter(
+      (candidate): candidate is VocabularyCandidate => candidate !== null,
+    );
+
+  return [
+    ...new Map(
+      candidates.map((candidate) => [candidate.id, candidate]),
+    ).values(),
+  ];
+}
+
 function createChoices(
   correct: VocabularyCandidate,
   candidates: readonly VocabularyCandidate[],
@@ -73,18 +91,15 @@ function createChoices(
 ): VocabularyExerciseChoice[] {
   const correctMeaning = normalizeMeaning(correct.meaning);
 
-  const distractors = candidates.filter(
-    (candidate) =>
-      candidate.id !== correct.id &&
-      normalizeMeaning(candidate.meaning) !== correctMeaning,
-  );
-
   const uniqueDistractors = [
     ...new Map(
-      distractors.map((candidate) => [
-        normalizeMeaning(candidate.meaning),
-        candidate,
-      ]),
+      candidates
+        .filter(
+          (candidate) =>
+            candidate.id !== correct.id &&
+            normalizeMeaning(candidate.meaning) !== correctMeaning,
+        )
+        .map((candidate) => [normalizeMeaning(candidate.meaning), candidate]),
     ).values(),
   ];
 
@@ -107,56 +122,33 @@ function createChoices(
   return shuffle(choices, random);
 }
 
+/**
+ * Generates one recognition question for every eligible vocabulary item.
+ *
+ * Question items determine which words are tested in the current round.
+ * Distractor items provide possible incorrect answers from the whole lesson.
+ */
 export function generateVocabularyExercise(
   items: readonly ResolvedLessonItem[],
   options: VocabularyExerciseOptions = {},
 ): readonly VocabularyExerciseQuestion[] {
-  const questionCount = Math.max(
-    0,
-    options.questionCount ?? DEFAULT_QUESTION_COUNT,
-  );
-
-  const choiceCount = Math.max(
-    2,
-    options.choiceCount ?? DEFAULT_CHOICE_COUNT,
-  );
+  const choiceCount = Math.max(2, options.choiceCount ?? DEFAULT_CHOICE_COUNT);
 
   const random = options.random ?? Math.random;
 
-  if (questionCount === 0) {
-    return [];
-  }
+  const questionCandidates = getUniqueCandidates(items);
 
-  const candidates = items
-    .filter(
-      (
-        item,
-      ): item is Extract<ResolvedLessonItem, { kind: "vocabulary" }> =>
-        item.kind === "vocabulary",
-    )
-    .map(getCandidate)
-    .filter(
-      (candidate): candidate is VocabularyCandidate => candidate !== null,
-    );
-
-  const uniqueCandidates = [
-    ...new Map(
-      candidates.map((candidate) => [candidate.id, candidate]),
-    ).values(),
-  ];
-
-  const shuffledCandidates = shuffle(uniqueCandidates, random);
+  const distractorCandidates = getUniqueCandidates([
+    ...items,
+    ...(options.distractorItems ?? []),
+  ]);
 
   const questions: VocabularyExerciseQuestion[] = [];
 
-  for (const candidate of shuffledCandidates) {
-    if (questions.length >= questionCount) {
-      break;
-    }
-
+  for (const candidate of shuffle(questionCandidates, random)) {
     const choices = createChoices(
       candidate,
-      uniqueCandidates,
+      distractorCandidates,
       choiceCount,
       random,
     );

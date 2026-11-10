@@ -9,10 +9,16 @@ import SpeakingPage from "../features/speaking/pages/SpeakingPage";
 import { CoursesPage } from "../features/course/pages/CoursePage";
 import { CourseDetailPage } from "../features/course/pages/CourseDetailPage";
 import { LessonPage } from "../features/course/pages/LessonPage";
+import { PronunciationLabPage } from "../features/pronunciation/presentation/pages/PronunciationLabPage";
 
 export function AppRouter() {
   return (
     <Routes>
+      <Route
+        path="/dev/pronunciation-lab"
+        element={<PronunciationLabPage />}
+      />
+
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />

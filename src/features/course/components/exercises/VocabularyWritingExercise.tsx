@@ -1,14 +1,17 @@
-
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
+  CircleAlert,
   PenLine,
   RotateCcw,
   Trophy,
 } from "lucide-react";
 import { learningRecordService } from "../../../../app/services/learningRecordService";
-import type { WritingCharacterResult } from "../../../learning/domain/types";
+import type {
+  LearningRecord,
+  WritingCharacterResult,
+} from "../../../learning/domain/types";
 import { PracticeCanvas } from "../../../writing/components/PracticeCanvas";
 import type {
   PracticeCharacterResult,
@@ -33,7 +36,49 @@ interface PendingWritingAttempt {
 
 type ExercisePhase = "ready" | "active" | "completed";
 
+type VocabularyItem = Extract<ResolvedLessonItem, { kind: "vocabulary" }>;
+
 const noOperation = () => {};
+
+function getMasteredWordIds(
+  records: readonly LearningRecord[],
+  courseId: string,
+  lessonId: string,
+  activityId: string,
+): Set<string> {
+  const masteredWordIds = new Set<string>();
+
+  for (const record of records) {
+    if (
+      record.recordType !== "attempt" ||
+      record.activity !== "writing" ||
+      record.item.kind !== "vocabulary" ||
+      !("kind" in record.details) ||
+      record.details.kind !== "vocabulary"
+    ) {
+      continue;
+    }
+
+    if (
+      record.context?.courseId !== courseId ||
+      record.context.lessonId !== lessonId ||
+      record.context.activityId !== activityId
+    ) {
+      continue;
+    }
+
+    const hasNoMistakes =
+      record.details.mistakes === 0 &&
+      record.details.characters.length > 0 &&
+      record.details.characters.every((character) => character.mistakes === 0);
+
+    if (hasNoMistakes) {
+      masteredWordIds.add(record.item.id);
+    }
+  }
+
+  return masteredWordIds;
+}
 
 export function VocabularyWritingExercise({
   items,
@@ -44,21 +89,32 @@ export function VocabularyWritingExercise({
   const vocabularyItems = useMemo(
     () =>
       items.filter(
-        (
-          item,
-        ): item is Extract<ResolvedLessonItem, { kind: "vocabulary" }> =>
-          item.kind === "vocabulary",
+        (item): item is VocabularyItem => item.kind === "vocabulary",
       ),
     [items],
   );
 
   const [phase, setPhase] = useState<ExercisePhase>("ready");
+
+  const [activeWords, setActiveWords] =
+    useState<readonly VocabularyItem[]>(vocabularyItems);
+
   const [wordIndex, setWordIndex] = useState(0);
   const [characterIndex, setCharacterIndex] = useState(0);
+
   const [characterResults, setCharacterResults] = useState<
     WritingCharacterResult[]
   >([]);
-  const [completedWords, setCompletedWords] = useState(0);
+
+  const [masteredWordIds, setMasteredWordIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  const [attemptedWordIds, setAttemptedWordIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -69,11 +125,77 @@ export function VocabularyWritingExercise({
   const strokeMistakesRef = useRef<Map<number, number>>(new Map());
   const pendingAttemptRef = useRef<PendingWritingAttempt | null>(null);
 
-  const currentWord = vocabularyItems[wordIndex];
+  const currentWord = activeWords[wordIndex];
+
   const wordCharacters = currentWord
     ? Array.from(currentWord.data.simplified)
     : [];
+
   const currentCharacter = wordCharacters[characterIndex];
+
+  const failedWords = useMemo(
+    () =>
+      vocabularyItems.filter((item) => !masteredWordIds.has(item.reference.id)),
+    [masteredWordIds, vocabularyItems],
+  );
+
+  const beginQueue = (words: readonly VocabularyItem[]) => {
+    if (words.length === 0) {
+      return;
+    }
+
+    setActiveWords(words);
+    setWordIndex(0);
+    setCharacterIndex(0);
+    setCharacterResults([]);
+
+    characterResultsRef.current = [];
+
+    setSaveError(null);
+    pendingAttemptRef.current = null;
+
+    sessionIdRef.current = crypto.randomUUID();
+
+    completionHandledRef.current = false;
+    isSavingRef.current = false;
+
+    strokeMistakesRef.current.clear();
+
+    setPhase("active");
+  };
+
+  const startExercise = async () => {
+    if (isLoadingHistory) {
+      return;
+    }
+
+    setIsLoadingHistory(true);
+    setSaveError(null);
+
+    try {
+      const records = await learningRecordService.getAllRecords();
+
+      const previouslyMastered = getMasteredWordIds(
+        records,
+        courseId,
+        lessonId,
+        activityId,
+      );
+
+      setMasteredWordIds(previouslyMastered);
+      setAttemptedWordIds(new Set());
+
+      beginQueue(vocabularyItems);
+    } catch {
+      setSaveError("Writing history could not be loaded. Please try again.");
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const startFailedWordsAgain = () => {
+    beginQueue(failedWords);
+  };
 
   const savePendingAttempt = useCallback(async () => {
     const pending = pendingAttemptRef.current;
@@ -121,17 +243,36 @@ export function VocabularyWritingExercise({
       });
 
       pendingAttemptRef.current = null;
-      setCompletedWords((previous) => previous + 1);
+
+      setAttemptedWordIds((previous) => {
+        const next = new Set(previous);
+        next.add(pending.wordId);
+        return next;
+      });
+
+      const isMastered = pending.characters.every(
+        (character) => character.mistakes === 0,
+      );
+
+      if (isMastered) {
+        setMasteredWordIds((previous) => {
+          const next = new Set(previous);
+          next.add(pending.wordId);
+          return next;
+        });
+      }
 
       const nextWordIndex = wordIndex + 1;
 
-      if (nextWordIndex < vocabularyItems.length) {
+      if (nextWordIndex < activeWords.length) {
         setWordIndex(nextWordIndex);
         setCharacterIndex(0);
         setCharacterResults([]);
+
         characterResultsRef.current = [];
 
         sessionIdRef.current = crypto.randomUUID();
+
         completionHandledRef.current = false;
         strokeMistakesRef.current.clear();
       } else {
@@ -145,13 +286,10 @@ export function VocabularyWritingExercise({
       isSavingRef.current = false;
       setIsSaving(false);
     }
-  }, [activityId, courseId, lessonId, vocabularyItems.length, wordIndex]);
+  }, [activityId, activeWords.length, courseId, lessonId, wordIndex]);
 
   const handleMistake = useCallback((event: WritingMistakeEvent) => {
-    strokeMistakesRef.current.set(
-      event.strokeNum,
-      event.mistakesOnStroke,
-    );
+    strokeMistakesRef.current.set(event.strokeNum, event.mistakesOnStroke);
   }, []);
 
   const handleCharacterComplete = useCallback(
@@ -179,10 +317,7 @@ export function VocabularyWritingExercise({
         ...(strokeMistakes.length > 0 ? { strokeMistakes } : {}),
       };
 
-      const nextResults = [
-        ...characterResultsRef.current,
-        characterResult,
-      ];
+      const nextResults = [...characterResultsRef.current, characterResult];
 
       characterResultsRef.current = nextResults;
       setCharacterResults(nextResults);
@@ -190,6 +325,7 @@ export function VocabularyWritingExercise({
       if (characterIndex + 1 < wordCharacters.length) {
         strokeMistakesRef.current.clear();
         completionHandledRef.current = false;
+
         setCharacterIndex((previous) => previous + 1);
         return;
       }
@@ -202,38 +338,15 @@ export function VocabularyWritingExercise({
       }
 
       pendingAttemptRef.current = {
-        wordId: currentWord.data.id,
+        wordId: currentWord.reference.id,
         sessionId,
         characters: nextResults,
       };
 
       void savePendingAttempt();
     },
-    [
-      characterIndex,
-      currentWord,
-      savePendingAttempt,
-      wordCharacters.length,
-    ],
+    [characterIndex, currentWord, savePendingAttempt, wordCharacters.length],
   );
-
-  function startExercise() {
-    setWordIndex(0);
-    setCharacterIndex(0);
-    setCharacterResults([]);
-    characterResultsRef.current = [];
-
-    setCompletedWords(0);
-    setSaveError(null);
-
-    pendingAttemptRef.current = null;
-    sessionIdRef.current = crypto.randomUUID();
-    completionHandledRef.current = false;
-    isSavingRef.current = false;
-    strokeMistakesRef.current.clear();
-
-    setPhase("active");
-  }
 
   if (vocabularyItems.length === 0) {
     return (
@@ -258,23 +371,38 @@ export function VocabularyWritingExercise({
           <div className={styles.introContent}>
             <span className={styles.eyebrow}>WRITING PRACTICE</span>
             <h2>Write the vocabulary</h2>
+
             <p>
-              Practise all {vocabularyItems.length} words from this lesson.
-              Each word is treated as one writing session, with its characters
-              practised individually.
+              Practise all {vocabularyItems.length} words from this lesson. Each
+              word is one writing session, with its characters practised
+              individually. Words with mistakes can be practised again.
             </p>
           </div>
 
-          <button className={styles.primaryButton} onClick={startExercise}>
-            Start writing
+          <button
+            className={styles.primaryButton}
+            onClick={() => void startExercise()}
+            disabled={isLoadingHistory}
+          >
+            {isLoadingHistory ? "Loading history..." : "Start writing"}
             <ArrowRight size={16} />
           </button>
         </div>
+
+        {saveError && (
+          <div className={styles.saveError} role="alert">
+            <p>{saveError}</p>
+          </div>
+        )}
       </section>
     );
   }
 
   if (phase === "completed") {
+    const masteredCount = vocabularyItems.filter((item) =>
+      masteredWordIds.has(item.reference.id),
+    ).length;
+
     return (
       <section className={styles.section}>
         <div className={styles.results}>
@@ -282,23 +410,83 @@ export function VocabularyWritingExercise({
             <Trophy size={28} />
           </div>
 
-          <span className={styles.eyebrow}>WRITING COMPLETED</span>
-          <h2>All words practised!</h2>
+          <span className={styles.eyebrow}>WRITING ROUND COMPLETED</span>
 
-          <div className={styles.score}>
-            <strong>{completedWords}</strong>
-            <span>/ {vocabularyItems.length}</span>
+          <h2>Practice round finished!</h2>
+
+          <div className={styles.resultStats}>
+            <div className={styles.resultStat}>
+              <strong>{attemptedWordIds.size}</strong>
+              <span>Practised</span>
+            </div>
+
+            <div className={styles.resultStat}>
+              <strong>{masteredCount}</strong>
+              <span>Mastered</span>
+            </div>
+
+            <div className={styles.resultStat}>
+              <strong>{failedWords.length}</strong>
+              <span>Need practice</span>
+            </div>
           </div>
 
           <p>
-            You have successfully completed the writing practice for every
-            vocabulary item in this lesson.
+            A word is mastered when every character has been written without
+            mistakes at least once. You can return to the remaining words
+            whenever you are ready.
           </p>
 
-          <button className={styles.primaryButton} onClick={startExercise}>
+          {failedWords.length > 0 && (
+            <div className={styles.failedWords}>
+              <div className={styles.failedWordsHeader}>
+                <CircleAlert size={17} />
+                <strong>Words to practise again</strong>
+              </div>
+
+              <div className={styles.failedWordList}>
+                {failedWords.map((item) => (
+                  <span
+                    className={styles.failedWord}
+                    key={item.reference.id}
+                    title={item.data.meanings.join("; ")}
+                  >
+                    {item.data.simplified}
+                  </span>
+                ))}
+              </div>
+
+              <button
+                className={styles.primaryButton}
+                onClick={startFailedWordsAgain}
+              >
+                <RotateCcw size={16} />
+                Practise these words again
+              </button>
+            </div>
+          )}
+
+          {failedWords.length === 0 && (
+            <p>
+              <CheckCircle2 size={16} />
+              All vocabulary words have been mastered!
+            </p>
+          )}
+
+          <button
+            className={styles.secondaryButton}
+            onClick={() => void startExercise()}
+            disabled={isLoadingHistory}
+          >
             <RotateCcw size={16} />
-            Practise again
+            {isLoadingHistory ? "Loading history..." : "Practise all words"}
           </button>
+
+          {saveError && (
+            <div className={styles.saveError} role="alert">
+              <p>{saveError}</p>
+            </div>
+          )}
         </div>
       </section>
     );
@@ -322,7 +510,7 @@ export function VocabularyWritingExercise({
           </div>
 
           <span className={styles.progressLabel}>
-            {completedWords + 1} / {vocabularyItems.length} words
+            {wordIndex + 1} / {activeWords.length} words
           </span>
         </div>
 
@@ -330,7 +518,7 @@ export function VocabularyWritingExercise({
           <div
             className={styles.progressValue}
             style={{
-              width: `${(completedWords / vocabularyItems.length) * 100}%`,
+              width: `${(wordIndex / activeWords.length) * 100}%`,
             }}
           />
         </div>
@@ -346,7 +534,7 @@ export function VocabularyWritingExercise({
                       ? `${styles.wordCharacter} ${styles.completedCharacter}`
                       : styles.wordCharacter
                 }
-                key={`${currentWord.data.id}-${index}`}
+                key={`${currentWord.reference.id}-${index}`}
               >
                 {character}
                 {index < characterIndex && <CheckCircle2 size={15} />}
@@ -368,7 +556,7 @@ export function VocabularyWritingExercise({
         </div>
 
         <PracticeCanvas
-          key={`${currentWord.data.id}-${characterIndex}`}
+          key={`${currentWord.reference.id}-${characterIndex}`}
           character={currentCharacter}
           onCorrectStroke={noOperation}
           onMistake={handleMistake}
@@ -379,6 +567,7 @@ export function VocabularyWritingExercise({
         {saveError && (
           <div className={styles.saveError} role="alert">
             <p>{saveError}</p>
+
             <button
               className={styles.primaryButton}
               disabled={isSaving}

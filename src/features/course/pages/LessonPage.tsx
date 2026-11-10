@@ -1,4 +1,3 @@
-
 import {
   ArrowLeft,
   BookOpen,
@@ -120,7 +119,15 @@ export function LessonPage() {
         </div>
       </section>
 
-      <VocabularyExercise items={content.items} />
+      <VocabularyExercise
+        items={content.items}
+        courseId={course.id}
+        lessonId={lesson.id}
+        activityId={
+          lesson.activities.find((activity) => activity.type === "vocabulary")
+            ?.id ?? "learn-vocabulary"
+        }
+      />
 
       {writingActivity && (
         <VocabularyWritingExercise
