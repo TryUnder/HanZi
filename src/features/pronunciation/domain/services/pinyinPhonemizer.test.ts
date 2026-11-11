@@ -137,19 +137,19 @@ describe("pinyinPhonemizer", () => {
   });
 
   describe("tone realization", () => {
-    it("uses lexical tone instead of surface tone", () => {
+    it("uses the spoken surface tone after sandhi", () => {
       expect(
         getSymbols([createRealization("ni", 3, { surfaceTone: 2 })]),
-      ).toEqual(["n", "i3"]);
+      ).toEqual(["n", "i2"]);
     });
 
-    it("preserves lexical tones across multiple syllables", () => {
+    it("applies spoken surface tones across multiple syllables", () => {
       expect(
         getSymbols([
           createRealization("ni", 3, { surfaceTone: 2 }),
           createRealization("hao", 3),
         ]),
-      ).toEqual(["n", "i3", "h", "ao3"]);
+      ).toEqual(["n", "i2", "h", "ao3"]);
     });
   });
 
