@@ -21,6 +21,7 @@ import {
 import type {
   PronunciationAnalysisResponse,
   PronunciationAnalysisResult,
+  PitchDetectionBackend,
 } from "../../application/services/pronunciationAnalysisService";
 import type {
   SyllablePitchContour,
@@ -530,6 +531,7 @@ export function PronunciationLabPage() {
   const recorder = usePronunciationRecorder();
 
   const [word, setWord] = useState(INITIAL_WORD);
+  const [pitchDetector, setPitchDetector] = useState<PitchDetectionBackend>("yin");
   const [pinyin, setPinyin] = useState(INITIAL_PINYIN);
 
   const [uploadedRecording, setUploadedRecording] =
@@ -601,6 +603,7 @@ export function PronunciationLabPage() {
         word,
         pinyin,
         recording,
+        pitchDetector,
       );
 
       setResponse(result);
@@ -686,6 +689,28 @@ export function PronunciationLabPage() {
           </label>
         </div>
 
+        <label className={styles.field}>
+          <span>Silnik detekcji F0 (diagnostyka)</span>
+          <select
+            value={pitchDetector}
+            onChange={(event) => {
+              setPitchDetector(event.target.value as PitchDetectionBackend);
+              setResponse(null);
+            }}
+            disabled={isAnalyzing}
+          >
+            <option value="yin">YIN — domyślny</option>
+            <option value="essentia-pyin">pYIN (Essentia.js) — eksperymentalny</option>
+          </select>
+        </label>
+        {pitchDetector === "essentia-pyin" && (
+          <p className={styles.fieldHint} role="alert">
+            Tryb wyłącznie eksperymentalny. Pierwsze testy pYIN dawały
+            błędne F0 nawet na czystych sinusoidach.
+            Punktacja jest WYŁĄCZONA, pokazujemy tylko kontur diagnostyczny.
+            Essentia.js: AGPL-3.0, wymagany przegląd licencji.
+          </p>
+        )}
         <p className={styles.fieldHint}>
           Wprowadź Pinyin w formacie liczbowym, np. ni3 hao3.
           Analizator sam wyznaczy tony powierzchniowe na podstawie
@@ -813,6 +838,7 @@ export function PronunciationLabPage() {
                 <h2>
                   {successfulAnalysis.word} · {successfulAnalysis.pinyin}
                 </h2>
+                <p>Detektor F0: {successfulAnalysis.pitchDetector}</p>
               </div>
             </div>
 

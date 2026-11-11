@@ -61,6 +61,13 @@ import {
   detectPitch,
 } from "../../infrastructure/audio/pitchDetectionService";
 
+import {
+  detectPitchEssentiaPyin,
+} from "../../infrastructure/audio/essentiaPyinDetectionService";
+
+export type PitchDetectionBackend = "yin" | "essentia-pyin";
+
+
 export type PronunciationAnalysisError =
   | {
       readonly stage: "tone-realization";
@@ -128,6 +135,7 @@ export interface PronunciationAnalysisResult {
   readonly syllableAlignment: PronunciationAlignment;
   readonly quality: AlignmentQualityReport;
   readonly toneAnalysis: PronunciationToneAnalysis;
+  readonly pitchDetector: PitchDetectionBackend;
 }
 
 export type PronunciationAnalysisResponse =
@@ -155,12 +163,13 @@ function failure(
  * Tone assessment is performed only when forced alignment
  * has passed the alignment quality checks.
  */
-function analyzeTone(
+async function analyzeTone(
   waveform: Float32Array,
   syllableAlignment: PronunciationAlignment,
   syllableRealizations: readonly PronunciationSyllableRealization[],
   quality: AlignmentQualityReport,
-): PronunciationToneAnalysis {
+  pitchDetector: PitchDetectionBackend,
+): Promise<PronunciationToneAnalysis> {
   if (quality.status !== "accepted") {
     const reason =
       quality.status === "rejected"
@@ -177,12 +186,33 @@ function analyzeTone(
 
   try {
     // The audio decoder always returns mono 16 kHz audio.
-    const pitchFrames = detectPitch(waveform, 16_000);
+    const pitchFrames =
+      pitchDetector === "essentia-pyin"
+        ? await detectPitchEssentiaPyin(waveform, 16_000)
+        : detectPitch(waveform, 16_000);
 
     const pitchAnalysis = analyzeSyllablePitch(
       pitchFrames,
       syllableAlignment.syllables,
     );
+
+    // Essentia.js pYIN fails basic 16 kHz pitch checks.
+    // Show contours for diagnosis, but NEVER grade learners with this mode.
+    if (pitchDetector === "essentia-pyin") {
+      return {
+        status: "completed",
+        pitchAnalysis,
+        syllableAssessments: pitchAnalysis.syllables.map((contour) => ({
+          expectedTone:
+            syllableRealizations[contour.syllableIndex]!.surfaceTone,
+          status: "uncertain" as const,
+          score: null,
+          confidence: 0,
+          feedbackCode: "AMBIGUOUS_CONTOUR" as const,
+          features: null,
+        })),
+      };
+    }
 
     const syllableAssessments = pitchAnalysis.syllables.map(
       (contour) => {
@@ -238,6 +268,7 @@ export async function analyzeWordPronunciation(
   word: string,
   pinyin: string,
   recording: Blob,
+  pitchDetector: PitchDetectionBackend = "yin",
 ): Promise<PronunciationAnalysisResponse> {
   if (!word.trim()) {
     return failure({
@@ -361,11 +392,12 @@ export async function analyzeWordPronunciation(
     });
   }
 
-  const toneAnalysis = analyzeTone(
+  const toneAnalysis = await analyzeTone(
     waveform,
     syllableAlignment,
     toneResult.syllables,
     quality,
+    pitchDetector,
   );
 
   return {
@@ -379,6 +411,7 @@ export async function analyzeWordPronunciation(
       syllableAlignment,
       quality,
       toneAnalysis,
+      pitchDetector,
     },
   };
 }
