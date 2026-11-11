@@ -307,10 +307,10 @@ export function phonemizePronunciation(
       );
     }
 
-    // Charsiu's G2P and phonemizer use lexical dictionary tones.
-    // Surface tones are retained separately for pronunciation analysis.
+    // Align the recording against the tone actually pronounced after sandhi.
+    // Keep the lexical reading unchanged for dictionary display.
     const phones = [
-      ...convertSyllableToPhones(syllable.pinyin, syllable.lexicalTone),
+      ...convertSyllableToPhones(syllable.pinyin, realization.surfaceTone),
     ];
 
     /**
