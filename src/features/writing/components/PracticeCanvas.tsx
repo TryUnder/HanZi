@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
 import type {
@@ -12,6 +13,9 @@ interface PracticeCanvasProps {
   onMistake: (event: WritingMistakeEvent) => void;
   onComplete: (totalMistakes: number) => void;
   onCompleteDetails?: (result: PracticeCharacterResult) => void;
+  showOutline?: boolean;
+  showHintAfterMisses?: number;
+  hintText?: string;
 }
 
 export function PracticeCanvas({
@@ -20,6 +24,9 @@ export function PracticeCanvas({
   onMistake,
   onComplete,
   onCompleteDetails,
+  showOutline = true,
+  showHintAfterMisses = 3,
+  hintText = "Follow the stroke direction and draw each stroke in the correct order.",
 }: PracticeCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const correctStrokesRef = useRef(0);
@@ -49,13 +56,13 @@ export function PracticeCanvas({
       height: 280,
       padding: 20,
       showCharacter: false,
-      showOutline: true,
+      showOutline,
       outlineColor: "#dedbea",
       drawingColor: "#6558bf",
       highlightColor: "#d99450",
       strokeColor: "#6558bf",
-      drawingWidth: 5,
-      showHintAfterMisses: 3,
+      drawingWidth: 20,
+      showHintAfterMisses,
 
       onLoadCharDataSuccess: (data) => {
         if (!isActive) {
@@ -66,7 +73,7 @@ export function PracticeCanvas({
         setIsLoading(false);
 
         void writer.quiz({
-          showHintAfterMisses: 3,
+          showHintAfterMisses,
 
           onCorrectStroke: () => {
             if (!isActive) {
@@ -123,7 +130,15 @@ export function PracticeCanvas({
       writer.cancelQuiz();
       container.replaceChildren();
     };
-  }, [character, onCorrectStroke, onMistake, onComplete, onCompleteDetails]);
+  }, [
+    character,
+    onCorrectStroke,
+    onMistake,
+    onComplete,
+    onCompleteDetails,
+    showOutline,
+    showHintAfterMisses,
+  ]);
 
   return (
     <section className={styles.canvasSection}>
@@ -143,9 +158,7 @@ export function PracticeCanvas({
         )}
       </div>
 
-      <p className={styles.practiceHint}>
-        Follow the stroke direction and draw each stroke in the correct order.
-      </p>
+      <p className={styles.practiceHint}>{hintText}</p>
     </section>
   );
 }

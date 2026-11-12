@@ -59,6 +59,12 @@ export const hsk1Lessons = [
         description: "Poznaj kolejność kresek znaków.",
       },
       {
+        id: "practice-writing-memory",
+        type: "writing-memory",
+        title: "Pisanie z pamięci",
+        description: "Odtwórz znaki na podstawie Pinyin i znaczenia.",
+      },
+      {
         id: "review-lesson",
         type: "review",
         title: "Powtórka",
@@ -193,6 +199,12 @@ export const hsk1Lessons = [
         type: "writing",
         title: "Ćwicz pisanie",
         description: "Poznaj kolejność kresek znaków.",
+      },
+      {
+        id: "practice-writing-memory",
+        type: "writing-memory",
+        title: "Pisanie z pamięci",
+        description: "Odtwórz znaki na podstawie Pinyin i znaczenia.",
       },
       {
         id: "review-lesson",
@@ -364,6 +376,12 @@ export const hsk1Lessons = [
         type: "writing",
         title: "Ćwicz pisanie",
         description: "Poznaj kolejność kresek znaków.",
+      },
+      {
+        id: "practice-writing-memory",
+        type: "writing-memory",
+        title: "Pisanie z pamięci",
+        description: "Odtwórz znaki na podstawie Pinyin i znaczenia.",
       },
       {
         id: "review-lesson",

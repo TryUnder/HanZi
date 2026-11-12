@@ -1,0 +1,361 @@
+
+.section {
+  width: 100%;
+}
+
+.intro,
+.exercise,
+.results,
+.emptyState {
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+
+.intro {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.introIcon,
+.resultsIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: var(--color-purple-background);
+  color: var(--color-brand-700);
+}
+
+.introContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.introContent h2,
+.exerciseHeader h2,
+.results h2 {
+  margin: 6px 0;
+  color: var(--color-text-heading);
+  font-size: 20px;
+}
+
+.introContent p,
+.results > p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-600);
+  color: white;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--color-brand-700);
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.exercise {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.exerciseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.progressLabel {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.progressTrack {
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-50);
+}
+
+.progressValue {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-brand-500);
+  transition: width var(--transition-normal);
+}
+
+.promptCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-subtle);
+  text-align: center;
+}
+
+.promptLabel {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.promptPinyin {
+  color: var(--color-brand-700);
+  font-size: 27px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.promptMeaning {
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.characterProgress {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nextCharacterHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.revealCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid var(--color-green);
+  border-radius: var(--radius-lg);
+  background: var(--color-green-background);
+  text-align: center;
+}
+
+.revealHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-green);
+  font-size: 14px;
+}
+
+.revealedWord {
+  color: var(--color-text-heading);
+  font-family: var(--font-chinese);
+  font-size: 54px;
+  line-height: 1.4;
+  letter-spacing: 5px;
+}
+
+.revealCard > p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.savingMessage {
+  margin: 0;
+  color: var(--color-brand-700);
+  font-size: 12px;
+  text-align: center;
+}
+
+.saveError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--color-orange);
+  border-radius: var(--radius-md);
+  background: var(--color-orange-background);
+}
+
+.saveError > svg {
+  color: var(--color-orange);
+}
+
+.saveError p {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.resultsIcon {
+  margin-bottom: 4px;
+}
+
+.resultStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 150px;
+  padding: 16px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-subtle);
+}
+
+.resultStat strong {
+  color: var(--color-brand-700);
+  font-size: 28px;
+}
+
+.resultStat span {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.secondaryButton:hover {
+  border-color: var(--color-brand-300);
+  color: var(--color-brand-700);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.emptyState h2,
+.emptyState p {
+  margin: 0;
+}
+
+.emptyState h2 {
+  color: var(--color-text-heading);
+  font-size: 18px;
+}
+
+.emptyState p {
+  max-width: 440px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .intro {
+    flex-wrap: wrap;
+  }
+
+  .introContent {
+    flex-basis: calc(100% - 75px);
+  }
+
+  .intro .primaryButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro,
+  .exercise,
+  .results,
+  .emptyState {
+    padding: 20px;
+  }
+
+  .promptCard {
+    padding: 22px 16px;
+  }
+
+  .promptPinyin {
+    font-size: 23px;
+  }
+
+  .revealedWord {
+    font-size: 44px;
+  }
+}

@@ -1,9 +1,11 @@
+
 import type { LearningItemReference } from "../../../learning/domain/types";
 
 export type LessonActivityType =
   | "vocabulary"
   | "pronunciation"
   | "writing"
+  | "writing-memory"
   | "listening"
   | "review"
   | "grammar";

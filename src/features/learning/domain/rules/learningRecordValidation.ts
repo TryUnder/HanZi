@@ -1,3 +1,4 @@
+
 import type {
   LearningRecord,
   LearningStatus,
@@ -7,6 +8,8 @@ import type {
 } from "../types";
 
 type UnknownRecord = Record<string, unknown>;
+
+type VocabularyWritingKind = "vocabulary" | "memory";
 
 const LEARNING_STATUSES: readonly LearningStatus[] = [
   "learning",
@@ -144,8 +147,11 @@ function isCharacterWritingDetails(value: UnknownRecord): boolean {
   return hasValidWritingStatistics(value);
 }
 
-function isVocabularyWritingDetails(value: UnknownRecord): boolean {
-  if (value.kind !== "vocabulary" || !Array.isArray(value.characters)) {
+function isVocabularyWritingDetails(
+  value: UnknownRecord,
+  expectedKind: VocabularyWritingKind,
+): boolean {
+  if (value.kind !== expectedKind || !Array.isArray(value.characters)) {
     return false;
   }
 
@@ -189,7 +195,11 @@ function isWritingDetails(value: unknown): boolean {
   }
 
   if (value.kind === "vocabulary") {
-    return isVocabularyWritingDetails(value);
+    return isVocabularyWritingDetails(value, "vocabulary");
+  }
+
+  if (value.kind === "memory") {
+    return isVocabularyWritingDetails(value, "memory");
   }
 
   return isCharacterWritingDetails(value);

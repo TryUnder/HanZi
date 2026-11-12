@@ -1,3 +1,4 @@
+
 import { describe, expect, it } from "vitest";
 import { isLearningRecord } from "./learningRecordValidation";
 
@@ -15,6 +16,11 @@ const validContext = {
   lessonId: "hsk-1-lesson-01",
   activityId: "practice-writing",
   sessionId: "session-001",
+};
+
+const memoryContext = {
+  ...validContext,
+  activityId: "practice-writing-memory",
 };
 
 describe("isLearningRecord", () => {
@@ -76,6 +82,43 @@ describe("isLearningRecord", () => {
     expect(isLearningRecord(record)).toBe(true);
   });
 
+  it("accepts a valid memory writing attempt", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      context: memoryContext,
+      details: {
+        kind: "memory",
+        correctStrokes: 9,
+        totalStrokes: 10,
+        mistakes: 3,
+        characters: [
+          {
+            character: "名",
+            correctStrokes: 6,
+            totalStrokes: 6,
+            mistakes: 1,
+            strokeMistakes: [{ strokeIndex: 2, mistakes: 1 }],
+          },
+          {
+            character: "字",
+            correctStrokes: 3,
+            totalStrokes: 4,
+            mistakes: 2,
+            strokeMistakes: [{ strokeIndex: 1, mistakes: 2 }],
+          },
+        ],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(true);
+  });
+
   it("rejects vocabulary writing without character results", () => {
     const record = {
       ...baseRecord,
@@ -97,6 +140,28 @@ describe("isLearningRecord", () => {
     expect(isLearningRecord(record)).toBe(false);
   });
 
+  it("rejects memory writing without character results", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      context: memoryContext,
+      details: {
+        kind: "memory",
+        correctStrokes: 0,
+        totalStrokes: 0,
+        mistakes: 0,
+        characters: [],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
+  });
+
   it("rejects vocabulary writing with inconsistent aggregate statistics", () => {
     const record = {
       ...baseRecord,
@@ -108,6 +173,41 @@ describe("isLearningRecord", () => {
       activity: "writing",
       details: {
         kind: "vocabulary",
+        correctStrokes: 8,
+        totalStrokes: 10,
+        mistakes: 3,
+        characters: [
+          {
+            character: "名",
+            correctStrokes: 6,
+            totalStrokes: 6,
+            mistakes: 1,
+          },
+          {
+            character: "字",
+            correctStrokes: 3,
+            totalStrokes: 4,
+            mistakes: 2,
+          },
+        ],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
+  });
+
+  it("rejects memory writing with inconsistent aggregate statistics", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      context: memoryContext,
+      details: {
+        kind: "memory",
         correctStrokes: 8,
         totalStrokes: 10,
         mistakes: 3,

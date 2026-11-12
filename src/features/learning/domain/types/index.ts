@@ -1,3 +1,4 @@
+
 export type { LearningItemReference } from "./learningItem";
 
 export type {
@@ -14,6 +15,7 @@ export type {
   ListeningExerciseMode,
   ListeningLearningAttempt,
   MandarinTone,
+  MemoryWritingAttemptDetails,
   RecognitionAttemptDetails,
   RecognitionLearningAttempt,
   SpeakingAttemptDetails,

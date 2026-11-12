@@ -1,7 +1,9 @@
+
 import {
   ArrowLeft,
   BookOpen,
   BookText,
+  Brain,
   Headphones,
   PenLine,
   RotateCcw,
@@ -13,12 +15,14 @@ import { LessonGrammar } from "../components/LessonGrammar";
 import { LessonVocabulary } from "../components/LessonVocabulary";
 import { VocabularyExercise } from "../components/exercises/VocabularyExercise";
 import { VocabularyWritingExercise } from "../components/exercises/VocabularyWritingExercise";
+import { MemoryWritingExercise } from "../components/exercises/MemoryWritingExercise";
 import styles from "./LessonPage.module.css";
 
 const activityIcons = {
   vocabulary: BookOpen,
   pronunciation: Headphones,
   writing: PenLine,
+  "writing-memory": Brain,
   listening: Headphones,
   review: RotateCcw,
   grammar: BookText,
@@ -61,6 +65,10 @@ export function LessonPage() {
 
   const writingActivity = lesson.activities.find(
     (activity) => activity.type === "writing",
+  );
+
+  const memoryWritingActivity = lesson.activities.find(
+    (activity) => activity.type === "writing-memory",
   );
 
   return (
@@ -138,6 +146,15 @@ export function LessonPage() {
           courseId={course.id}
           lessonId={lesson.id}
           activityId={writingActivity.id}
+        />
+      )}
+
+      {memoryWritingActivity && (
+        <MemoryWritingExercise
+          items={content.items}
+          courseId={course.id}
+          lessonId={lesson.id}
+          activityId={memoryWritingActivity.id}
         />
       )}
 
