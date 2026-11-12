@@ -1,0 +1,209 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.eyebrow {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.sectionHeader h2 {
+  margin: 4px 0 0;
+  color: var(--color-text-heading);
+  font-size: 21px;
+  letter-spacing: -0.5px;
+}
+
+.sectionHeader p {
+  margin: 4px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-purple-background);
+  color: var(--color-brand-700);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.grammarList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.grammarCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headerTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ruleNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-50);
+  color: var(--color-brand-700);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.structureBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-50);
+  border: 1px solid var(--color-brand-200);
+  color: var(--color-brand-700);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.explanation {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.examplesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.examplesHeading {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.exampleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.exampleCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+}
+
+.exampleChinese {
+  font-family: var(--font-chinese);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-heading);
+}
+
+.exampleMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.examplePinyin {
+  color: var(--color-brand-600);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.exampleTranslation {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.exampleExplanation {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.notesBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-orange-background);
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.notesBox svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #ea580c;
+}
+
+@media (max-width: 640px) {
+  .grammarCard {
+    padding: 18px 20px;
+  }
+
+  .exampleGrid {
+    grid-template-columns: 1fr;
+  }
+}

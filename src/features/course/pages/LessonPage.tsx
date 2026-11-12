@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   BookOpen,
+  BookText,
   Headphones,
   PenLine,
   RotateCcw,
@@ -8,6 +9,7 @@ import {
 import { Link, useParams } from "react-router";
 import { resolveLessonItems } from "../application/services/lessonContentService";
 import { getCourseById, getLessonById } from "../repositories/courseRepository";
+import { LessonGrammar } from "../components/LessonGrammar";
 import { LessonVocabulary } from "../components/LessonVocabulary";
 import { VocabularyExercise } from "../components/exercises/VocabularyExercise";
 import { VocabularyWritingExercise } from "../components/exercises/VocabularyWritingExercise";
@@ -19,6 +21,7 @@ const activityIcons = {
   writing: PenLine,
   listening: Headphones,
   review: RotateCcw,
+  grammar: BookText,
 } as const;
 
 export function LessonPage() {
@@ -143,6 +146,10 @@ export function LessonPage() {
           Some lesson references could not be found in the Library:{" "}
           {content.missingItems.length}
         </div>
+      )}
+
+      {lesson.grammar && lesson.grammar.length > 0 && (
+        <LessonGrammar grammar={lesson.grammar} />
       )}
 
       <LessonVocabulary items={content.items} />
