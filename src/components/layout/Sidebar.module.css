@@ -197,4 +197,41 @@
   .sidebar.sidebarOpen {
     transform: translateX(0);
   }
+  
+}
+
+.logoutButton {
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.logoutButton:hover {
+  background: var(--color-brand-100);
+  color: var(--color-brand-700);
+}
+
+.profileInfo {
+  min-width: 0;
+}
+
+.profileInfo strong,
+.profileInfo span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileInfo span {
+  max-width: 125px;
 }

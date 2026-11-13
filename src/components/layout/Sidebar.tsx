@@ -5,11 +5,14 @@ import {
   LayoutDashboard,
   Layers,
   Library,
+  LogOut,
   PenLine,
   Settings,
   Sparkles,
 } from "lucide-react";
 import { NavLink } from "react-router";
+
+import { useAuth } from "../../features/auth/hooks/useAuth";
 import styles from "./Sidebar.module.css";
 
 interface SidebarProps {
@@ -27,12 +30,27 @@ const navigation = [
 ];
 
 export function Sidebar({ isOpen, onNavigate }: SidebarProps) {
+  const { user, signOut } = useAuth();
+
   const sidebarClassName = [styles.sidebar, isOpen ? styles.sidebarOpen : ""]
     .filter(Boolean)
     .join(" ");
 
   const getNavLinkClassName = ({ isActive }: { isActive: boolean }) =>
     [styles.navItem, isActive ? styles.active : ""].filter(Boolean).join(" ");
+
+  const email = user?.email ?? "Signed in";
+  const metadataName = user?.user_metadata?.display_name;
+  const displayName =
+    typeof metadataName === "string" && metadataName.trim()
+      ? metadataName
+      : email.split("@")[0];
+
+const avatarInitial = (displayName ?? "U").charAt(0).toUpperCase() || "U";
+
+  function handleSignOut() {
+    void signOut();
+  }
 
   return (
     <aside className={sidebarClassName}>
@@ -94,12 +112,22 @@ export function Sidebar({ isOpen, onNavigate }: SidebarProps) {
         </div>
 
         <div className={styles.profile}>
-          <div className={styles.avatar}>H</div>
+          <div className={styles.avatar}>{avatarInitial}</div>
+
           <div className={styles.profileInfo}>
-            <strong>My profile</strong>
-            <span>HSK 1 · Beginner</span>
+            <strong>{displayName}</strong>
+            <span title={email}>{email}</span>
           </div>
-          <Settings size={17} className={styles.profileSettings} />
+
+          <button
+            type="button"
+            className={styles.logoutButton}
+            onClick={handleSignOut}
+            aria-label="Sign out"
+            title="Sign out"
+          >
+            <LogOut size={17} />
+          </button>
         </div>
       </div>
     </aside>
