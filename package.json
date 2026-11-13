@@ -24,7 +24,8 @@
     "hsk:analyze": "node scripts/analyze-hsk-cedict.mjs",
     "vocabulary:build": "node scripts/build-vocabulary.mjs",
     "audio:sync:tones": "node scripts/sync-tone-audio.mjs",
-    "audio:sync:all": "npm run audio:sync && npm run audio:download && npm run audio:sync:tones"
+    "audio:sync:all": "npm run audio:sync && npm run audio:download && npm run audio:sync:tones",
+    "audio:upload": "node --env-file=.env scripts/upload-audio-to-supabase.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

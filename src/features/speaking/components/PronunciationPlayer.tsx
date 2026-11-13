@@ -1,4 +1,5 @@
 import { Pause, Play } from "lucide-react";
+import { resolveAudioUrl } from "../../../shared/infrastructure/audio/resolveAudioUrl";
 import { usePronunciation } from "../hooks/usePronunciation";
 import styles from "./PronunciationPlayer.module.css";
 
@@ -13,14 +14,20 @@ export function PronunciationPlayer({
   text,
   label,
 }: PronunciationPlayerProps) {
+  const resolvedAudioUrl = resolveAudioUrl(audioUrl);
+
   const { audioRef, isPlaying, error, play } = usePronunciation({
-    audioUrl,
+    audioUrl: resolvedAudioUrl,
     text,
   });
 
   return (
     <div className={styles.container}>
-      <audio ref={audioRef} src={audioUrl ?? undefined} preload="none" />
+      <audio
+        ref={audioRef}
+        src={resolvedAudioUrl ?? undefined}
+        preload="none"
+      />
 
       <button
         type="button"
