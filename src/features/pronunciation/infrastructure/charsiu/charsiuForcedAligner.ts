@@ -1,10 +1,5 @@
-
 import * as ort from "onnxruntime-web";
-import {
-  forcedAlign,
-  normalize,
-  softmaxRows,
-} from "charsiu-js";
+import { forcedAlign, normalize, softmaxRows } from "charsiu-js";
 
 import type {
   ForcedAlignmentErrorCode,
@@ -115,7 +110,7 @@ function extractModelOutput(
     return null;
   }
 
-    if (!(logits.data instanceof Float32Array)) {
+  if (!(logits.data instanceof Float32Array)) {
     return null;
   }
 
@@ -129,19 +124,13 @@ function extractModelOutput(
     }
   }
 
-  const probabilities = softmaxRows(
-    rawLogits,
-    frames,
-    vocabularySize,
-  );
+  const probabilities = softmaxRows(rawLogits, frames, vocabularySize);
 
   if (
     probabilities.length !== frames * vocabularySize ||
     probabilities.some(
       (probability) =>
-        !Number.isFinite(probability) ||
-        probability < 0 ||
-        probability > 1,
+        !Number.isFinite(probability) || probability < 0 || probability > 1,
     )
   ) {
     return null;
@@ -169,10 +158,7 @@ function findPredictedPhones(
     for (let phone = 0; phone < vocabularySize; phone += 1) {
       const probability = probabilities[offset + phone];
 
-      if (
-        probability !== undefined &&
-        probability > bestProbability
-      ) {
+      if (probability !== undefined && probability > bestProbability) {
         bestProbability = probability;
         bestPhone = phone;
       }
@@ -204,10 +190,7 @@ function findSpeechFrames(
 
     let end = start + 1;
 
-    while (
-      end < predictions.length &&
-      predictions[end] === predictedPhone
-    ) {
+    while (end < predictions.length && predictions[end] === predictedPhone) {
       end += 1;
     }
 
@@ -258,7 +241,7 @@ function buildFrameAlignments(
   const result: FramePhoneAlignment[] = [];
 
   for (let frameIndex = 0; frameIndex < frames; frameIndex += 1) {
-        const offset = frameIndex * vocabularySize;
+    const offset = frameIndex * vocabularySize;
     const targetPhoneIndex = speechPhoneIndexes[frameIndex];
 
     if (targetPhoneIndex === undefined) {
@@ -376,15 +359,11 @@ export async function alignRecordingToPronunciation(
 
   const phoneIds = pronunciation.phoneIds;
 
-  const knownPhoneIds = new Set(
-    Object.values(model.phoneVocabulary),
-  );
+  const knownPhoneIds = new Set(Object.values(model.phoneVocabulary));
 
   if (
     phoneIds.some(
-      (phoneId) =>
-        !knownPhoneIds.has(phoneId) ||
-        phoneId === silenceTokenId,
+      (phoneId) => !knownPhoneIds.has(phoneId) || phoneId === silenceTokenId,
     )
   ) {
     return failure(
@@ -398,11 +377,10 @@ export async function alignRecordingToPronunciation(
   try {
     const normalizedWaveform = normalize(waveform);
 
-    const inputTensor = new ort.Tensor(
-      "float32",
-      normalizedWaveform,
-      [1, normalizedWaveform.length],
-    );
+    const inputTensor = new ort.Tensor("float32", normalizedWaveform, [
+      1,
+      normalizedWaveform.length,
+    ]);
 
     output = await model.session.run({
       input_values: inputTensor,
@@ -423,11 +401,7 @@ export async function alignRecordingToPronunciation(
     );
   }
 
-  const {
-    frames,
-    vocabularySize,
-    probabilities,
-  } = modelOutput;
+  const { frames, vocabularySize, probabilities } = modelOutput;
 
   if (silenceTokenId >= vocabularySize) {
     return failure(
@@ -449,10 +423,7 @@ export async function alignRecordingToPronunciation(
     vocabularySize,
   );
 
-  const speechFrames = findSpeechFrames(
-    predictions,
-    silenceTokenId,
-  );
+  const speechFrames = findSpeechFrames(predictions, silenceTokenId);
 
   if (speechFrames.length < phoneIds.length) {
     return failure(
@@ -479,10 +450,7 @@ export async function alignRecordingToPronunciation(
     const targetOffset = index * vocabularySize;
 
     compactProbabilities.set(
-      probabilities.subarray(
-        sourceOffset,
-        sourceOffset + vocabularySize,
-      ),
+      probabilities.subarray(sourceOffset, sourceOffset + vocabularySize),
       targetOffset,
     );
   }

@@ -21,11 +21,9 @@ function createContour(
     durationSeconds,
     status: options.status ?? "analyzed",
     points: values.map((semitonesFromReference, index) => ({
-      timeSeconds:
-        (index / (values.length - 1)) * durationSeconds,
+      timeSeconds: (index / (values.length - 1)) * durationSeconds,
       relativePosition: index / (values.length - 1),
-      frequencyHz:
-        150 * Math.pow(2, semitonesFromReference / 12),
+      frequencyHz: 150 * Math.pow(2, semitonesFromReference / 12),
       semitonesFromReference,
       clarity,
     })),
@@ -38,10 +36,7 @@ function createContour(
   };
 }
 
-function createLinearContour(
-  start: number,
-  end: number,
-): SyllablePitchContour {
+function createLinearContour(start: number, end: number): SyllablePitchContour {
   return createContour(
     Array.from({ length: 20 }, (_, index) => {
       const ratio = index / 19;
@@ -52,10 +47,7 @@ function createLinearContour(
 
 describe("assessSyllableTone", () => {
   it("recognizes a stable first tone", () => {
-    const result = assessSyllableTone(
-      createContour(Array(20).fill(0)),
-      1,
-    );
+    const result = assessSyllableTone(createContour(Array(20).fill(0)), 1);
 
     expect(result.status).toBe("matched");
     expect(result.score).toBeGreaterThanOrEqual(80);
@@ -63,10 +55,7 @@ describe("assessSyllableTone", () => {
   });
 
   it("recognizes a rising second tone", () => {
-    const result = assessSyllableTone(
-      createLinearContour(-1.5, 1.5),
-      2,
-    );
+    const result = assessSyllableTone(createLinearContour(-1.5, 1.5), 2);
 
     expect(result.status).toBe("matched");
     expect(result.score).toBeGreaterThanOrEqual(80);
@@ -75,16 +64,11 @@ describe("assessSyllableTone", () => {
 
   it("recognizes a dipping third tone", () => {
     const values = [
-      0, 0, 0, 0, 0,
-      -0.5, -1, -1.5, -2, -2,
-      -2, -2, -1.8, -1.5,
-      -1.2, -1, -0.8, -0.6, -0.5, -0.4,
+      0, 0, 0, 0, 0, -0.5, -1, -1.5, -2, -2, -2, -2, -1.8, -1.5, -1.2, -1, -0.8,
+      -0.6, -0.5, -0.4,
     ];
 
-    const result = assessSyllableTone(
-      createContour(values),
-      3,
-    );
+    const result = assessSyllableTone(createContour(values), 3);
 
     expect(result.status).toBe("matched");
     expect(result.feedbackCode).toBe("DIPPING_CONTOUR");
@@ -95,20 +79,14 @@ describe("assessSyllableTone", () => {
       return -(index / 19) * 2;
     });
 
-    const result = assessSyllableTone(
-      createContour(values),
-      3,
-    );
+    const result = assessSyllableTone(createContour(values), 3);
 
     expect(result.feedbackCode).toBe("LOW_FALLING_CONTOUR");
     expect(result.score).toBeGreaterThanOrEqual(70);
   });
 
   it("recognizes a falling fourth tone", () => {
-    const result = assessSyllableTone(
-      createLinearContour(1.5, -1.5),
-      4,
-    );
+    const result = assessSyllableTone(createLinearContour(1.5, -1.5), 4);
 
     expect(result.status).toBe("matched");
     expect(result.score).toBeGreaterThanOrEqual(80);
@@ -116,10 +94,7 @@ describe("assessSyllableTone", () => {
   });
 
   it("does not grade neutral tone from pitch contour alone", () => {
-    const result = assessSyllableTone(
-      createContour(Array(20).fill(0)),
-      5,
-    );
+    const result = assessSyllableTone(createContour(Array(20).fill(0)), 5);
 
     expect(result.status).toBe("limited-assessment");
     expect(result.score).toBeNull();
@@ -150,10 +125,7 @@ describe("assessSyllableTone", () => {
   });
 
   it("returns insufficient data when there are too few points", () => {
-    const result = assessSyllableTone(
-      createContour([0, 1, 2, 3, 4]),
-      2,
-    );
+    const result = assessSyllableTone(createContour([0, 1, 2, 3, 4]), 2);
 
     expect(result.status).toBe("insufficient-data");
   });
@@ -176,10 +148,7 @@ describe("assessSyllableTone", () => {
   });
 
   it("returns needs-improvement for a weak rising contour", () => {
-    const result = assessSyllableTone(
-      createLinearContour(0, 0.8),
-      2,
-    );
+    const result = assessSyllableTone(createLinearContour(0, 0.8), 2);
 
     expect(result.status).toBe("needs-improvement");
     expect(result.score).toBeGreaterThanOrEqual(45);
@@ -188,21 +157,15 @@ describe("assessSyllableTone", () => {
 
   it("rejects an invalid expected tone", () => {
     expect(() =>
-      assessSyllableTone(
-        createContour(Array(20).fill(0)),
-        6 as unknown as 1,
-      ),
+      assessSyllableTone(createContour(Array(20).fill(0)), 6 as unknown as 1),
     ).toThrow("Invalid expected Mandarin tone.");
   });
 
   it("rejects invalid assessment options", () => {
     expect(() =>
-      assessSyllableTone(
-        createContour(Array(20).fill(0)),
-        1,
-        { minimumPoints: 1 },
-      ),
+      assessSyllableTone(createContour(Array(20).fill(0)), 1, {
+        minimumPoints: 1,
+      }),
     ).toThrow("Invalid syllable tone assessment configuration.");
   });
 });
-

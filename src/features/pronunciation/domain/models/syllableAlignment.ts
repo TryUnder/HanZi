@@ -1,4 +1,3 @@
-
 export interface PhonemeGroupAlignment {
   readonly startSeconds: number;
   readonly endSeconds: number;
@@ -27,10 +26,7 @@ export interface SyllableAlignment {
 }
 
 export type AlignmentStatus =
-  | "aligned"
-  | "low-confidence"
-  | "insufficient-data"
-  | "failed";
+  "aligned" | "low-confidence" | "insufficient-data" | "failed";
 
 export interface PronunciationAlignment {
   readonly status: AlignmentStatus;

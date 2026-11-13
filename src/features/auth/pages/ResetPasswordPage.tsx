@@ -1,4 +1,3 @@
-
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router";
 import { Mail } from "lucide-react";
@@ -20,10 +19,12 @@ export function ResetPasswordPage() {
     setIsSubmitting(true);
 
     try {
-      const { error: resetError } =
-        await supabase.auth.resetPasswordForEmail(email.trim(), {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        {
           redirectTo: `${window.location.origin}/set-password`,
-        });
+        },
+      );
 
       if (resetError) {
         setError(resetError.message);
@@ -44,9 +45,7 @@ export function ResetPasswordPage() {
           <div className={styles.brandSymbol}>汉</div>
           <div>
             <div className={styles.brandName}>HanZi</div>
-            <div className={styles.brandSubtitle}>
-              CHINESE LEARNING STUDIO
-            </div>
+            <div className={styles.brandSubtitle}>CHINESE LEARNING STUDIO</div>
           </div>
         </div>
 
@@ -84,8 +83,8 @@ export function ResetPasswordPage() {
 
           {success && (
             <div className={styles.success} role="status">
-              If an account exists for this email, a password reset link
-              has been sent. Check your inbox and spam folder.
+              If an account exists for this email, a password reset link has
+              been sent. Check your inbox and spam folder.
             </div>
           )}
 

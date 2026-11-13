@@ -1,28 +1,29 @@
 import { LearningRecordService } from "../../features/learning/application/services/LearningRecordService";
-import { LocalStorageLearningRecordRepository } from "../../features/learning/infrastructure/storage/localStorageLearningRecordRepository";
+import type { LearningRecordRepository } from "../../features/learning/application/ports/learningRecordRepository";
 
-export interface AppStorageAdapter {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-}
+import { SupabaseLearningRecordRepository } from "../../features/learning/infrastructure/supabase/supabaseLearningRecordRepository";
+
+import { supabase } from "../../services/supabase/supabaseClient";
 
 /**
  * Creates the application-level learning service.
- * Storage is injected so the implementation can be replaced or tested.
+ * Repository implementation is injected to keep the application
+ * layer independent of the storage technology.
  */
 export function createLearningRecordService(
-  storage: AppStorageAdapter,
+  repository: LearningRecordRepository,
 ): LearningRecordService {
-  const repository = new LocalStorageLearningRecordRepository(storage);
-
   return new LearningRecordService(repository);
 }
 
 /**
  * Default application instance.
- * Access to localStorage is deferred until a repository operation is called.
+ *
+ * Supabase uses the currently authenticated session.
+ * Row Level Security isolates records between users.
  */
-export const learningRecordService = createLearningRecordService({
-  getItem: (key) => window.localStorage.getItem(key),
-  setItem: (key, value) => window.localStorage.setItem(key, value),
-});
+const learningRecordRepository = new SupabaseLearningRecordRepository(supabase);
+
+export const learningRecordService = createLearningRecordService(
+  learningRecordRepository,
+);

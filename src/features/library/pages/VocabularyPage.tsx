@@ -5,9 +5,30 @@ import { VocabularyCard } from "../components/VocabularyCard";
 import { VocabularyDetails } from "../components/VocabularyDetails";
 import { useVocabulary } from "../hooks/useVocabulary";
 import type { HskLevel } from "../types/character";
+import type { HskLevelFilter } from "../../../shared/domain/types/hsk";
+import { useUserSettings } from "../../settings/presentation/hooks/useUserSettings";
+import { getDefaultHskLevel } from "../../settings/domain/rules/userSettingsValidation";
 import styles from "./VocabularyPage.module.css";
 
 export function VocabularyPage() {
+  const { settings, isLoading } = useUserSettings();
+
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <p>Loading your preferences...</p>
+      </div>
+    );
+  }
+
+  return <VocabularyPageContent defaultLevel={getDefaultHskLevel(settings)} />;
+}
+
+interface VocabularyPageContentProps {
+  readonly defaultLevel: HskLevelFilter;
+}
+
+function VocabularyPageContent({ defaultLevel }: VocabularyPageContentProps) {
   const {
     search,
     setSearch,
@@ -18,7 +39,7 @@ export function VocabularyPage() {
     resultCount,
     verifiedCount,
     unreviewedCount,
-  } = useVocabulary();
+  } = useVocabulary(defaultLevel);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 

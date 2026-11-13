@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
 import type {

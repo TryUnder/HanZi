@@ -1,4 +1,3 @@
-
 import { describe, expect, it } from "vitest";
 
 import type { PhonemizedPronunciation } from "../models/phoneme";
@@ -44,15 +43,13 @@ function createForcedAlignment(
   targetPhoneIndexes: readonly number[],
   confidence = 0.5,
 ): ForcedAlignmentResult {
-  const frames = targetPhoneIndexes.map(
-    (targetPhoneIndex, frameIndex) => ({
-      frameIndex,
-      timeSeconds: frameIndex * 0.01,
-      targetPhoneIndex,
-      confidence,
-      isSilence: false,
-    }),
-  );
+  const frames = targetPhoneIndexes.map((targetPhoneIndex, frameIndex) => ({
+    frameIndex,
+    timeSeconds: frameIndex * 0.01,
+    targetPhoneIndex,
+    confidence,
+    isSilence: false,
+  }));
 
   return {
     durationSeconds: frames.length * 0.01,
@@ -62,7 +59,6 @@ function createForcedAlignment(
     alignedFrameCount: frames.length,
   };
 }
-
 
 function createSyllableAlignment(
   firstSyllable: {
@@ -118,7 +114,6 @@ function createSyllableAlignment(
       firstSyllable.alignedFrames + secondSyllable.alignedFrames,
   };
 }
-
 
 describe("evaluateAlignmentQuality", () => {
   it("accepts a well-aligned two-syllable pronunciation", () => {

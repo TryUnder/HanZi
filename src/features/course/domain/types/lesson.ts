@@ -1,4 +1,3 @@
-
 import type { LearningItemReference } from "../../../learning/domain/types";
 
 export type LessonActivityType =

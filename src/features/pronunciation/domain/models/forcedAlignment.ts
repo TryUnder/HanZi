@@ -1,4 +1,3 @@
-
 export interface FramePhoneAlignment {
   readonly frameIndex: number;
   readonly timeSeconds: number;

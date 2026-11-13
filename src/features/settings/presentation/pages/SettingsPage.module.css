@@ -1,0 +1,365 @@
+.page {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 42px 46px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.eyebrow {
+  color: var(--color-brand-500);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.pageHeader h1 {
+  margin: 10px 0 7px;
+  color: var(--color-text-heading);
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+
+.pageHeader p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-brand-600);
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sectionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-purple-background);
+  color: var(--color-brand-600);
+}
+
+.sectionHeader h2 {
+  margin: 0 0 4px;
+  color: var(--color-text-heading);
+  font-size: 15px;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+.settingsCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 90px;
+  padding: 20px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.accountInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-purple-background);
+  color: var(--color-brand-600);
+}
+
+.accountDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.accountDetails strong {
+  overflow-wrap: anywhere;
+  color: var(--color-text-heading);
+  font-size: 12px;
+}
+
+.accountStatus {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  color: var(--color-brand-600);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.emptyState h3 {
+  margin: 12px 0 6px;
+  color: var(--color-text-heading);
+  font-size: 13px;
+}
+
+.emptyState p {
+  max-width: 380px;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.syncStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-brand-600);
+}
+
+.syncStatus div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.syncStatus strong {
+  color: var(--color-text-heading);
+  font-size: 12px;
+}
+
+.syncStatus span {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-brand-600);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.refreshButton,
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.refreshButton:hover:not(:disabled),
+.retryButton:hover:not(:disabled) {
+  border-color: var(--color-brand-400);
+}
+
+.refreshButton:disabled,
+.retryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 13px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.errorContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-secondary);
+}
+
+.errorContent svg {
+  flex-shrink: 0;
+}
+
+.errorContent p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  .page {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 25px 15px;
+  }
+
+  .pageHeader h1 {
+    font-size: 25px;
+  }
+
+  .settingsCard {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .accountStatus {
+    padding-left: 58px;
+  }
+
+  .errorMessage {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.preferenceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-width: 460px;
+}
+
+.preferenceInfo strong {
+  color: var(--color-text-heading);
+  font-size: 12px;
+}
+
+.preferenceInfo p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.preferenceControl {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  min-width: 150px;
+}
+
+.preferenceControl select {
+  min-width: 150px;
+  min-height: 36px;
+  padding: 7px 30px 7px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.preferenceControl select:focus-visible {
+  outline: 2px solid var(--color-brand-400);
+  outline-offset: 2px;
+}
+
+.preferenceControl select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.preferenceStatus {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+@media (max-width: 560px) {
+  .preferenceControl {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .preferenceControl select {
+    width: 100%;
+  }
+}

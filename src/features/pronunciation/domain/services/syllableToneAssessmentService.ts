@@ -64,9 +64,7 @@ function resolveOptions(
 }
 
 function median(values: readonly number[]): number {
-  const sorted = [...values].sort(
-    (first, second) => first - second,
-  );
+  const sorted = [...values].sort((first, second) => first - second);
 
   const middleIndex = Math.floor(sorted.length / 2);
 
@@ -74,9 +72,7 @@ function median(values: readonly number[]): number {
     return sorted[middleIndex]!;
   }
 
-  return (
-    sorted[middleIndex - 1]! + sorted[middleIndex]!
-  ) / 2;
+  return (sorted[middleIndex - 1]! + sorted[middleIndex]!) / 2;
 }
 
 function medianInPositionRange(
@@ -88,39 +84,29 @@ function medianInPositionRange(
   const selected = values.filter((_, index) => {
     const position = points[index]!.relativePosition;
 
-    return (
-      position >= minimumPosition &&
-      position <= maximumPosition
-    );
+    return position >= minimumPosition && position <= maximumPosition;
   });
 
-  return selected.length > 0
-    ? median(selected)
-    : median(values);
+  return selected.length > 0 ? median(selected) : median(values);
 }
 
 function calculateRegressionSlope(
   points: SyllablePitchContour["points"],
 ): number {
   const meanX =
-    points.reduce(
-      (sum, point) => sum + point.relativePosition,
-      0,
-    ) / points.length;
+    points.reduce((sum, point) => sum + point.relativePosition, 0) /
+    points.length;
 
   const meanY =
-    points.reduce(
-      (sum, point) => sum + point.semitonesFromReference,
-      0,
-    ) / points.length;
+    points.reduce((sum, point) => sum + point.semitonesFromReference, 0) /
+    points.length;
 
   let numerator = 0;
   let denominator = 0;
 
   for (const point of points) {
     const differenceX = point.relativePosition - meanX;
-    const differenceY =
-      point.semitonesFromReference - meanY;
+    const differenceY = point.semitonesFromReference - meanY;
 
     numerator += differenceX * differenceY;
     denominator += differenceX * differenceX;
@@ -155,25 +141,14 @@ function calculateDirectionConsistency(
     }
   }
 
-  return relevantChanges === 0
-    ? 0
-    : matchingChanges / relevantChanges;
+  return relevantChanges === 0 ? 0 : matchingChanges / relevantChanges;
 }
 
-function extractFeatures(
-  contour: SyllablePitchContour,
-): SyllableToneFeatures {
+function extractFeatures(contour: SyllablePitchContour): SyllableToneFeatures {
   const points = contour.points;
-  const values = points.map(
-    (point) => point.semitonesFromReference,
-  );
+  const values = points.map((point) => point.semitonesFromReference);
 
-  const startMedianSemitones = medianInPositionRange(
-    values,
-    points,
-    0,
-    0.25,
-  );
+  const startMedianSemitones = medianInPositionRange(values, points, 0, 0.25);
 
   const middleMedianSemitones = medianInPositionRange(
     values,
@@ -182,12 +157,7 @@ function extractFeatures(
     0.65,
   );
 
-  const endMedianSemitones = medianInPositionRange(
-    values,
-    points,
-    0.75,
-    1,
-  );
+  const endMedianSemitones = medianInPositionRange(values, points, 0.75, 1);
 
   const minimumSemitones = Math.min(...values);
   const maximumSemitones = Math.max(...values);
@@ -198,16 +168,12 @@ function extractFeatures(
     endMedianSemitones,
     minimumSemitones,
     maximumSemitones,
-    pitchRangeSemitones:
-      maximumSemitones - minimumSemitones,
-    startToEndChangeSemitones:
-      endMedianSemitones - startMedianSemitones,
+    pitchRangeSemitones: maximumSemitones - minimumSemitones,
+    startToEndChangeSemitones: endMedianSemitones - startMedianSemitones,
     regressionSlope: calculateRegressionSlope(points),
     directionConsistency: calculateDirectionConsistency(
       points,
-      endMedianSemitones >= startMedianSemitones
-        ? "rising"
-        : "falling",
+      endMedianSemitones >= startMedianSemitones ? "rising" : "falling",
     ),
   };
 }
@@ -216,32 +182,23 @@ function clampScore(value: number): number {
   return Math.round(Math.max(0, Math.min(100, value)));
 }
 
-function evaluateLevelTone(
-  features: SyllableToneFeatures,
-): ToneEvaluation {
+function evaluateLevelTone(features: SyllableToneFeatures): ToneEvaluation {
   const instability =
     Math.max(0, features.pitchRangeSemitones - 1.5) * 12 +
     Math.abs(features.regressionSlope) * 5;
 
   return {
     score: clampScore(100 - instability),
-    feedbackCode:
-      instability <= 30
-        ? "STABLE_CONTOUR"
-        : "UNSTABLE_CONTOUR",
+    feedbackCode: instability <= 30 ? "STABLE_CONTOUR" : "UNSTABLE_CONTOUR",
   };
 }
 
-function evaluateRisingTone(
-  features: SyllableToneFeatures,
-): ToneEvaluation {
+function evaluateRisingTone(features: SyllableToneFeatures): ToneEvaluation {
   const rise = features.startToEndChangeSemitones;
 
-  const riseScore =
-    Math.max(0, Math.min(1, rise / 3)) * 65;
+  const riseScore = Math.max(0, Math.min(1, rise / 3)) * 65;
 
-  const consistencyScore =
-    features.directionConsistency * 35;
+  const consistencyScore = features.directionConsistency * 35;
 
   return {
     score: clampScore(riseScore + consistencyScore),
@@ -252,16 +209,12 @@ function evaluateRisingTone(
   };
 }
 
-function evaluateFallingTone(
-  features: SyllableToneFeatures,
-): ToneEvaluation {
+function evaluateFallingTone(features: SyllableToneFeatures): ToneEvaluation {
   const fall = -features.startToEndChangeSemitones;
 
-  const fallScore =
-    Math.max(0, Math.min(1, fall / 3)) * 65;
+  const fallScore = Math.max(0, Math.min(1, fall / 3)) * 65;
 
-  const consistencyScore =
-    features.directionConsistency * 35;
+  const consistencyScore = features.directionConsistency * 35;
 
   return {
     score: clampScore(fallScore + consistencyScore),
@@ -272,33 +225,24 @@ function evaluateFallingTone(
   };
 }
 
-function evaluateThirdTone(
-  features: SyllableToneFeatures,
-): ToneEvaluation {
+function evaluateThirdTone(features: SyllableToneFeatures): ToneEvaluation {
   const initialFall =
-    features.startMedianSemitones -
-    features.middleMedianSemitones;
+    features.startMedianSemitones - features.middleMedianSemitones;
 
   const finalRise =
-    features.endMedianSemitones -
-    features.middleMedianSemitones;
+    features.endMedianSemitones - features.middleMedianSemitones;
 
   const lowFalling =
-    features.startToEndChangeSemitones <= -1.2 &&
-    initialFall >= 0.6;
+    features.startToEndChangeSemitones <= -1.2 && initialFall >= 0.6;
 
-  const dipping =
-    initialFall >= 0.8 &&
-    finalRise >= 0.4;
+  const dipping = initialFall >= 0.8 && finalRise >= 0.4;
 
   if (dipping) {
     const fallScore = Math.min(1, initialFall / 2);
     const riseScore = Math.min(1, finalRise / 1.5);
 
     return {
-      score: clampScore(
-        fallScore * 50 + riseScore * 50,
-      ),
+      score: clampScore(fallScore * 50 + riseScore * 50),
       feedbackCode: "DIPPING_CONTOUR",
     };
   }
@@ -306,10 +250,7 @@ function evaluateThirdTone(
   if (lowFalling) {
     return {
       score: clampScore(
-        Math.min(
-          1,
-          -features.startToEndChangeSemitones / 1.8,
-        ) * 85,
+        Math.min(1, -features.startToEndChangeSemitones / 1.8) * 85,
       ),
       feedbackCode: "LOW_FALLING_CONTOUR",
     };
@@ -317,11 +258,7 @@ function evaluateThirdTone(
 
   return {
     score: clampScore(
-      Math.max(
-        0,
-        45 -
-          Math.abs(features.startToEndChangeSemitones) * 10,
-      ),
+      Math.max(0, 45 - Math.abs(features.startToEndChangeSemitones) * 10),
     ),
     feedbackCode: "UNSTABLE_CONTOUR",
   };
@@ -348,27 +285,19 @@ function evaluateTone(
   }
 }
 
-function calculateConfidence(
-  contour: SyllablePitchContour,
-): number {
+function calculateConfidence(contour: SyllablePitchContour): number {
   const averageClarity =
-    contour.points.reduce(
-      (sum, point) => sum + point.clarity,
-      0,
-    ) / contour.points.length;
+    contour.points.reduce((sum, point) => sum + point.clarity, 0) /
+    contour.points.length;
 
-  const frameCoverage = Math.min(
-    1,
-    contour.voicedFrameCount / 12,
+  const frameCoverage = Math.min(1, contour.voicedFrameCount / 12);
+
+  return (
+    Math.round(
+      (contour.voicedRatio * 0.4 + averageClarity * 0.3 + frameCoverage * 0.3) *
+        100,
+    ) / 100
   );
-
-  return Math.round(
-    (
-      contour.voicedRatio * 0.4 +
-      averageClarity * 0.3 +
-      frameCoverage * 0.3
-    ) * 100,
-  ) / 100;
 }
 
 function createInsufficientResult(
@@ -398,11 +327,7 @@ export function assessSyllableTone(
 ): SyllableToneAssessment {
   const options = resolveOptions(customOptions);
 
-  if (
-    !Number.isInteger(expectedTone) ||
-    expectedTone < 1 ||
-    expectedTone > 5
-  ) {
+  if (!Number.isInteger(expectedTone) || expectedTone < 1 || expectedTone > 5) {
     throw new Error("Invalid expected Mandarin tone.");
   }
 
@@ -472,4 +397,3 @@ export function assessSyllableTone(
     features,
   };
 }
-

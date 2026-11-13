@@ -15,15 +15,9 @@ function getSupportedMimeType(): string | undefined {
     return undefined;
   }
 
-  const mimeTypes = [
-    "audio/webm;codecs=opus",
-    "audio/webm",
-    "audio/mp4",
-  ];
+  const mimeTypes = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
 
-  return mimeTypes.find((mimeType) =>
-    MediaRecorder.isTypeSupported(mimeType),
-  );
+  return mimeTypes.find((mimeType) => MediaRecorder.isTypeSupported(mimeType));
 }
 
 export function usePronunciationRecorder(): UsePronunciationRecorderReturn {

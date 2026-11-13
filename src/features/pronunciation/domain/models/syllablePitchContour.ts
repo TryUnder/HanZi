@@ -1,6 +1,4 @@
-export type SyllablePitchStatus =
-  | "analyzed"
-  | "insufficient-data";
+export type SyllablePitchStatus = "analyzed" | "insufficient-data";
 
 export interface SyllablePitchPoint {
   readonly timeSeconds: number;

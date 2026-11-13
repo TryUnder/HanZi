@@ -1,13 +1,7 @@
-
 export type AlignmentQualityStatus =
-  | "accepted"
-  | "low-confidence"
-  | "insufficient-data"
-  | "rejected";
+  "accepted" | "low-confidence" | "insufficient-data" | "rejected";
 
-export type AlignmentQualityIssueSeverity =
-  | "warning"
-  | "error";
+export type AlignmentQualityIssueSeverity = "warning" | "error";
 
 export type AlignmentQualityIssueCode =
   | "MISSING_PHONEME_FRAMES"

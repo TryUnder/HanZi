@@ -1,4 +1,3 @@
-
 import type { PitchFrame } from "../models/pitchFrame";
 import type {
   SyllablePitchContour,
@@ -58,9 +57,7 @@ function resolveOptions(
     resolved.minimumVoicedRatio < 0 ||
     resolved.minimumVoicedRatio > 1
   ) {
-    throw new Error(
-      "Invalid syllable pitch analysis configuration.",
-    );
+    throw new Error("Invalid syllable pitch analysis configuration.");
   }
 
   return resolved;
@@ -68,14 +65,10 @@ function resolveOptions(
 
 function median(values: readonly number[]): number {
   if (values.length === 0) {
-    throw new Error(
-      "Cannot calculate median of an empty collection.",
-    );
+    throw new Error("Cannot calculate median of an empty collection.");
   }
 
-  const sorted = [...values].sort(
-    (first, second) => first - second,
-  );
+  const sorted = [...values].sort((first, second) => first - second);
 
   const middleIndex = Math.floor(sorted.length / 2);
 
@@ -83,10 +76,7 @@ function median(values: readonly number[]): number {
     return sorted[middleIndex]!;
   }
 
-  return (
-    sorted[middleIndex - 1]! +
-    sorted[middleIndex]!
-  ) / 2;
+  return (sorted[middleIndex - 1]! + sorted[middleIndex]!) / 2;
 }
 
 function validateInputs(
@@ -100,8 +90,7 @@ function validateInputs(
       frame.clarity < 0 ||
       frame.clarity > 1 ||
       (frame.frequencyHz !== null &&
-        (!Number.isFinite(frame.frequencyHz) ||
-          frame.frequencyHz <= 0))
+        (!Number.isFinite(frame.frequencyHz) || frame.frequencyHz <= 0))
     ) {
       throw new Error("Invalid pitch frame.");
     }
@@ -147,30 +136,21 @@ function validateInputs(
       !Number.isInteger(finalAlignment.firstPhoneIndex) ||
       !Number.isInteger(finalAlignment.lastPhoneIndex) ||
       finalAlignment.firstPhoneIndex < 0 ||
-      finalAlignment.lastPhoneIndex <
-        finalAlignment.firstPhoneIndex ||
+      finalAlignment.lastPhoneIndex < finalAlignment.firstPhoneIndex ||
       Math.abs(
         finalAlignment.durationSeconds -
-          (finalAlignment.endSeconds -
-            finalAlignment.startSeconds),
+          (finalAlignment.endSeconds - finalAlignment.startSeconds),
       ) > 0.01
     ) {
       throw new Error("Invalid final alignment.");
     }
   }
 
-  for (
-    let index = 1;
-    index < alignments.length;
-    index += 1
-  ) {
+  for (let index = 1; index < alignments.length; index += 1) {
     if (
-      alignments[index]!.syllableIndex <=
-      alignments[index - 1]!.syllableIndex
+      alignments[index]!.syllableIndex <= alignments[index - 1]!.syllableIndex
     ) {
-      throw new Error(
-        "Syllable alignments must be ordered.",
-      );
+      throw new Error("Syllable alignments must be ordered.");
     }
   }
 }
@@ -180,8 +160,7 @@ function prepareSyllables(
   alignments: readonly SyllableAlignment[],
   options: ResolvedOptions,
 ): PreparedSyllable[] {
-  const halfWindow =
-    options.frameWindowDurationSeconds / 2;
+  const halfWindow = options.frameWindowDurationSeconds / 2;
 
   return alignments.map((alignment) => {
     const finalAlignment = alignment.finalAlignment;
@@ -200,32 +179,25 @@ function prepareSyllables(
       };
     }
 
-    const analysisStartSeconds =
-      finalAlignment.startSeconds;
+    const analysisStartSeconds = finalAlignment.startSeconds;
 
-    const analysisEndSeconds =
-      finalAlignment.endSeconds;
+    const analysisEndSeconds = finalAlignment.endSeconds;
 
-    const analysisDurationSeconds =
-      finalAlignment.durationSeconds;
+    const analysisDurationSeconds = finalAlignment.durationSeconds;
 
     const availableFrames = frames.filter((frame) => {
-      const windowStart =
-        frame.timeSeconds - halfWindow;
+      const windowStart = frame.timeSeconds - halfWindow;
 
-      const windowEnd =
-        frame.timeSeconds + halfWindow;
+      const windowEnd = frame.timeSeconds + halfWindow;
 
       return (
-        windowStart >= analysisStartSeconds &&
-        windowEnd <= analysisEndSeconds
+        windowStart >= analysisStartSeconds && windowEnd <= analysisEndSeconds
       );
     });
 
     const voicedFrames = availableFrames.filter(
       (frame) =>
-        frame.frequencyHz !== null &&
-        frame.clarity >= options.minimumClarity,
+        frame.frequencyHz !== null && frame.clarity >= options.minimumClarity,
     );
 
     return {
@@ -255,9 +227,7 @@ function createContour(
     hasFinalAlignment,
   } = prepared;
 
-  const frequencies = voicedFrames.map(
-    (frame) => frame.frequencyHz!,
-  );
+  const frequencies = voicedFrames.map((frame) => frame.frequencyHz!);
 
   const voicedRatio =
     availableFrames.length === 0
@@ -278,15 +248,11 @@ function createContour(
           return {
             timeSeconds: frame.timeSeconds,
             relativePosition:
-              (frame.timeSeconds -
-                analysisStartSeconds) /
+              (frame.timeSeconds - analysisStartSeconds) /
               analysisDurationSeconds,
             frequencyHz,
             semitonesFromReference:
-              12 *
-              Math.log2(
-                frequencyHz / referenceFrequencyHz,
-              ),
+              12 * Math.log2(frequencyHz / referenceFrequencyHz),
             clarity: frame.clarity,
           };
         })
@@ -297,25 +263,16 @@ function createContour(
     startSeconds: analysisStartSeconds,
     endSeconds: analysisEndSeconds,
     durationSeconds: analysisDurationSeconds,
-    status: hasEnoughData
-      ? "analyzed"
-      : "insufficient-data",
+    status: hasEnoughData ? "analyzed" : "insufficient-data",
     points,
     voicedFrameCount: voicedFrames.length,
     availableFrameCount: availableFrames.length,
     voicedRatio,
-    medianFrequencyHz:
-      frequencies.length > 0
-        ? median(frequencies)
-        : null,
+    medianFrequencyHz: frequencies.length > 0 ? median(frequencies) : null,
     minimumFrequencyHz:
-      frequencies.length > 0
-        ? Math.min(...frequencies)
-        : null,
+      frequencies.length > 0 ? Math.min(...frequencies) : null,
     maximumFrequencyHz:
-      frequencies.length > 0
-        ? Math.max(...frequencies)
-        : null,
+      frequencies.length > 0 ? Math.max(...frequencies) : null,
   };
 }
 
@@ -339,22 +296,13 @@ export function analyzeSyllablePitch(
   validateInputs(frames, alignments);
 
   if (alignments.length === 0) {
-    throw new Error(
-      "At least one syllable alignment is required.",
-    );
+    throw new Error("At least one syllable alignment is required.");
   }
 
-  const prepared = prepareSyllables(
-    frames,
-    alignments,
-    options,
-  );
+  const prepared = prepareSyllables(frames, alignments, options);
 
-  const allVoicedFrequencies = prepared.flatMap(
-    (syllable) =>
-      syllable.voicedFrames.map(
-        (frame) => frame.frequencyHz!,
-      ),
+  const allVoicedFrequencies = prepared.flatMap((syllable) =>
+    syllable.voicedFrames.map((frame) => frame.frequencyHz!),
   );
 
   const referenceFrequencyHz =
@@ -363,17 +311,11 @@ export function analyzeSyllablePitch(
       : null;
 
   const syllables = prepared.map((syllable) =>
-    createContour(
-      syllable,
-      referenceFrequencyHz,
-      options,
-    ),
+    createContour(syllable, referenceFrequencyHz, options),
   );
 
   return {
-    status: syllables.every(
-      (syllable) => syllable.status === "analyzed",
-    )
+    status: syllables.every((syllable) => syllable.status === "analyzed")
       ? "analyzed"
       : "insufficient-data",
     referenceFrequencyHz,

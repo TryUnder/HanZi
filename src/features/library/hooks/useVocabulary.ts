@@ -8,9 +8,9 @@ import {
 import { createVocabularyDisplay } from "../domain/vocabulary/vocabularyDisplay";
 import { matchesVocabularySearch } from "../domain/vocabulary/vocabularySearch";
 import type { VocabularyDisplay } from "../domain/vocabulary/vocabularyDisplay";
-import type { HskLevel } from "../types/character";
+import type { HskLevelFilter } from "../../../shared/domain/types/hsk";
 
-export type VocabularyLevelFilter = HskLevel | "all";
+export type VocabularyLevelFilter = HskLevelFilter;
 
 export interface UseVocabularyResult {
   readonly search: string;
@@ -24,10 +24,12 @@ export interface UseVocabularyResult {
   readonly unreviewedCount: number;
 }
 
-export function useVocabulary(): UseVocabularyResult {
+export function useVocabulary(
+  defaultLevel: HskLevelFilter = "all",
+): UseVocabularyResult {
   const [search, setSearch] = useState("");
   const [selectedLevel, setSelectedLevel] =
-    useState<VocabularyLevelFilter>("all");
+    useState<VocabularyLevelFilter>(defaultLevel);
 
   const vocabulary = useMemo(
     () =>

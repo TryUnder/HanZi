@@ -4,10 +4,31 @@ import { CharacterCard } from "../components/CharacterCard";
 import { CharacterDetails } from "../components/CharacterDetails";
 import { useLibrary } from "../hooks/useLibrary";
 import type { HskLevel } from "../types/character";
+import type { HskLevelFilter } from "../../../shared/domain/types/hsk";
 import { LibraryTabs } from "../components/LibraryTabs";
+import { useUserSettings } from "../../settings/presentation/hooks/useUserSettings";
+import { getDefaultHskLevel } from "../../settings/domain/rules/userSettingsValidation";
 import styles from "./LibraryPage.module.css";
 
 export function LibraryPage() {
+  const { settings, isLoading } = useUserSettings();
+
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <p>Loading your preferences...</p>
+      </div>
+    );
+  }
+
+  return <LibraryPageContent defaultLevel={getDefaultHskLevel(settings)} />;
+}
+
+interface LibraryPageContentProps {
+  readonly defaultLevel: HskLevelFilter;
+}
+
+function LibraryPageContent({ defaultLevel }: LibraryPageContentProps) {
   const {
     search,
     setSearch,
@@ -19,7 +40,7 @@ export function LibraryPage() {
     isLoading,
     error,
     refreshStatuses,
-  } = useLibrary();
+  } = useLibrary(defaultLevel);
 
   const [selectedId, setSelectedId] = useState<string | null>("ni");
 

@@ -6,7 +6,7 @@ import type {
   LearningStatusChanged,
 } from "../../learning/domain/types";
 import { characters } from "../data/characters";
-import type { HskLevel } from "../types/character";
+import type { HskLevelFilter } from "../../../shared/domain/types/hsk";
 
 function getItemKey(kind: "character" | "vocabulary", id: string): string {
   return `${kind}:${id}`;
@@ -16,12 +16,15 @@ function isActiveLearningStatus(status: LearningStatus | undefined): boolean {
   return status === "learning" || status === "needs-practice";
 }
 
-export function useLibrary() {
+export function useLibrary(defaultLevel: HskLevelFilter = "all") {
   const [search, setSearch] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState<HskLevel | "all">("all");
+  const [selectedLevel, setSelectedLevel] =
+    useState<HskLevelFilter>(defaultLevel);
+
   const [latestStatuses, setLatestStatuses] = useState<
     ReadonlyMap<string, LearningStatusChanged>
   >(() => new Map());
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

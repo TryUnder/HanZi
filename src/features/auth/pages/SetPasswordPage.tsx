@@ -1,4 +1,3 @@
-
 import { useState, type FormEvent } from "react";
 import { Link, Navigate } from "react-router";
 import { LockKeyhole } from "lucide-react";
@@ -17,11 +16,7 @@ export function SetPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (isLoading) {
-    return (
-      <div className={styles.loadingScreen}>
-        Checking your session...
-      </div>
-    );
+    return <div className={styles.loadingScreen}>Checking your session...</div>;
   }
 
   if (!user) {
@@ -42,8 +37,8 @@ export function SetPasswordPage() {
             <div className={styles.eyebrow}>LINK EXPIRED</div>
             <h1>Unable to set password</h1>
             <p>
-              This link is invalid or has expired. Request a new password
-              reset link and try again.
+              This link is invalid or has expired. Request a new password reset
+              link and try again.
             </p>
           </div>
 
@@ -100,18 +95,14 @@ export function SetPasswordPage() {
           <div className={styles.brandSymbol}>汉</div>
           <div>
             <div className={styles.brandName}>HanZi</div>
-            <div className={styles.brandSubtitle}>
-              CHINESE LEARNING STUDIO
-            </div>
+            <div className={styles.brandSubtitle}>CHINESE LEARNING STUDIO</div>
           </div>
         </div>
 
         <div className={styles.heading}>
           <div className={styles.eyebrow}>ACCOUNT SECURITY</div>
           <h1>Set your password</h1>
-          <p>
-            Choose a new password for your HanZi account.
-          </p>
+          <p>Choose a new password for your HanZi account.</p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -157,11 +148,7 @@ export function SetPasswordPage() {
           <button
             className={styles.submitButton}
             type="submit"
-            disabled={
-              isSubmitting ||
-              !password ||
-              !confirmPassword
-            }
+            disabled={isSubmitting || !password || !confirmPassword}
           >
             {isSubmitting ? "Saving..." : "Save password"}
           </button>

@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
 import {
@@ -15,16 +14,12 @@ import {
   Upload,
 } from "lucide-react";
 
-import {
-  analyzeWordPronunciation,
-} from "../../application/services/pronunciationAnalysisService";
+import { analyzeWordPronunciation } from "../../application/services/pronunciationAnalysisService";
 import type {
   PronunciationAnalysisResponse,
   PronunciationAnalysisResult,
 } from "../../application/services/pronunciationAnalysisService";
-import type {
-  SyllablePitchContour,
-} from "../../domain/models/syllablePitchContour";
+import type { SyllablePitchContour } from "../../domain/models/syllablePitchContour";
 
 import { usePronunciationRecorder } from "../hooks/usePronunciationRecorder";
 import styles from "./PronunciationLabPage.module.css";
@@ -122,8 +117,7 @@ function PitchChart({
     left + (timeSeconds / durationSeconds) * chartWidth;
 
   const y = (semitones: number) =>
-    top +
-    ((paddedMaximum - semitones) / paddedRange) * chartHeight;
+    top + ((paddedMaximum - semitones) / paddedRange) * chartHeight;
 
   const gridValues = [paddedMinimum, 0, paddedMaximum];
 
@@ -308,10 +302,7 @@ function AlignmentSection({
 
       <div className={styles.syllableTable}>
         {syllableAlignment.syllables.map((syllable) => (
-          <div
-            className={styles.syllableRow}
-            key={syllable.syllableIndex}
-          >
+          <div className={styles.syllableRow} key={syllable.syllableIndex}>
             <strong>{syllable.syllableIndex + 1}</strong>
             <span>{formatSeconds(syllable.startSeconds)}</span>
             <span>{formatSeconds(syllable.endSeconds)}</span>
@@ -400,8 +391,7 @@ function ToneSection({
                 (item) => item.syllableIndex === index,
               );
 
-              const assessment =
-                toneAnalysis.syllableAssessments[index];
+              const assessment = toneAnalysis.syllableAssessments[index];
 
               return (
                 <article className={styles.toneCard} key={index}>
@@ -480,10 +470,7 @@ function PronunciationDiagnostics({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const json = useMemo(
-    () => JSON.stringify(analysis, null, 2),
-    [analysis],
-  );
+  const json = useMemo(() => JSON.stringify(analysis, null, 2), [analysis]);
 
   const handleCopy = async () => {
     try {
@@ -532,10 +519,8 @@ export function PronunciationLabPage() {
   const [word, setWord] = useState(INITIAL_WORD);
   const [pinyin, setPinyin] = useState(INITIAL_PINYIN);
 
-  const [uploadedRecording, setUploadedRecording] =
-    useState<Blob | null>(null);
-  const [uploadedAudioUrl, setUploadedAudioUrl] =
-    useState<string | null>(null);
+  const [uploadedRecording, setUploadedRecording] = useState<Blob | null>(null);
+  const [uploadedAudioUrl, setUploadedAudioUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
   const [response, setResponse] =
@@ -597,11 +582,7 @@ export function PronunciationLabPage() {
     setResponse(null);
 
     try {
-      const result = await analyzeWordPronunciation(
-        word,
-        pinyin,
-        recording,
-      );
+      const result = await analyzeWordPronunciation(word, pinyin, recording);
 
       setResponse(result);
 
@@ -640,13 +621,11 @@ export function PronunciationLabPage() {
     <main className={styles.page}>
       <header className={styles.pageHeader}>
         <div>
-          <span className={styles.eyebrow}>
-            DEVELOPER TOOL · PRONUNCIATION
-          </span>
+          <span className={styles.eyebrow}>DEVELOPER TOOL · PRONUNCIATION</span>
           <h1>Pronunciation Lab</h1>
           <p>
-            Testowanie dopasowania fonemów, granic sylab i analizy
-            tonów w rzeczywistych nagraniach.
+            Testowanie dopasowania fonemów, granic sylab i analizy tonów w
+            rzeczywistych nagraniach.
           </p>
         </div>
 
@@ -687,9 +666,8 @@ export function PronunciationLabPage() {
         </div>
 
         <p className={styles.fieldHint}>
-          Wprowadź Pinyin w formacie liczbowym, np. ni3 hao3.
-          Analizator sam wyznaczy tony powierzchniowe na podstawie
-          reguł sandhi.
+          Wprowadź Pinyin w formacie liczbowym, np. ni3 hao3. Analizator sam
+          wyznaczy tony powierzchniowe na podstawie reguł sandhi.
         </p>
 
         <div className={styles.recordingArea}>
@@ -857,8 +835,8 @@ export function PronunciationLabPage() {
           <LoaderCircle className={styles.spinner} size={26} />
           <strong>Analizuję nagranie…</strong>
           <span>
-            Pierwsze uruchomienie może potrwać dłużej ze względu na
-            pobieranie modelu Charsiu.
+            Pierwsze uruchomienie może potrwać dłużej ze względu na pobieranie
+            modelu Charsiu.
           </span>
         </div>
       )}

@@ -1,4 +1,3 @@
-
 import type { PhonemizedPronunciation } from "../models/phoneme";
 import type {
   AlignmentStatus,
@@ -144,8 +143,7 @@ function validateForcedAlignment(
   ) {
     return {
       code: "INVALID_TIMELINE",
-      message:
-        "Forced alignment contains invalid duration or frame counters.",
+      message: "Forced alignment contains invalid duration or frame counters.",
     };
   }
 
@@ -173,10 +171,8 @@ function validateForcedAlignment(
     if (
       frame.frameIndex !== index ||
       !Number.isFinite(frame.timeSeconds) ||
-      Math.abs(
-        frame.timeSeconds -
-          index * alignment.frameDurationSeconds,
-      ) > TIMELINE_TOLERANCE_SECONDS
+      Math.abs(frame.timeSeconds - index * alignment.frameDurationSeconds) >
+        TIMELINE_TOLERANCE_SECONDS
     ) {
       return {
         code: "INVALID_TIMELINE",
@@ -195,8 +191,7 @@ function validateForcedAlignment(
       if (frame.targetPhoneIndex !== null) {
         return {
           code: "INVALID_TIMELINE",
-          message:
-            "Silence frames must not reference target phonemes.",
+          message: "Silence frames must not reference target phonemes.",
         };
       }
 
@@ -208,8 +203,7 @@ function validateForcedAlignment(
     if (frame.targetPhoneIndex === null) {
       return {
         code: "INVALID_TIMELINE",
-        message:
-          "Speech frames must reference a target phoneme.",
+        message: "Speech frames must reference a target phoneme.",
       };
     }
 
@@ -222,8 +216,7 @@ function validateForcedAlignment(
     ) {
       return {
         code: "INVALID_TIMELINE",
-        message:
-          "Alignment contains an invalid phoneme sequence.",
+        message: "Alignment contains an invalid phoneme sequence.",
       };
     }
 
@@ -237,8 +230,7 @@ function validateForcedAlignment(
   ) {
     return {
       code: "INVALID_TIMELINE",
-      message:
-        "Alignment frame counters do not match the actual frames.",
+      message: "Alignment frame counters do not match the actual frames.",
     };
   }
 
@@ -255,37 +247,27 @@ function validatePronunciation(
   ) {
     return {
       code: "EMPTY_ALIGNMENT",
-      message:
-        "Pronunciation does not contain valid syllable data.",
+      message: "Pronunciation does not contain valid syllable data.",
     };
   }
 
-  if (
-    pronunciation.phoneIds.length !==
-    pronunciation.phonemes.length
-  ) {
+  if (pronunciation.phoneIds.length !== pronunciation.phonemes.length) {
     return {
       code: "INVALID_PHONE_REFERENCE",
-      message:
-        "Phone IDs and phoneme metadata have different lengths.",
+      message: "Phone IDs and phoneme metadata have different lengths.",
     };
   }
 
   let previousSyllableIndex = -1;
   let previousPositionInSyllable = -1;
 
-  for (
-    let index = 0;
-    index < pronunciation.phonemes.length;
-    index += 1
-  ) {
+  for (let index = 0; index < pronunciation.phonemes.length; index += 1) {
     const phoneme = pronunciation.phonemes[index];
 
     if (phoneme === undefined) {
       return {
         code: "INVALID_PHONE_REFERENCE",
-        message:
-          "Pronunciation contains an undefined phoneme.",
+        message: "Pronunciation contains an undefined phoneme.",
       };
     }
 
@@ -303,56 +285,43 @@ function validatePronunciation(
     ) {
       return {
         code: "INVALID_PHONE_REFERENCE",
-        message:
-          "Pronunciation contains invalid phoneme metadata.",
+        message: "Pronunciation contains invalid phoneme metadata.",
       };
     }
 
     if (phoneme.syllableIndex < previousSyllableIndex) {
       return {
         code: "INVALID_PHONE_REFERENCE",
-        message:
-          "Phoneme syllable indexes must be ordered.",
+        message: "Phoneme syllable indexes must be ordered.",
       };
     }
 
     if (phoneme.syllableIndex !== previousSyllableIndex) {
-      if (
-        phoneme.syllableIndex !== previousSyllableIndex + 1
-      ) {
+      if (phoneme.syllableIndex !== previousSyllableIndex + 1) {
         return {
           code: "INVALID_PHONE_REFERENCE",
-          message:
-            "Pronunciation contains a missing syllable index.",
+          message: "Pronunciation contains a missing syllable index.",
         };
       }
 
       previousPositionInSyllable = -1;
     }
 
-    if (
-      phoneme.positionInSyllable <=
-      previousPositionInSyllable
-    ) {
+    if (phoneme.positionInSyllable <= previousPositionInSyllable) {
       return {
         code: "INVALID_PHONE_REFERENCE",
-        message:
-          "Phoneme positions within a syllable must be ordered.",
+        message: "Phoneme positions within a syllable must be ordered.",
       };
     }
 
     previousSyllableIndex = phoneme.syllableIndex;
-    previousPositionInSyllable =
-      phoneme.positionInSyllable;
+    previousPositionInSyllable = phoneme.positionInSyllable;
   }
 
-  if (
-    previousSyllableIndex !== pronunciation.syllables - 1
-  ) {
+  if (previousSyllableIndex !== pronunciation.syllables - 1) {
     return {
       code: "INVALID_PHONE_REFERENCE",
-      message:
-        "Pronunciation does not contain all expected syllables.",
+      message: "Pronunciation does not contain all expected syllables.",
     };
   }
 
@@ -373,18 +342,15 @@ function createPhonemeGroupAlignment(
     return null;
   }
 
-  const startSeconds =
-    accumulator.startFrame * frameDurationSeconds;
+  const startSeconds = accumulator.startFrame * frameDurationSeconds;
 
-  const endSeconds =
-    (accumulator.endFrame + 1) * frameDurationSeconds;
+  const endSeconds = (accumulator.endFrame + 1) * frameDurationSeconds;
 
   return {
     startSeconds,
     endSeconds,
     durationSeconds: endSeconds - startSeconds,
-    confidence:
-      accumulator.confidenceSum / accumulator.alignedFrames,
+    confidence: accumulator.confidenceSum / accumulator.alignedFrames,
     alignedFrames: accumulator.alignedFrames,
     firstPhoneIndex: accumulator.firstPhoneIndex,
     lastPhoneIndex: accumulator.lastPhoneIndex,
@@ -397,8 +363,7 @@ export function mapAlignmentToSyllables(
   options: SyllableAlignmentOptions = {},
 ): SyllableAlignmentResult {
   const minimumFramesPerSyllable =
-    options.minimumFramesPerSyllable ??
-    DEFAULT_MINIMUM_FRAMES_PER_SYLLABLE;
+    options.minimumFramesPerSyllable ?? DEFAULT_MINIMUM_FRAMES_PER_SYLLABLE;
 
   if (
     !Number.isInteger(minimumFramesPerSyllable) ||
@@ -410,8 +375,7 @@ export function mapAlignmentToSyllables(
     );
   }
 
-  const pronunciationError =
-    validatePronunciation(pronunciation);
+  const pronunciationError = validatePronunciation(pronunciation);
 
   if (pronunciationError !== null) {
     return {
@@ -420,8 +384,7 @@ export function mapAlignmentToSyllables(
     };
   }
 
-  const alignmentError =
-    validateForcedAlignment(forcedAlignment);
+  const alignmentError = validateForcedAlignment(forcedAlignment);
 
   if (alignmentError !== null) {
     return {
@@ -443,8 +406,7 @@ export function mapAlignmentToSyllables(
       continue;
     }
 
-    const phoneme =
-      pronunciation.phonemes[frame.targetPhoneIndex];
+    const phoneme = pronunciation.phonemes[frame.targetPhoneIndex];
 
     if (phoneme === undefined) {
       return failure(
@@ -453,8 +415,7 @@ export function mapAlignmentToSyllables(
       );
     }
 
-    const accumulator =
-      accumulators[phoneme.syllableIndex];
+    const accumulator = accumulators[phoneme.syllableIndex];
 
     if (accumulator === undefined) {
       return failure(
@@ -471,8 +432,7 @@ export function mapAlignmentToSyllables(
     );
 
     const isInitial =
-      phoneme.positionInSyllable === 0 &&
-      INITIAL_PHONES.has(phoneme.symbol);
+      phoneme.positionInSyllable === 0 && INITIAL_PHONES.has(phoneme.symbol);
 
     if (!isInitial) {
       addFrame(
@@ -486,11 +446,7 @@ export function mapAlignmentToSyllables(
 
   const syllables: SyllableAlignment[] = [];
 
-  for (
-    let index = 0;
-    index < accumulators.length;
-    index += 1
-  ) {
+  for (let index = 0; index < accumulators.length; index += 1) {
     const accumulator = accumulators[index];
 
     if (
@@ -505,11 +461,10 @@ export function mapAlignmentToSyllables(
       );
     }
 
-    const syllableAlignment =
-      createPhonemeGroupAlignment(
-        accumulator.syllable,
-        forcedAlignment.frameDurationSeconds,
-      );
+    const syllableAlignment = createPhonemeGroupAlignment(
+      accumulator.syllable,
+      forcedAlignment.frameDurationSeconds,
+    );
 
     if (syllableAlignment === null) {
       return failure(
@@ -518,11 +473,10 @@ export function mapAlignmentToSyllables(
       );
     }
 
-    const finalAlignment =
-      createPhonemeGroupAlignment(
-        accumulator.final,
-        forcedAlignment.frameDurationSeconds,
-      );
+    const finalAlignment = createPhonemeGroupAlignment(
+      accumulator.final,
+      forcedAlignment.frameDurationSeconds,
+    );
 
     const endSeconds = syllableAlignment.endSeconds;
 
@@ -530,8 +484,7 @@ export function mapAlignmentToSyllables(
       !Number.isFinite(syllableAlignment.startSeconds) ||
       !Number.isFinite(endSeconds) ||
       endSeconds >
-        forcedAlignment.durationSeconds +
-          forcedAlignment.frameDurationSeconds
+        forcedAlignment.durationSeconds + forcedAlignment.frameDurationSeconds
     ) {
       return failure(
         "INVALID_TIMELINE",
@@ -551,17 +504,14 @@ export function mapAlignmentToSyllables(
   }
 
   const averageConfidence =
-    syllables.reduce(
-      (sum, syllable) => sum + syllable.confidence,
-      0,
-    ) / syllables.length;
+    syllables.reduce((sum, syllable) => sum + syllable.confidence, 0) /
+    syllables.length;
 
   const status: AlignmentStatus = syllables.some(
     (syllable) =>
       syllable.alignedFrames < minimumFramesPerSyllable ||
       syllable.finalAlignment === null ||
-      syllable.finalAlignment.alignedFrames <
-        minimumFramesPerSyllable,
+      syllable.finalAlignment.alignedFrames < minimumFramesPerSyllable,
   )
     ? "insufficient-data"
     : "aligned";

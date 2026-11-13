@@ -1,4 +1,3 @@
-
 import { useState, type FormEvent } from "react";
 import { Link, Navigate } from "react-router";
 import { BookOpen, LockKeyhole, Mail } from "lucide-react";
@@ -15,11 +14,7 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (isLoading) {
-    return (
-      <div className={styles.loadingScreen}>
-        Checking your session...
-      </div>
-    );
+    return <div className={styles.loadingScreen}>Checking your session...</div>;
   }
 
   if (user) {
@@ -48,9 +43,7 @@ export function LoginPage() {
           <div className={styles.brandSymbol}>汉</div>
           <div>
             <div className={styles.brandName}>HanZi</div>
-            <div className={styles.brandSubtitle}>
-              CHINESE LEARNING STUDIO
-            </div>
+            <div className={styles.brandSubtitle}>CHINESE LEARNING STUDIO</div>
           </div>
         </div>
 

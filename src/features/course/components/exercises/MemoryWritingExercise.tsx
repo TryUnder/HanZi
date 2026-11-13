@@ -1,4 +1,3 @@
-
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -81,8 +80,7 @@ export function MemoryWritingExercise({
   const currentPinyin =
     currentWord?.data.readings[0]?.pinyin ?? "Pinyin unavailable";
 
-  const currentMeaning =
-    currentWord?.data.meanings[0] ?? "Meaning unavailable";
+  const currentMeaning = currentWord?.data.meanings[0] ?? "Meaning unavailable";
 
   const beginExercise = () => {
     setWordIndex(0);
@@ -220,12 +218,7 @@ export function MemoryWritingExercise({
       setPhase("word-completed");
       void savePendingAttempt();
     },
-    [
-      characterIndex,
-      currentWord,
-      savePendingAttempt,
-      wordCharacters.length,
-    ],
+    [characterIndex, currentWord, savePendingAttempt, wordCharacters.length],
   );
 
   const handleNextWord = () => {
@@ -275,9 +268,9 @@ export function MemoryWritingExercise({
             <span className={styles.eyebrow}>MEMORY WRITING</span>
             <h2>Write from memory</h2>
             <p>
-              Recall the Chinese characters using only their Pinyin and
-              meaning. The characters will be revealed after you finish
-              writing each word.
+              Recall the Chinese characters using only their Pinyin and meaning.
+              The characters will be revealed after you finish writing each
+              word.
             </p>
           </div>
 
@@ -307,8 +300,8 @@ export function MemoryWritingExercise({
           </div>
 
           <p>
-            You have completed the memory-writing exercise for this lesson.
-            Your results have been saved in your learning history.
+            You have completed the memory-writing exercise for this lesson. Your
+            results have been saved in your learning history.
           </p>
 
           <button className={styles.secondaryButton} onClick={beginExercise}>
@@ -325,9 +318,7 @@ export function MemoryWritingExercise({
   }
 
   const currentWordProgress =
-    phase === "word-completed"
-      ? 1
-      : characterIndex / wordCharacters.length;
+    phase === "word-completed" ? 1 : characterIndex / wordCharacters.length;
 
   const progress =
     ((wordIndex + currentWordProgress) / vocabularyItems.length) * 100;

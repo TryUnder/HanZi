@@ -1,4 +1,3 @@
-
 import type {
   PitchFrame,
   PitchDetectionOptions,
@@ -78,10 +77,7 @@ function resolveOptions(
   return resolved;
 }
 
-function calculateRms(
-  samples: Float32Array,
-  windowSize: number,
-): number {
+function calculateRms(samples: Float32Array, windowSize: number): number {
   let mean = 0;
 
   for (let index = 0; index < windowSize; index += 1) {
@@ -112,11 +108,7 @@ function calculateDifferenceFunction(
     let sum = 0;
     const comparisonLength = windowSize - lag;
 
-    for (
-      let index = 0;
-      index < comparisonLength;
-      index += 1
-    ) {
+    for (let index = 0; index < comparisonLength; index += 1) {
       const first = samples[index]! - mean;
       const second = samples[index + lag]! - mean;
       const delta = first - second;
@@ -144,18 +136,13 @@ function calculateCumulativeMeanNormalizedDifference(
     runningSum += difference[lag]!;
 
     normalized[lag] =
-      runningSum === 0
-        ? 1
-        : (difference[lag]! * lag) / runningSum;
+      runningSum === 0 ? 1 : (difference[lag]! * lag) / runningSum;
   }
 
   return normalized;
 }
 
-function refineLag(
-  normalized: Float64Array,
-  lag: number,
-): number {
+function refineLag(normalized: Float64Array, lag: number): number {
   if (lag <= 0 || lag >= normalized.length - 1) {
     return lag;
   }
@@ -164,8 +151,7 @@ function refineLag(
   const current = normalized[lag]!;
   const next = normalized[lag + 1]!;
 
-  const denominator =
-    2 * (2 * current - next - previous);
+  const denominator = 2 * (2 * current - next - previous);
 
   if (Math.abs(denominator) < 0.000001) {
     return lag;
@@ -176,10 +162,7 @@ function refineLag(
   return lag + adjustment;
 }
 
-function isLocalMinimum(
-  normalized: Float64Array,
-  lag: number,
-): boolean {
+function isLocalMinimum(normalized: Float64Array, lag: number): boolean {
   const current = normalized[lag]!;
   const previous = normalized[lag - 1]!;
   const next = normalized[lag + 1]!;
@@ -205,19 +188,13 @@ function createCandidate(
   const frequencyHz = sampleRate / refinedLag;
   const normalizedDifference = normalized[lag]!;
 
-  if (
-    !Number.isFinite(frequencyHz) ||
-    !Number.isFinite(normalizedDifference)
-  ) {
+  if (!Number.isFinite(frequencyHz) || !Number.isFinite(normalizedDifference)) {
     return null;
   }
 
   return {
     frequencyHz,
-    clarity: Math.max(
-      0,
-      Math.min(1, 1 - normalizedDifference),
-    ),
+    clarity: Math.max(0, Math.min(1, 1 - normalizedDifference)),
     normalizedDifference,
   };
 }
@@ -290,10 +267,7 @@ function createPitchCandidates(
     for (let lag = minLag + 1; lag < maxLag; lag += 1) {
       const difference = normalized[lag]!;
 
-      if (
-        isLocalMinimum(normalized, lag) &&
-        difference < bestDifference
-      ) {
+      if (isLocalMinimum(normalized, lag) && difference < bestDifference) {
         bestDifference = difference;
         bestLag = lag;
       }
@@ -322,11 +296,7 @@ function createPitchCandidates(
     return [];
   }
 
-  const candidate = createCandidate(
-    normalized,
-    selectedLag,
-    sampleRate,
-  );
+  const candidate = createCandidate(normalized, selectedLag, sampleRate);
 
   return candidate === null ? [] : [candidate];
 }
@@ -345,10 +315,7 @@ function detectFramePitch(
     fallbackThreshold,
   } = options;
 
-  const minLag = Math.max(
-    2,
-    Math.floor(sampleRate / maxFrequencyHz),
-  );
+  const minLag = Math.max(2, Math.floor(sampleRate / maxFrequencyHz));
 
   const maxLag = Math.min(
     Math.floor(sampleRate / minFrequencyHz),
@@ -380,11 +347,10 @@ function detectFramePitch(
     maxLag,
   );
 
-  const normalized =
-    calculateCumulativeMeanNormalizedDifference(
-      difference,
-      maxLag,
-    );
+  const normalized = calculateCumulativeMeanNormalizedDifference(
+    difference,
+    maxLag,
+  );
 
   const candidates = createPitchCandidates(
     normalized,
@@ -406,17 +372,11 @@ function calculateTransitionCost(
   previousFrequencyHz: number | null,
   currentFrequencyHz: number | null,
 ): number {
-  if (
-    previousFrequencyHz === null &&
-    currentFrequencyHz === null
-  ) {
+  if (previousFrequencyHz === null && currentFrequencyHz === null) {
     return 0;
   }
 
-  if (
-    previousFrequencyHz === null ||
-    currentFrequencyHz === null
-  ) {
+  if (previousFrequencyHz === null || currentFrequencyHz === null) {
     return VOICED_UNVOICED_TRANSITION_COST;
   }
 
@@ -425,14 +385,9 @@ function calculateTransitionCost(
   );
 
   const octaveJumpPenalty =
-    semitoneDistance >= 10 && semitoneDistance <= 14
-      ? OCTAVE_JUMP_PENALTY
-      : 0;
+    semitoneDistance >= 10 && semitoneDistance <= 14 ? OCTAVE_JUMP_PENALTY : 0;
 
-  return (
-    semitoneDistance * TRANSITION_COST_PER_SEMITONE +
-    octaveJumpPenalty
-  );
+  return semitoneDistance * TRANSITION_COST_PER_SEMITONE + octaveJumpPenalty;
 }
 
 function calculateEmissionCost(
@@ -441,9 +396,7 @@ function calculateEmissionCost(
   hasCandidates: boolean,
 ): number {
   if (candidate === null) {
-    return hasCandidates
-      ? MISSING_PITCH_EMISSION_COST
-      : 0;
+    return hasCandidates ? MISSING_PITCH_EMISSION_COST : 0;
   }
 
   const fallbackPenalty =
@@ -454,9 +407,7 @@ function calculateEmissionCost(
   return candidate.normalizedDifference + fallbackPenalty;
 }
 
-function getPathCandidates(
-  frameResult: FramePitchResult,
-): PathCandidate[] {
+function getPathCandidates(frameResult: FramePitchResult): PathCandidate[] {
   return [...frameResult.candidates, null];
 }
 
@@ -470,11 +421,7 @@ function selectContinuousPitchPath(
 
   const states: CandidatePathState[][] = [];
 
-  for (
-    let frameIndex = 0;
-    frameIndex < frameResults.length;
-    frameIndex += 1
-  ) {
+  for (let frameIndex = 0; frameIndex < frameResults.length; frameIndex += 1) {
     const frameResult = frameResults[frameIndex]!;
     const currentCandidates = getPathCandidates(frameResult);
     const currentStates: CandidatePathState[] = [];
@@ -515,8 +462,7 @@ function selectContinuousPitchPath(
         previousIndex < previousCandidates.length;
         previousIndex += 1
       ) {
-        const previousCandidate =
-          previousCandidates[previousIndex]!;
+        const previousCandidate = previousCandidates[previousIndex]!;
 
         const transitionCost = calculateTransitionCost(
           previousCandidate?.frequencyHz ?? null,
@@ -524,9 +470,7 @@ function selectContinuousPitchPath(
         );
 
         const totalCost =
-          previousStates[previousIndex]!.cost +
-          transitionCost +
-          emissionCost;
+          previousStates[previousIndex]!.cost + transitionCost + emissionCost;
 
         if (totalCost < bestCost) {
           bestCost = totalCost;
@@ -548,16 +492,15 @@ function selectContinuousPitchPath(
   let bestLastIndex = 0;
 
   for (let index = 1; index < lastStates.length; index += 1) {
-    if (
-      lastStates[index]!.cost <
-      lastStates[bestLastIndex]!.cost
-    ) {
+    if (lastStates[index]!.cost < lastStates[bestLastIndex]!.cost) {
       bestLastIndex = index;
     }
   }
 
-  const selected: (PitchCandidate | null)[] =
-    Array.from({ length: frameResults.length }, () => null);
+  const selected: (PitchCandidate | null)[] = Array.from(
+    { length: frameResults.length },
+    () => null,
+  );
 
   let selectedCandidateIndex = bestLastIndex;
 
@@ -566,17 +509,13 @@ function selectContinuousPitchPath(
     frameIndex >= 0;
     frameIndex -= 1
   ) {
-    const candidates = getPathCandidates(
-      frameResults[frameIndex]!,
-    );
+    const candidates = getPathCandidates(frameResults[frameIndex]!);
 
-    selected[frameIndex] =
-      candidates[selectedCandidateIndex] ?? null;
+    selected[frameIndex] = candidates[selectedCandidateIndex] ?? null;
 
     if (frameIndex > 0) {
       selectedCandidateIndex =
-        states[frameIndex]![selectedCandidateIndex]!
-          .previousCandidateIndex;
+        states[frameIndex]![selectedCandidateIndex]!.previousCandidateIndex;
     }
   }
 
@@ -621,18 +560,11 @@ export function detectPitch(
     start + options.windowSize <= audioData.length;
     start += options.hopSize
   ) {
-    const samples = audioData.subarray(
-      start,
-      start + options.windowSize,
-    );
+    const samples = audioData.subarray(start, start + options.windowSize);
 
-    frameResults.push(
-      detectFramePitch(samples, sampleRate, options),
-    );
+    frameResults.push(detectFramePitch(samples, sampleRate, options));
 
-    frameTimes.push(
-      (start + options.windowSize / 2) / sampleRate,
-    );
+    frameTimes.push((start + options.windowSize / 2) / sampleRate);
   }
 
   const selectedPath = selectContinuousPitchPath(

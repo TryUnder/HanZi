@@ -1,4 +1,3 @@
-
 import {
   useCallback,
   useEffect,
@@ -102,9 +101,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [session, isLoading, signIn, signOut],
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

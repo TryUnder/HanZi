@@ -1,4 +1,3 @@
-
 import * as ort from "onnxruntime-web";
 
 import { getCharsiuModel } from "./charsiuModelProvider";
@@ -26,16 +25,11 @@ function createTestWaveform(): Float32Array {
   const frequency = 220;
   const amplitude = 0.2;
 
-  const waveform = new Float32Array(
-    sampleRate * durationSeconds,
-  );
+  const waveform = new Float32Array(sampleRate * durationSeconds);
 
   for (let index = 0; index < waveform.length; index += 1) {
     waveform[index] =
-      amplitude *
-      Math.sin(
-        (2 * Math.PI * frequency * index) / sampleRate,
-      );
+      amplitude * Math.sin((2 * Math.PI * frequency * index) / sampleRate);
   }
 
   return waveform;
@@ -50,11 +44,7 @@ export async function runCharsiuModelDiagnostics(): Promise<CharsiuModelDiagnost
 
     const waveform = createTestWaveform();
 
-    const input = new ort.Tensor(
-      "float32",
-      waveform,
-      [1, waveform.length],
-    );
+    const input = new ort.Tensor("float32", waveform, [1, waveform.length]);
 
     const output = await model.session.run({
       input_values: input,
@@ -68,14 +58,14 @@ export async function runCharsiuModelDiagnostics(): Promise<CharsiuModelDiagnost
 
     let hasFiniteValues = true;
 
-for (let index = 0; index < logits.data.length; index += 1) {
-  const value = logits.data[index];
+    for (let index = 0; index < logits.data.length; index += 1) {
+      const value = logits.data[index];
 
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    hasFiniteValues = false;
-    break;
-  }
-}
+      if (typeof value !== "number" || !Number.isFinite(value)) {
+        hasFiniteValues = false;
+        break;
+      }
+    }
 
     return {
       success:

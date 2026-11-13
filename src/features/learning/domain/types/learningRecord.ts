@@ -1,20 +1,12 @@
-
 import type { LearningItemReference } from "./learningItem";
 
 export type MandarinTone = 1 | 2 | 3 | 4 | 5;
 
 export type LearningActivity =
-  | "writing"
-  | "speaking"
-  | "listening"
-  | "recognition"
-  | "flashcard";
+  "writing" | "speaking" | "listening" | "recognition" | "flashcard";
 
 export type LearningStatus =
-  | "learning"
-  | "known"
-  | "needs-practice"
-  | "not-learning";
+  "learning" | "known" | "needs-practice" | "not-learning";
 
 /**
  * Context connecting an attempt with a course activity.
@@ -90,10 +82,7 @@ export type WritingAttemptDetails =
   | MemoryWritingAttemptDetails;
 
 export type ToneAssessmentStatus =
-  | "matched"
-  | "ambiguous"
-  | "uncertain"
-  | "insufficient-data";
+  "matched" | "ambiguous" | "uncertain" | "insufficient-data";
 
 export interface ToneCandidate {
   readonly tone: MandarinTone;

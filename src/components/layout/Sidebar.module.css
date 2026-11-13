@@ -197,7 +197,6 @@
   .sidebar.sidebarOpen {
     transform: translateX(0);
   }
-  
 }
 
 .logoutButton {

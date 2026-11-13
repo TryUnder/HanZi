@@ -17,7 +17,10 @@ export function LessonGrammar({ grammar }: LessonGrammarProps) {
         <div>
           <span className={styles.eyebrow}>GRAMMAR & LANGUAGE NOTES</span>
           <h2>Grammar & Language Rules</h2>
-          <p>Kluczowe reguły fonetyczne, gramatyczne i zwroty językowe w tej lekcji.</p>
+          <p>
+            Kluczowe reguły fonetyczne, gramatyczne i zwroty językowe w tej
+            lekcji.
+          </p>
         </div>
 
         <span className={styles.count}>
@@ -37,9 +40,7 @@ export function LessonGrammar({ grammar }: LessonGrammarProps) {
               </div>
 
               {point.structure && (
-                <div className={styles.structureBadge}>
-                  {point.structure}
-                </div>
+                <div className={styles.structureBadge}>{point.structure}</div>
               )}
             </div>
 
@@ -51,9 +52,13 @@ export function LessonGrammar({ grammar }: LessonGrammarProps) {
                 <div className={styles.exampleGrid}>
                   {point.examples.map((example, exIndex) => (
                     <div className={styles.exampleCard} key={exIndex}>
-                      <span className={styles.exampleChinese}>{example.chinese}</span>
+                      <span className={styles.exampleChinese}>
+                        {example.chinese}
+                      </span>
                       <div className={styles.exampleMeta}>
-                        <span className={styles.examplePinyin}>{example.pinyin}</span>
+                        <span className={styles.examplePinyin}>
+                          {example.pinyin}
+                        </span>
                         <span className={styles.exampleTranslation}>
                           • {example.translation}
                         </span>

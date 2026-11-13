@@ -1,4 +1,6 @@
-export type HskLevel = 1 | 2 | 3 | 4 | 5 | 6;
+import type { HskLevel } from "../../../shared/domain/types/hsk";
+
+export type { HskLevel } from "../../../shared/domain/types/hsk";
 
 export interface CharacterExample {
   word: string;

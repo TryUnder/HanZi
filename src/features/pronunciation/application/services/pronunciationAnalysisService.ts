@@ -1,4 +1,3 @@
-
 import type { AlignmentQualityReport } from "../../domain/models/alignmentQuality";
 import type {
   ForcedAlignmentErrorCode,
@@ -6,60 +5,28 @@ import type {
 } from "../../domain/models/forcedAlignment";
 import type { PhonemizedPronunciation } from "../../domain/models/phoneme";
 import type { PronunciationSyllableRealization } from "../../domain/models/pronunciationSyllableRealization";
-import type {
-  PronunciationAlignment,
-} from "../../domain/models/syllableAlignment";
-import type {
-  SyllableToneAssessment,
-} from "../../domain/models/syllableToneAssessment";
-import type {
-  WordPitchAnalysis,
-} from "../../domain/models/syllablePitchContour";
+import type { PronunciationAlignment } from "../../domain/models/syllableAlignment";
+import type { SyllableToneAssessment } from "../../domain/models/syllableToneAssessment";
+import type { WordPitchAnalysis } from "../../domain/models/syllablePitchContour";
 
-import {
-  evaluateAlignmentQuality,
-} from "../../domain/services/alignmentQualityService";
-import {
-  assessSyllableTone,
-} from "../../domain/services/syllableToneAssessmentService";
-import type {
-  PhonemizationErrorCode,
-} from "../../domain/services/pinyinPhonemizer";
-import {
-  phonemizePronunciation,
-} from "../../domain/services/pinyinPhonemizer";
-import type {
-  ToneRealizationError,
-} from "../../domain/services/toneRealizationService";
-import {
-  realizeWordPronunciation,
-} from "../../domain/services/toneRealizationService";
-import {
-  analyzeSyllablePitch,
-} from "../../domain/services/syllablePitchAnalysisService";
-import type {
-  SyllableAlignmentErrorCode,
-} from "../../domain/services/syllableAlignmentService";
-import {
-  mapAlignmentToSyllables,
-} from "../../domain/services/syllableAlignmentService";
+import { evaluateAlignmentQuality } from "../../domain/services/alignmentQualityService";
+import { assessSyllableTone } from "../../domain/services/syllableToneAssessmentService";
+import type { PhonemizationErrorCode } from "../../domain/services/pinyinPhonemizer";
+import { phonemizePronunciation } from "../../domain/services/pinyinPhonemizer";
+import type { ToneRealizationError } from "../../domain/services/toneRealizationService";
+import { realizeWordPronunciation } from "../../domain/services/toneRealizationService";
+import { analyzeSyllablePitch } from "../../domain/services/syllablePitchAnalysisService";
+import type { SyllableAlignmentErrorCode } from "../../domain/services/syllableAlignmentService";
+import { mapAlignmentToSyllables } from "../../domain/services/syllableAlignmentService";
 
 import {
   AudioDecodingError,
   decodeRecordingToMono16k,
 } from "../../infrastructure/charsiu/charsiuAudioDecoder";
-import type {
-  AudioDecodingErrorCode,
-} from "../../infrastructure/charsiu/charsiuAudioDecoder";
-import {
-  alignRecordingToPronunciation,
-} from "../../infrastructure/charsiu/charsiuForcedAligner";
-import {
-  getCharsiuModel,
-} from "../../infrastructure/charsiu/charsiuModelProvider";
-import {
-  detectPitch,
-} from "../../infrastructure/audio/pitchDetectionService";
+import type { AudioDecodingErrorCode } from "../../infrastructure/charsiu/charsiuAudioDecoder";
+import { alignRecordingToPronunciation } from "../../infrastructure/charsiu/charsiuForcedAligner";
+import { getCharsiuModel } from "../../infrastructure/charsiu/charsiuModelProvider";
+import { detectPitch } from "../../infrastructure/audio/pitchDetectionService";
 
 export type PronunciationAnalysisError =
   | {
@@ -184,23 +151,17 @@ function analyzeTone(
       syllableAlignment.syllables,
     );
 
-    const syllableAssessments = pitchAnalysis.syllables.map(
-      (contour) => {
-        const realization =
-          syllableRealizations[contour.syllableIndex];
+    const syllableAssessments = pitchAnalysis.syllables.map((contour) => {
+      const realization = syllableRealizations[contour.syllableIndex];
 
-        if (!realization) {
-          throw new Error(
-            `Missing tone realization for syllable ${contour.syllableIndex}.`,
-          );
-        }
-
-        return assessSyllableTone(
-          contour,
-          realization.surfaceTone,
+      if (!realization) {
+        throw new Error(
+          `Missing tone realization for syllable ${contour.syllableIndex}.`,
         );
-      },
-    );
+      }
+
+      return assessSyllableTone(contour, realization.surfaceTone);
+    });
 
     return {
       status: "completed",
@@ -311,8 +272,7 @@ export async function analyzeWordPronunciation(
     });
   }
 
-  const phonemizedPronunciation =
-    phonemizationResult.pronunciation;
+  const phonemizedPronunciation = phonemizationResult.pronunciation;
 
   const forcedAlignmentResult = await alignRecordingToPronunciation(
     waveform,

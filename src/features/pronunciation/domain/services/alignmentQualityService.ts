@@ -1,4 +1,3 @@
-
 import type { PhonemizedPronunciation } from "../models/phoneme";
 import type { ForcedAlignmentResult } from "../models/forcedAlignment";
 import type { PronunciationAlignment } from "../models/syllableAlignment";
@@ -36,9 +35,7 @@ const DEFAULT_OPTIONS: Required<AlignmentQualityOptions> = {
   maximumSyllableFrameShare: 0.9,
 };
 
-function isValidOptions(
-  options: Required<AlignmentQualityOptions>,
-): boolean {
+function isValidOptions(options: Required<AlignmentQualityOptions>): boolean {
   return (
     Number.isInteger(options.minimumFramesPerPhoneme) &&
     options.minimumFramesPerPhoneme > 0 &&
@@ -61,9 +58,7 @@ function isValidOptions(
   );
 }
 
-function createAccumulators(
-  count: number,
-): PhonemeAccumulator[] {
+function createAccumulators(count: number): PhonemeAccumulator[] {
   return Array.from({ length: count }, () => ({
     confidenceSum: 0,
     minimumConfidence: null,
@@ -102,9 +97,7 @@ export function evaluateAlignmentQuality(
     throw new Error("Cannot evaluate an incomplete alignment.");
   }
 
-  const accumulators = createAccumulators(
-    pronunciation.phonemes.length,
-  );
+  const accumulators = createAccumulators(pronunciation.phonemes.length);
 
   for (const frame of forcedAlignment.frames) {
     if (frame.isSilence || frame.targetPhoneIndex === null) {
@@ -114,9 +107,7 @@ export function evaluateAlignmentQuality(
     const accumulator = accumulators[frame.targetPhoneIndex];
 
     if (accumulator === undefined) {
-      throw new Error(
-        "Alignment references an unknown target phoneme.",
-      );
+      throw new Error("Alignment references an unknown target phoneme.");
     }
 
     accumulator.confidenceSum += frame.confidence;
@@ -125,14 +116,11 @@ export function evaluateAlignmentQuality(
     accumulator.minimumConfidence =
       accumulator.minimumConfidence === null
         ? frame.confidence
-        : Math.min(
-            accumulator.minimumConfidence,
-            frame.confidence,
-          );
+        : Math.min(accumulator.minimumConfidence, frame.confidence);
   }
 
-  const phonemes: PhonemeAlignmentQuality[] =
-    pronunciation.phonemes.map((phoneme, index) => {
+  const phonemes: PhonemeAlignmentQuality[] = pronunciation.phonemes.map(
+    (phoneme, index) => {
       const accumulator = accumulators[index];
 
       if (accumulator === undefined) {
@@ -146,12 +134,12 @@ export function evaluateAlignmentQuality(
         alignedFrames: accumulator.alignedFrames,
         averageConfidence:
           accumulator.alignedFrames > 0
-            ? accumulator.confidenceSum /
-              accumulator.alignedFrames
+            ? accumulator.confidenceSum / accumulator.alignedFrames
             : 0,
         minimumConfidence: accumulator.minimumConfidence,
       };
-    });
+    },
+  );
 
   const issues: AlignmentQualityIssue[] = [];
 
@@ -168,10 +156,7 @@ export function evaluateAlignmentQuality(
       continue;
     }
 
-    if (
-      phoneme.alignedFrames <
-      thresholds.minimumFramesPerPhoneme
-    ) {
+    if (phoneme.alignedFrames < thresholds.minimumFramesPerPhoneme) {
       addIssue(issues, {
         code: "INSUFFICIENT_PHONEME_FRAMES",
         severity: "warning",
@@ -181,10 +166,7 @@ export function evaluateAlignmentQuality(
       });
     }
 
-    if (
-      phoneme.averageConfidence <
-      thresholds.minimumPhonemeConfidence
-    ) {
+    if (phoneme.averageConfidence < thresholds.minimumPhonemeConfidence) {
       addIssue(issues, {
         code: "LOW_PHONEME_CONFIDENCE",
         severity: "warning",
@@ -200,11 +182,10 @@ export function evaluateAlignmentQuality(
     0,
   );
 
-  const syllables: SyllableAlignmentQuality[] =
-    syllableAlignment.syllables.map((syllable) => {
+  const syllables: SyllableAlignmentQuality[] = syllableAlignment.syllables.map(
+    (syllable) => {
       const syllablePhonemes = phonemes.filter(
-        (phoneme) =>
-          phoneme.syllableIndex === syllable.syllableIndex,
+        (phoneme) => phoneme.syllableIndex === syllable.syllableIndex,
       );
 
       const alignedFrames = syllablePhonemes.reduce(
@@ -214,8 +195,7 @@ export function evaluateAlignmentQuality(
 
       const confidenceSum = syllablePhonemes.reduce(
         (sum, phoneme) =>
-          sum +
-          phoneme.averageConfidence * phoneme.alignedFrames,
+          sum + phoneme.averageConfidence * phoneme.alignedFrames,
         0,
       );
 
@@ -223,22 +203,16 @@ export function evaluateAlignmentQuality(
         syllableIndex: syllable.syllableIndex,
         alignedFrames,
         averageConfidence:
-          alignedFrames > 0
-            ? confidenceSum / alignedFrames
-            : 0,
+          alignedFrames > 0 ? confidenceSum / alignedFrames : 0,
         durationSeconds: syllable.durationSeconds,
         frameShare:
-          totalAlignedFrames > 0
-            ? alignedFrames / totalAlignedFrames
-            : 0,
+          totalAlignedFrames > 0 ? alignedFrames / totalAlignedFrames : 0,
       };
-    });
+    },
+  );
 
   for (const syllable of syllables) {
-    if (
-      syllable.alignedFrames <
-      thresholds.minimumFramesPerSyllable
-    ) {
+    if (syllable.alignedFrames < thresholds.minimumFramesPerSyllable) {
       addIssue(issues, {
         code: "INSUFFICIENT_SYLLABLE_FRAMES",
         severity: "error",
@@ -247,10 +221,7 @@ export function evaluateAlignmentQuality(
       });
     }
 
-    if (
-      syllable.averageConfidence <
-      thresholds.minimumSyllableConfidence
-    ) {
+    if (syllable.averageConfidence < thresholds.minimumSyllableConfidence) {
       addIssue(issues, {
         code: "LOW_SYLLABLE_CONFIDENCE",
         severity: "warning",
@@ -259,10 +230,7 @@ export function evaluateAlignmentQuality(
       });
     }
 
-    if (
-      syllable.durationSeconds <
-      thresholds.minimumSyllableDurationSeconds
-    ) {
+    if (syllable.durationSeconds < thresholds.minimumSyllableDurationSeconds) {
       addIssue(issues, {
         code: "SYLLABLE_TOO_SHORT",
         severity: "error",
@@ -271,10 +239,7 @@ export function evaluateAlignmentQuality(
       });
     }
 
-    if (
-      syllable.durationSeconds >
-      thresholds.maximumSyllableDurationSeconds
-    ) {
+    if (syllable.durationSeconds > thresholds.maximumSyllableDurationSeconds) {
       addIssue(issues, {
         code: "SYLLABLE_TOO_LONG",
         severity: "error",
@@ -284,8 +249,7 @@ export function evaluateAlignmentQuality(
     }
 
     if (
-      syllable.frameShare >
-        thresholds.maximumSyllableFrameShare &&
+      syllable.frameShare > thresholds.maximumSyllableFrameShare &&
       syllables.length > 1
     ) {
       addIssue(issues, {
@@ -301,8 +265,7 @@ export function evaluateAlignmentQuality(
     totalAlignedFrames > 0
       ? phonemes.reduce(
           (sum, phoneme) =>
-            sum +
-            phoneme.averageConfidence * phoneme.alignedFrames,
+            sum + phoneme.averageConfidence * phoneme.alignedFrames,
           0,
         ) / totalAlignedFrames
       : 0;
@@ -327,14 +290,13 @@ export function evaluateAlignmentQuality(
       issue.code === "LOW_SYLLABLE_CONFIDENCE",
   );
 
-  const status: AlignmentQualityStatus =
-    hasRejectingErrors
-      ? "rejected"
-      : hasInsufficientData
-        ? "insufficient-data"
-        : hasLowConfidence
-          ? "low-confidence"
-          : "accepted";
+  const status: AlignmentQualityStatus = hasRejectingErrors
+    ? "rejected"
+    : hasInsufficientData
+      ? "insufficient-data"
+      : hasLowConfidence
+        ? "low-confidence"
+        : "accepted";
 
   return {
     status,

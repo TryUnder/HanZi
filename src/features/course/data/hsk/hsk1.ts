@@ -186,7 +186,8 @@ export const hsk1Lessons = [
         id: "learn-grammar",
         type: "grammar",
         title: "Reguły i gramatyka",
-        description: "Ton neutralny (轻声), zasady zapisu tonów i zwroty podziękowania.",
+        description:
+          "Ton neutralny (轻声), zasady zapisu tonów i zwroty podziękowania.",
       },
       {
         id: "practice-pronunciation",
@@ -249,7 +250,8 @@ export const hsk1Lessons = [
             chinese: "你们",
             pinyin: "nǐmen",
             translation: "wy (liczba mnoga)",
-            explanation: "Partykuła 们 (men) wymawiana jest w tonie neutralnym.",
+            explanation:
+              "Partykuła 们 (men) wymawiana jest w tonie neutralnym.",
           },
         ],
         notes: [
@@ -259,7 +261,8 @@ export const hsk1Lessons = [
       {
         id: "tone-marking-rules",
         title: "Zasady oznaczania tonów w Pinyin (标调法 Tone Marking)",
-        structure: "Hierarchia samogłosek: a → o → e → i → u → ü (wyjątek: iu → na u)",
+        structure:
+          "Hierarchia samogłosek: a → o → e → i → u → ü (wyjątek: iu → na u)",
         explanation:
           "Znak tonu zawsze umieszcza się nad samogłoską. Jeśli sylaba zawiera więcej niż jedną samogłoskę, znak stawiamy nad tą, przy której usta otwierają się najszerzej: w kolejności a, o, e, i, u, ü. Jeśli obok siebie stoją litery 'i' oraz 'u' (zbitki iu/ui), znak tonu stawiamy zawsze na drugiej z nich.",
         examples: [
@@ -267,7 +270,8 @@ export const hsk1Lessons = [
             chinese: "学校",
             pinyin: "xuéxiào",
             translation: "szkoła",
-            explanation: "W sylabie 'xiào' litera 'a' ma pierwszeństwo przed 'o'.",
+            explanation:
+              "W sylabie 'xiào' litera 'a' ma pierwszeństwo przed 'o'.",
           },
           {
             chinese: "手表",
@@ -279,13 +283,15 @@ export const hsk1Lessons = [
             chinese: "休息",
             pinyin: "xiūxi",
             translation: "odpoczywać",
-            explanation: "W zbitce 'iu' ton stawiamy na drugiej literze, czyli 'u'.",
+            explanation:
+              "W zbitce 'iu' ton stawiamy na drugiej literze, czyli 'u'.",
           },
           {
             chinese: "口",
             pinyin: "kǒu",
             translation: "usta",
-            explanation: "W sylabie 'kǒu' litera 'o' ma pierwszeństwo przed 'u'.",
+            explanation:
+              "W sylabie 'kǒu' litera 'o' ma pierwszeństwo przed 'u'.",
           },
         ],
         notes: [
@@ -309,13 +315,15 @@ export const hsk1Lessons = [
             chinese: "谢谢你！ — 不客气！",
             pinyin: "Xièxie nǐ! — Bú kèqi!",
             translation: "Dziękuję ci! — Proszę bardzo / Nie ma za co!",
-            explanation: "Standardowa, uprzejma forma podziękowania i odpowiedzi.",
+            explanation:
+              "Standardowa, uprzejma forma podziękowania i odpowiedzi.",
           },
           {
             chinese: "再见！ — 再见！",
             pinyin: "Zàijiàn! — Zàijiàn!",
             translation: "Do widzenia! — Do widzenia!",
-            explanation: "Dosłownie: 'zobaczyć się znowu' (再 znowu + 见 widzieć).",
+            explanation:
+              "Dosłownie: 'zobaczyć się znowu' (再 znowu + 见 widzieć).",
           },
         ],
         notes: [
@@ -402,13 +410,15 @@ export const hsk1Lessons = [
             chinese: "你叫什么名字？",
             pinyin: "Nǐ jiào shénme míngzi?",
             translation: "Jak masz na imię? (dosł. Jakie imię się nazywasz?)",
-            explanation: "什么 + 名字 (jakie imię) pełni funkcję dopełnienia czasownika 叫.",
+            explanation:
+              "什么 + 名字 (jakie imię) pełni funkcję dopełnienia czasownika 叫.",
           },
           {
             chinese: "这是什么？",
             pinyin: "Zhè shì shénme?",
             translation: "Co to jest?",
-            explanation: "什么 występuje samodzielnie jako orzecznik po czasowniku 是.",
+            explanation:
+              "什么 występuje samodzielnie jako orzecznik po czasowniku 是.",
           },
           {
             chinese: "这是什么书？",
@@ -468,7 +478,8 @@ export const hsk1Lessons = [
             chinese: "你是中国人吗？",
             pinyin: "Nǐ shì Zhōngguórén ma?",
             translation: "Czy jesteś Chińczykiem?",
-            explanation: "Odpowiedź twierdząca: 是 / 我是中国人; przecząca: 不是 / 我不是中国人.",
+            explanation:
+              "Odpowiedź twierdząca: 是 / 我是中国人; przecząca: 不是 / 我不是中国人.",
           },
           {
             chinese: "你是美国人吗？",

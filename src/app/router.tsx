@@ -16,6 +16,7 @@ import { LessonPage } from "../features/course/pages/LessonPage";
 import { PronunciationLabPage } from "../features/pronunciation/presentation/pages/PronunciationLabPage";
 import { ResetPasswordPage } from "../features/auth/pages/ResetPasswordPage";
 import { SetPasswordPage } from "../features/auth/pages/SetPasswordPage";
+import { SettingsPage } from "../features/settings/presentation/pages/SettingsPage";
 
 export function AppRouter() {
   return (
@@ -57,10 +58,7 @@ export function AppRouter() {
             path="/flashcards"
             element={<PlaceholderPage title="Flashcards" />}
           />
-          <Route
-            path="/settings"
-            element={<PlaceholderPage title="Settings" />}
-          />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route
             path="/help"
             element={<PlaceholderPage title="Help center" />}

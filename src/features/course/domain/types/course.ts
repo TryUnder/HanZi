@@ -1,4 +1,4 @@
-import type { HskLevel } from "../../../library/types/character";
+import type { HskLevel } from "../../../../shared/domain/types/hsk";
 
 export interface Course {
   readonly id: string;

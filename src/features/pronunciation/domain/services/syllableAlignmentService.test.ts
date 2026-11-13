@@ -108,19 +108,19 @@ describe("mapAlignmentToSyllables", () => {
     });
 
     expect(result.alignment.syllables[0]?.finalAlignment).toMatchObject({
-    startSeconds: 0.02,
-    endSeconds: 0.04,
-    alignedFrames: 2,
-    firstPhoneIndex: 1,
-    lastPhoneIndex: 1,
+      startSeconds: 0.02,
+      endSeconds: 0.04,
+      alignedFrames: 2,
+      firstPhoneIndex: 1,
+      lastPhoneIndex: 1,
     });
 
     expect(result.alignment.syllables[1]?.finalAlignment).toMatchObject({
-    startSeconds: 0.06,
-    endSeconds: 0.08,
-    alignedFrames: 2,
-    firstPhoneIndex: 3,
-    lastPhoneIndex: 3,
+      startSeconds: 0.06,
+      endSeconds: 0.08,
+      alignedFrames: 2,
+      firstPhoneIndex: 3,
+      lastPhoneIndex: 3,
     });
   });
 

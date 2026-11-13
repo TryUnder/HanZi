@@ -46,7 +46,7 @@ export function Sidebar({ isOpen, onNavigate }: SidebarProps) {
       ? metadataName
       : email.split("@")[0];
 
-const avatarInitial = (displayName ?? "U").charAt(0).toUpperCase() || "U";
+  const avatarInitial = (displayName ?? "U").charAt(0).toUpperCase() || "U";
 
   function handleSignOut() {
     void signOut();

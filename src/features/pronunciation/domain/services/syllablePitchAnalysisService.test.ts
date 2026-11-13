@@ -5,7 +5,6 @@ import type { SyllableAlignment } from "../models/syllableAlignment";
 
 const FRAME_WINDOW = 0.02;
 
-
 function createAlignment(
   syllableIndex: number,
   startSeconds: number,
@@ -29,7 +28,6 @@ function createAlignment(
     },
   };
 }
-
 
 function createFrames(
   startSeconds: number,
@@ -69,10 +67,7 @@ function analyze(
 describe("analyzeSyllablePitch", () => {
   it("extracts a pitch contour for an aligned syllable", () => {
     const frames = createFrames(0.02, 0.48, 150);
-    const result = analyze(
-      frames,
-      [createAlignment(0, 0, 0.5)],
-    );
+    const result = analyze(frames, [createAlignment(0, 0, 0.5)]);
 
     expect(result.status).toBe("analyzed");
     expect(result.referenceFrequencyHz).toBeCloseTo(150);
@@ -110,9 +105,9 @@ describe("analyzeSyllablePitch", () => {
       12 * Math.log2(200 / 150),
     );
 
-    expect(
-      second.points[0]!.semitonesFromReference,
-    ).toBeGreaterThan(first.points[0]!.semitonesFromReference);
+    expect(second.points[0]!.semitonesFromReference).toBeGreaterThan(
+      first.points[0]!.semitonesFromReference,
+    );
   });
 
   it("excludes frames whose analysis windows cross syllable boundaries", () => {
@@ -122,18 +117,17 @@ describe("analyzeSyllablePitch", () => {
       { timeSeconds: 0.495, frequencyHz: 150, clarity: 0.9 },
     ];
 
-    const result = analyze(
-      frames,
-      [createAlignment(0, 0, 0.5)],
-    );
+    const result = analyze(frames, [createAlignment(0, 0, 0.5)]);
 
     const syllable = result.syllables[0]!;
 
-    expect(syllable.points.every(
-      (point) =>
-        point.timeSeconds - FRAME_WINDOW / 2 >= 0 &&
-        point.timeSeconds + FRAME_WINDOW / 2 <= 0.5,
-    )).toBe(true);
+    expect(
+      syllable.points.every(
+        (point) =>
+          point.timeSeconds - FRAME_WINDOW / 2 >= 0 &&
+          point.timeSeconds + FRAME_WINDOW / 2 <= 0.5,
+      ),
+    ).toBe(true);
 
     expect(syllable.points).toHaveLength(24);
   });
@@ -141,10 +135,7 @@ describe("analyzeSyllablePitch", () => {
   it("returns insufficient data when too few voiced frames are available", () => {
     const frames = createFrames(0.02, 0.48, 150).slice(0, 3);
 
-    const result = analyze(
-      frames,
-      [createAlignment(0, 0, 0.5)],
-    );
+    const result = analyze(frames, [createAlignment(0, 0, 0.5)]);
 
     expect(result.status).toBe("insufficient-data");
     expect(result.syllables[0]!.status).toBe("insufficient-data");
@@ -154,10 +145,7 @@ describe("analyzeSyllablePitch", () => {
   it("ignores frames below the clarity threshold", () => {
     const frames = createFrames(0.02, 0.48, 150, 0.2);
 
-    const result = analyze(
-      frames,
-      [createAlignment(0, 0, 0.5)],
-    );
+    const result = analyze(frames, [createAlignment(0, 0, 0.5)]);
 
     expect(result.status).toBe("insufficient-data");
     expect(result.syllables[0]!.voicedFrameCount).toBe(0);
@@ -166,19 +154,16 @@ describe("analyzeSyllablePitch", () => {
   it("returns insufficient data when a word has no voiced frames", () => {
     const frames = createFrames(0.02, 0.48, 150, 0);
 
-    const result = analyze(
-      frames,
-      [createAlignment(0, 0, 0.5)],
-    );
+    const result = analyze(frames, [createAlignment(0, 0, 0.5)]);
 
     expect(result.referenceFrequencyHz).toBeNull();
     expect(result.status).toBe("insufficient-data");
   });
 
   it("rejects an empty alignment list", () => {
-    expect(() =>
-      analyzeSyllablePitch([], []),
-    ).toThrow("At least one syllable alignment is required.");
+    expect(() => analyzeSyllablePitch([], [])).toThrow(
+      "At least one syllable alignment is required.",
+    );
   });
 
   it("rejects invalid pitch frames", () => {
@@ -190,12 +175,9 @@ describe("analyzeSyllablePitch", () => {
       },
     ];
 
-    expect(() =>
-      analyze(
-        frames,
-        [createAlignment(0, 0, 0.5)],
-      ),
-    ).toThrow("Invalid pitch frame.");
+    expect(() => analyze(frames, [createAlignment(0, 0, 0.5)])).toThrow(
+      "Invalid pitch frame.",
+    );
   });
 
   it("rejects invalid syllable alignments", () => {
@@ -204,58 +186,51 @@ describe("analyzeSyllablePitch", () => {
       endSeconds: 0,
     };
 
-    expect(() =>
-      analyze([], [invalidAlignment]),
-    ).toThrow("Invalid syllable alignment.");
+    expect(() => analyze([], [invalidAlignment])).toThrow(
+      "Invalid syllable alignment.",
+    );
   });
 
   it("rejects unordered syllable alignments", () => {
-    const alignments = [
-      createAlignment(1, 0.5, 1),
-      createAlignment(0, 0, 0.5),
-    ];
+    const alignments = [createAlignment(1, 0.5, 1), createAlignment(0, 0, 0.5)];
 
-    expect(() =>
-      analyze([], alignments),
-    ).toThrow("Syllable alignments must be ordered.");
+    expect(() => analyze([], alignments)).toThrow(
+      "Syllable alignments must be ordered.",
+    );
   });
 
+  it("uses only the final interval and excludes the initial consonant", () => {
+    const frames = [
+      ...createFrames(0.02, 0.18, 100),
+      ...createFrames(0.22, 0.48, 200),
+    ];
 
-it("uses only the final interval and excludes the initial consonant", () => {
-  const frames = [
-    ...createFrames(0.02, 0.18, 100),
-    ...createFrames(0.22, 0.48, 200),
-  ];
+    const alignment: SyllableAlignment = {
+      ...createAlignment(0, 0, 0.5),
+      finalAlignment: {
+        startSeconds: 0.2,
+        endSeconds: 0.5,
+        durationSeconds: 0.3,
+        confidence: 0.9,
+        alignedFrames: 30,
+        firstPhoneIndex: 1,
+        lastPhoneIndex: 1,
+      },
+    };
 
-  const alignment: SyllableAlignment = {
-    ...createAlignment(0, 0, 0.5),
-    finalAlignment: {
-      startSeconds: 0.2,
-      endSeconds: 0.5,
-      durationSeconds: 0.3,
-      confidence: 0.9,
-      alignedFrames: 30,
-      firstPhoneIndex: 1,
-      lastPhoneIndex: 1,
-    },
-  };
+    const result = analyze(frames, [alignment]);
 
-  const result = analyze(frames, [alignment]);
+    expect(result.status).toBe("analyzed");
+    expect(result.referenceFrequencyHz).toBeCloseTo(200);
 
-  expect(result.status).toBe("analyzed");
-  expect(result.referenceFrequencyHz).toBeCloseTo(200);
+    const syllable = result.syllables[0]!;
 
-  const syllable = result.syllables[0]!;
+    expect(syllable.startSeconds).toBe(0.2);
+    expect(syllable.endSeconds).toBe(0.5);
+    expect(syllable.medianFrequencyHz).toBeCloseTo(200);
 
-  expect(syllable.startSeconds).toBe(0.2);
-  expect(syllable.endSeconds).toBe(0.5);
-  expect(syllable.medianFrequencyHz).toBeCloseTo(200);
-
-  expect(
-    syllable.points.every(
-      (point) => point.timeSeconds >= 0.2,
-    ),
-  ).toBe(true);
-});
-
+    expect(syllable.points.every((point) => point.timeSeconds >= 0.2)).toBe(
+      true,
+    );
+  });
 });
