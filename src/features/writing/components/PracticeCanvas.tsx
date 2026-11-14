@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import HanziWriter from "hanzi-writer";
 import type {
@@ -74,12 +75,15 @@ export function PracticeCanvas({
         void writer.quiz({
           showHintAfterMisses,
 
-          onCorrectStroke: () => {
+          onCorrectStroke: (data) => {
             if (!isActive) {
               return;
             }
 
-            correctStrokesRef.current += 1;
+            if (data.mistakesOnStroke === 0) {
+              correctStrokesRef.current += 1;
+            }
+
             onCorrectStroke();
           },
 

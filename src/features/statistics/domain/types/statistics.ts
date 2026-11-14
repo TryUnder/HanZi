@@ -1,3 +1,4 @@
+
 import type {
   FlashcardRating,
   LearningActivity,
@@ -17,9 +18,7 @@ export interface ActivityStatistics {
 
   readonly measuredSuccesses: number;
   readonly measuredTotal: number;
-
   readonly averageResponseTimeMs: number | null;
-
   readonly flashcardRatings: Readonly<Record<FlashcardRating, number>>;
 }
 
@@ -28,21 +27,46 @@ export interface ItemActivityStatistics {
   readonly attemptCount: number;
 }
 
+export interface VocabularyRecognitionStatistics {
+  readonly exerciseType: "vocabulary-recognition";
+  readonly attemptCount: number;
+  readonly correctCount: number;
+  readonly incorrectCount: number;
+  readonly accuracyRate: number;
+  readonly difficultyRate: number;
+  readonly averageResponseTimeMs: number | null;
+  readonly lastAttemptAt: string;
+}
+
+export interface VocabularyWritingStatistics {
+  readonly exerciseType: "writing-practice" | "memory-writing";
+  readonly attemptCount: number;
+  readonly perfectAttemptCount: number;
+  readonly imperfectAttemptCount: number;
+  readonly perfectAttemptRate: number;
+  readonly correctStrokes: number;
+  readonly totalStrokes: number;
+  readonly strokeAccuracyRate: number | null;
+  readonly difficultyRate: number | null;
+  readonly lastAttemptAt: string;
+}
+
+export type ExerciseItemStatistics =
+  | VocabularyRecognitionStatistics
+  | VocabularyWritingStatistics;
+
 export interface ItemStatistics {
   readonly item: LearningItemReference;
   readonly attemptCount: number;
-
-  /**
-   * Combined difficulty indicator based on recorded errors
-   * and self-assessed flashcard difficulty.
-   * Higher values indicate greater difficulty.
-   */
-  readonly difficultyRate: number | null;
-
   readonly lastAttemptAt: string | null;
   readonly latestStatus: LearningStatus | null;
-
   readonly activities: readonly ItemActivityStatistics[];
+
+  /**
+   * Separate statistics for each vocabulary exercise type.
+   * The same vocabulary item can have multiple entries.
+   */
+  readonly exerciseStatistics: readonly ExerciseItemStatistics[];
 }
 
 export interface DailyActivityStatistics {
@@ -58,7 +82,6 @@ export interface LearningOverviewStatistics {
   readonly statusChangeCount: number;
   readonly distinctItemCount: number;
   readonly trackedSessionCount: number;
-
   readonly firstActivityAt: string | null;
   readonly lastActivityAt: string | null;
 }

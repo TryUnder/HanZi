@@ -1,11 +1,11 @@
+
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { statisticsService } from "../../../app/services/statisticsService";
-
-import type { LearningStatistics } from "../domain/types/statistics";
+import type { StatisticsDashboardData } from "../application/types/statisticsDashboardData";
 
 interface UseLearningStatisticsResult {
-  readonly statistics: LearningStatistics | null;
+  readonly statistics: StatisticsDashboardData | null;
   readonly isLoading: boolean;
   readonly error: string | null;
   readonly refreshStatistics: () => Promise<void>;
@@ -18,11 +18,10 @@ function getErrorMessage(error: unknown): string {
 }
 
 export function useLearningStatistics(): UseLearningStatisticsResult {
-  const [statistics, setStatistics] = useState<LearningStatistics | null>(null);
-
+  const [statistics, setStatistics] =
+    useState<StatisticsDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const operationIdRef = useRef(0);
 
   useEffect(() => {
@@ -31,17 +30,13 @@ export function useLearningStatistics(): UseLearningStatisticsResult {
     statisticsService
       .getStatistics()
       .then((result) => {
-        if (operationIdRef.current !== operationId) {
-          return;
-        }
+        if (operationIdRef.current !== operationId) return;
 
         setStatistics(result);
         setError(null);
       })
       .catch((caughtError: unknown) => {
-        if (operationIdRef.current !== operationId) {
-          return;
-        }
+        if (operationIdRef.current !== operationId) return;
 
         setError(getErrorMessage(caughtError));
       })
@@ -65,15 +60,11 @@ export function useLearningStatistics(): UseLearningStatisticsResult {
     try {
       const result = await statisticsService.getStatistics();
 
-      if (operationIdRef.current !== operationId) {
-        return;
-      }
+      if (operationIdRef.current !== operationId) return;
 
       setStatistics(result);
     } catch (caughtError) {
-      if (operationIdRef.current !== operationId) {
-        return;
-      }
+      if (operationIdRef.current !== operationId) return;
 
       setError(getErrorMessage(caughtError));
     } finally {
@@ -83,10 +74,5 @@ export function useLearningStatistics(): UseLearningStatisticsResult {
     }
   }, []);
 
-  return {
-    statistics,
-    isLoading,
-    error,
-    refreshStatistics,
-  };
+  return { statistics, isLoading, error, refreshStatistics };
 }
