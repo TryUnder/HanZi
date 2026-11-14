@@ -71,7 +71,7 @@ function isValidDate(value: unknown): value is string {
   );
 }
 
-function isLearningItemReference(value: unknown): boolean {
+function isLearningItemReference(value: unknown): value is UnknownRecord {
   if (!isRecord(value) || !isNonEmptyString(value.id)) {
     return false;
   }
@@ -146,6 +146,12 @@ function isCharacterWritingDetails(value: UnknownRecord): boolean {
   return hasValidWritingStatistics(value);
 }
 
+function isVocabularyCharacterWritingDetails(value: UnknownRecord): boolean {
+  return (
+    value.kind === "vocabulary-character" && hasValidWritingStatistics(value)
+  );
+}
+
 function isVocabularyWritingDetails(
   value: UnknownRecord,
   expectedKind: VocabularyWritingKind,
@@ -188,9 +194,21 @@ function isVocabularyWritingDetails(
   );
 }
 
-function isWritingDetails(value: unknown): boolean {
+function isWritingDetails(
+  value: unknown,
+  item: UnknownRecord,
+  hasContext: boolean,
+): boolean {
   if (!isRecord(value)) {
     return false;
+  }
+
+  if (value.kind === "vocabulary-character") {
+    return (
+      item.kind === "character" &&
+      hasContext &&
+      isVocabularyCharacterWritingDetails(value)
+    );
   }
 
   if (value.kind === "vocabulary") {
@@ -303,7 +321,11 @@ export function isLearningRecord(value: unknown): value is LearningRecord {
 
   switch (value.activity) {
     case "writing":
-      return isWritingDetails(value.details);
+      return isWritingDetails(
+        value.details,
+        value.item,
+        value.context !== undefined,
+      );
 
     case "speaking":
       return isSpeakingDetails(value.details);

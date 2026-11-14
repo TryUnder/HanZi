@@ -1,4 +1,3 @@
-
 import { createClient } from "@supabase/supabase-js";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -16,13 +15,10 @@ const CONCURRENCY = 4;
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseKey =
-  process.env.SUPABASE_SECRET_KEY ||
-  process.env.SUPABASE_SERVICE_ROLE_KEY;
+  process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error(
-    "Missing VITE_SUPABASE_URL or SUPABASE_SECRET_KEY in .env.",
-  );
+  throw new Error("Missing VITE_SUPABASE_URL or SUPABASE_SECRET_KEY in .env.");
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -144,13 +140,13 @@ async function main() {
       } catch (error) {
         results.failed += 1;
         const errorMessage =
-  error instanceof Error ? error.message : String(error);
+          error instanceof Error ? error.message : String(error);
 
-errors.push(errorMessage);
+        errors.push(errorMessage);
 
-if (errors.length <= 10) {
-  console.error(`Upload error: ${errorMessage}`);
-}
+        if (errors.length <= 10) {
+          console.error(`Upload error: ${errorMessage}`);
+        }
       }
 
       completed += 1;
@@ -168,9 +164,7 @@ if (errors.length <= 10) {
     }
   }
 
-  await Promise.all(
-    Array.from({ length: CONCURRENCY }, () => worker()),
-  );
+  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
 
   console.log("\nUpload summary");
   console.log("------------------------------");

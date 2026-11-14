@@ -8,6 +8,7 @@ interface TopbarProps {
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
+  "/statistics": "Statistics",
   "/writing": "Writing",
   "/speaking": "Speaking",
   "/flashcards": "Flashcards",

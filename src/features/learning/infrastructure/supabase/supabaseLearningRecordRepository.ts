@@ -44,6 +44,32 @@ export class SupabaseLearningRecordRepositoryError extends Error {
   }
 }
 
+function normalizeForComparison(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(normalizeForComparison);
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, entryValue]) => [key, normalizeForComparison(entryValue)]),
+    );
+  }
+
+  return value;
+}
+
+function haveSameContent(
+  first: LearningRecord,
+  second: LearningRecord,
+): boolean {
+  return (
+    JSON.stringify(normalizeForComparison(first)) ===
+    JSON.stringify(normalizeForComparison(second))
+  );
+}
+
 export class SupabaseLearningRecordRepository implements LearningRecordRepository {
   private readonly client: SupabaseClient;
 
@@ -167,6 +193,62 @@ export class SupabaseLearningRecordRepository implements LearningRecordRepositor
       throw new SupabaseLearningRecordRepositoryError(
         "Unable to save learning records to Supabase.",
         { cause: error },
+      );
+    }
+  }
+
+  async appendIdempotent(record: LearningRecord): Promise<void> {
+    if (!isLearningRecord(record)) {
+      throw new SupabaseLearningRecordRepositoryError(
+        "The learning record is invalid.",
+      );
+    }
+
+    const { error: insertError } = await this.client
+      .from("learning_records")
+      .insert(this.toInsertRow(record));
+
+    if (!insertError) {
+      return;
+    }
+
+    // PostgreSQL unique_violation. The original request may have committed
+    // successfully even though its response was lost.
+    if (insertError.code !== "23505") {
+      throw new SupabaseLearningRecordRepositoryError(
+        "Unable to save learning record to Supabase.",
+        { cause: insertError },
+      );
+    }
+
+    const { data, error: readError } = await this.client
+      .from("learning_records")
+      .select(LEARNING_RECORD_COLUMNS)
+      .eq("id", record.id)
+      .maybeSingle();
+
+    if (readError) {
+      throw new SupabaseLearningRecordRepositoryError(
+        "Unable to verify an existing learning record in Supabase.",
+        { cause: readError },
+      );
+    }
+
+    if (!data) {
+      throw new SupabaseLearningRecordRepositoryError(
+        "The learning record ID already exists but the existing record is not accessible.",
+        { cause: insertError },
+      );
+    }
+
+    const existingRecord = this.mapRows([
+      data as unknown as LearningRecordRow,
+    ])[0];
+
+    if (!existingRecord || !haveSameContent(existingRecord, record)) {
+      throw new SupabaseLearningRecordRepositoryError(
+        "A learning record with the same ID but different content already exists.",
+        { cause: insertError },
       );
     }
   }

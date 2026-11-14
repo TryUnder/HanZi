@@ -7,7 +7,9 @@ import {
   Trophy,
 } from "lucide-react";
 import { learningRecordService } from "../../../../app/services/learningRecordService";
+import { learningSessionService } from "../../../../app/services/learningSessionService";
 import type { LearningRecord } from "../../../learning/domain/types";
+import type { StartLearningSessionInput } from "../../../../features/learning/application/services/LearningSessionService";
 import type { ResolvedLessonItem } from "../../application/services/lessonContentService";
 import { generateVocabularyExercise } from "../../application/services/vocabularyExerciseService";
 import styles from "./VocabularyExercise.module.css";
@@ -108,9 +110,14 @@ export function VocabularyExercise({
   const [isSaving, setIsSaving] = useState(false);
   const [saveErrors, setSaveErrors] = useState(0);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [sessionError, setSessionError] = useState<string | null>(null);
 
   const questionStartedAt = useRef(0);
   const sessionIdRef = useRef<string | null>(null);
+  const pendingSessionInputRef = useRef<StartLearningSessionInput | null>(null);
+
+  const pendingSessionQueueKeyRef = useRef<string | null>(null);
+  const completedWordIdsRef = useRef<Set<string>>(new Set());
   const isAnswerSavingRef = useRef(false);
 
   const questions = useMemo(
@@ -149,6 +156,7 @@ export function VocabularyExercise({
 
     setIsLoadingHistory(true);
     setHistoryError(null);
+    setSessionError(null);
 
     try {
       const records = await learningRecordService.getAllRecords();
@@ -179,7 +187,53 @@ export function VocabularyExercise({
       setTotalMistakes(0);
       setSaveErrors(0);
 
-      sessionIdRef.current = crypto.randomUUID();
+      sessionIdRef.current = null;
+      completedWordIdsRef.current = new Set();
+
+      if (initialQueue.length > 0) {
+        const context = {
+          courseId,
+          lessonId,
+          activityId,
+        };
+
+        const queueKey = initialQueue
+          .map((item) => item.reference.id)
+          .join("\u001f");
+
+        const pendingSession = pendingSessionInputRef.current;
+
+        const canReusePendingSession =
+          pendingSession !== null &&
+          pendingSessionQueueKeyRef.current === queueKey &&
+          pendingSession.exerciseType === "vocabulary-recognition" &&
+          pendingSession.totalItems === initialQueue.length &&
+          pendingSession.context?.courseId === courseId &&
+          pendingSession.context?.lessonId === lessonId &&
+          pendingSession.context?.activityId === activityId;
+
+        const sessionInput: StartLearningSessionInput = canReusePendingSession
+          ? pendingSession
+          : {
+              id: crypto.randomUUID(),
+              startedAt: new Date().toISOString(),
+              exerciseType: "vocabulary-recognition",
+              totalItems: initialQueue.length,
+              context,
+            };
+
+        pendingSessionInputRef.current = sessionInput;
+        pendingSessionQueueKeyRef.current = queueKey;
+
+        const session = await learningSessionService.startSession(sessionInput);
+
+        sessionIdRef.current = session.id;
+        pendingSessionInputRef.current = null;
+        pendingSessionQueueKeyRef.current = null;
+      } else {
+        pendingSessionInputRef.current = null;
+        pendingSessionQueueKeyRef.current = null;
+      }
 
       setRunId((previous) => previous + 1);
       setPhase(initialQueue.length === 0 ? "completed" : "active");
@@ -207,9 +261,12 @@ export function VocabularyExercise({
       return;
     }
 
-    isAnswerSavingRef.current = true;
+    const question = currentQuestion;
 
-    const isCorrect = choiceId === currentQuestion.correctChoiceId;
+    isAnswerSavingRef.current = true;
+    setIsSaving(true);
+
+    const isCorrect = choiceId === question.correctChoiceId;
 
     const responseTimeMs = Math.max(
       0,
@@ -217,7 +274,7 @@ export function VocabularyExercise({
     );
 
     const answer: AnswerResult = {
-      questionId: currentQuestion.id,
+      questionId: question.id,
       selectedChoiceId: choiceId,
       isCorrect,
     };
@@ -228,53 +285,73 @@ export function VocabularyExercise({
     if (isCorrect) {
       setMasteredWordIds((previous) => {
         const next = new Set(previous);
-        next.add(currentQuestion.item.id);
+        next.add(question.item.id);
         return next;
       });
 
       setRoundMasteredWordIds((previous) => {
         const next = new Set(previous);
-        next.add(currentQuestion.item.id);
+        next.add(question.item.id);
         return next;
       });
     } else {
       setTotalMistakes((previous) => previous + 1);
     }
 
-    setIsSaving(true);
-
     try {
-      await learningRecordService.recordAttempt({
-        recordType: "attempt",
-        activity: "recognition",
-        item: currentQuestion.item,
-        context: {
-          courseId,
-          lessonId,
-          activityId,
-          sessionId,
-        },
-        details: {
-          isCorrect,
-          responseTimeMs,
-        },
-      });
-    } catch {
-      setSaveErrors((previous) => previous + 1);
+      try {
+        await learningRecordService.recordAttempt({
+          recordType: "attempt",
+          activity: "recognition",
+          item: question.item,
+          context: {
+            courseId,
+            lessonId,
+            activityId,
+            sessionId,
+          },
+          details: {
+            isCorrect,
+            responseTimeMs,
+          },
+        });
+      } catch {
+        setSaveErrors((previous) => previous + 1);
+      }
+
+      if (isCorrect && !completedWordIdsRef.current.has(question.item.id)) {
+        completedWordIdsRef.current.add(question.item.id);
+
+        try {
+          await learningSessionService.updateProgress(
+            sessionId,
+            completedWordIdsRef.current.size,
+          );
+          setSessionError(null);
+        } catch {
+          setSessionError(
+            "Session progress could not be saved. It will be retried when you finish.",
+          );
+        }
+      }
     } finally {
       isAnswerSavingRef.current = false;
       setIsSaving(false);
     }
   }
-
   /**
    * Finishes the current round or moves to the next one.
    *
    * Only words not correctly recognized in this exercise
    * are included in the next round.
    */
-  function goToNextQuestion() {
-    if (!currentQuestion || !currentAnswer || isSaving) {
+  async function goToNextQuestion() {
+    if (
+      !currentQuestion ||
+      !currentAnswer ||
+      isSaving ||
+      isAnswerSavingRef.current
+    ) {
       return;
     }
 
@@ -287,18 +364,45 @@ export function VocabularyExercise({
       (item) => !roundMasteredWordIds.has(item.reference.id),
     );
 
-    if (failedItems.length === 0) {
-      setPhase("completed");
+    if (failedItems.length > 0) {
+      setRoundItems(failedItems);
+      setRoundAnswers([]);
+      setCurrentIndex(0);
+      setRoundNumber((previous) => previous + 1);
+      setRunId((previous) => previous + 1);
       return;
     }
 
-    setRoundItems(failedItems);
-    setRoundAnswers([]);
-    setCurrentIndex(0);
-    setRoundNumber((previous) => previous + 1);
-    setRunId((previous) => previous + 1);
-  }
+    const sessionId = sessionIdRef.current;
 
+    if (!sessionId) {
+      setSessionError("The learning session could not be found.");
+      return;
+    }
+
+    isAnswerSavingRef.current = true;
+    setIsSaving(true);
+
+    try {
+      await learningSessionService.updateProgress(
+        sessionId,
+        completedWordIdsRef.current.size,
+      );
+
+      await learningSessionService.completeSession(sessionId);
+
+      sessionIdRef.current = null;
+      setSessionError(null);
+      setPhase("completed");
+    } catch {
+      setSessionError(
+        "The learning session could not be completed. Please try again.",
+      );
+    } finally {
+      isAnswerSavingRef.current = false;
+      setIsSaving(false);
+    }
+  }
   if (vocabularyItems.length === 0) {
     return (
       <section className={styles.section}>
@@ -533,6 +637,11 @@ export function VocabularyExercise({
         {saveErrors > 0 && (
           <p className={styles.saveWarning} role="status">
             Some answers could not be saved to your learning history.
+          </p>
+        )}
+        {sessionError && (
+          <p className={styles.saveWarning} role="alert">
+            {sessionError}
           </p>
         )}
 

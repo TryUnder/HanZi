@@ -176,6 +176,89 @@ describe("LocalStorageLearningRecordRepository", () => {
     await expect(repository.getAll()).resolves.toEqual([firstRecord]);
   });
 
+  it("treats an identical idempotent append as success", async () => {
+    const { repository, storage } = createRepository();
+
+    await repository.appendIdempotent(firstRecord);
+
+    const originalStorage = storage.getRaw(LEARNING_RECORDS_STORAGE_KEY);
+
+    await expect(
+      repository.appendIdempotent(firstRecord),
+    ).resolves.toBeUndefined();
+
+    await expect(repository.getAll()).resolves.toEqual([firstRecord]);
+
+    expect(storage.getRaw(LEARNING_RECORDS_STORAGE_KEY)).toBe(originalStorage);
+  });
+
+  it("compares nested object content independently of property order", async () => {
+    const { repository } = createRepository();
+
+    await repository.appendIdempotent(secondRecord);
+
+    const sameRecordWithDifferentPropertyOrder: LearningRecord = {
+      details: {
+        responseTimeMs: 1200,
+        isCorrect: true,
+      },
+      activity: "recognition",
+      recordType: "attempt",
+      occurredAt: "2026-11-07T18:05:00.000Z",
+      item: {
+        id: "ni-hao",
+        kind: "vocabulary",
+      },
+      id: "record-002",
+    };
+
+    await expect(
+      repository.appendIdempotent(sameRecordWithDifferentPropertyOrder),
+    ).resolves.toBeUndefined();
+
+    await expect(repository.getAll()).resolves.toEqual([secondRecord]);
+  });
+
+  it("rejects an existing ID with different content", async () => {
+    const { repository } = createRepository();
+
+    await repository.appendIdempotent(firstRecord);
+
+    const conflictingRecord: LearningRecord = {
+      ...firstRecord,
+      status: "known",
+    };
+
+    await expect(
+      repository.appendIdempotent(conflictingRecord),
+    ).rejects.toBeInstanceOf(LearningRecordStorageError);
+
+    await expect(
+      repository.appendIdempotent(conflictingRecord),
+    ).rejects.toMatchObject({
+      code: "idempotency-conflict",
+    });
+
+    await expect(repository.getAll()).resolves.toEqual([firstRecord]);
+  });
+
+  it("does not persist an invalid idempotent record", async () => {
+    const { repository, storage } = createRepository();
+
+    const invalidRecord = {
+      ...firstRecord,
+      id: "",
+    } as LearningRecord;
+
+    await expect(
+      repository.appendIdempotent(invalidRecord),
+    ).rejects.toMatchObject({
+      code: "invalid-record",
+    });
+
+    expect(storage.getRaw(LEARNING_RECORDS_STORAGE_KEY)).toBeNull();
+  });
+
   it("reports invalid JSON instead of returning an empty collection", async () => {
     const { repository, storage } = createRepository();
 

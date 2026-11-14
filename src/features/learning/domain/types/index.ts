@@ -27,5 +27,13 @@ export type {
   CharacterWritingAttemptDetails,
   LearningRecordContext,
   VocabularyWritingAttemptDetails,
+  VocabularyCharacterWritingAttemptDetails,
   WritingCharacterResult,
 } from "./learningRecord";
+
+export type {
+  LearningExerciseType,
+  LearningSession,
+  LearningSessionContext,
+  LearningSessionStatus,
+} from "./learningSession";

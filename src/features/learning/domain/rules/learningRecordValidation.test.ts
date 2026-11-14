@@ -476,4 +476,59 @@ describe("isLearningRecord", () => {
     expect(isLearningRecord("record")).toBe(false);
     expect(isLearningRecord(123)).toBe(false);
   });
+
+  it("accepts a vocabulary character writing attempt", () => {
+    const record = {
+      ...baseRecord,
+      recordType: "attempt",
+      activity: "writing",
+      context: validContext,
+      details: {
+        kind: "vocabulary-character",
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 1,
+        strokeMistakes: [{ strokeIndex: 2, mistakes: 1 }],
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(true);
+  });
+
+  it("rejects a vocabulary character writing attempt without context", () => {
+    const record = {
+      ...baseRecord,
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        kind: "vocabulary-character",
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 1,
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
+  });
+
+  it("rejects a vocabulary character writing attempt with a vocabulary item", () => {
+    const record = {
+      ...baseRecord,
+      item: {
+        kind: "vocabulary",
+        id: "vocab-540d-5b57",
+      },
+      recordType: "attempt",
+      activity: "writing",
+      context: validContext,
+      details: {
+        kind: "vocabulary-character",
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 1,
+      },
+    };
+
+    expect(isLearningRecord(record)).toBe(false);
+  });
 });

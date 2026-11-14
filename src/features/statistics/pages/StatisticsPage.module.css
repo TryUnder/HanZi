@@ -1,0 +1,498 @@
+.page {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 38px 46px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.eyebrow,
+.panelEyebrow {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.pageHeader h1 {
+  margin: 7px 0 5px;
+  color: var(--color-text-heading);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.pageHeader p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.refreshButton,
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.refreshButton:hover {
+  border-color: var(--color-brand-300);
+  color: var(--color-brand-700);
+}
+
+.refreshButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.primaryButton {
+  border-color: var(--color-brand-500);
+  background: var(--color-brand-500);
+  color: white;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.metricCard,
+.panel,
+.stateCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.metricCard {
+  min-width: 0;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 35px 1fr;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.metricIcon {
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  grid-row: span 2;
+}
+
+.purple {
+  color: var(--color-purple);
+  background: var(--color-purple-background);
+}
+
+.green {
+  color: var(--color-green);
+  background: var(--color-green-background);
+}
+
+.orange {
+  color: var(--color-orange);
+  background: var(--color-orange-background);
+}
+
+.blue {
+  color: var(--color-blue);
+  background: var(--color-blue-background);
+}
+
+.metricLabel {
+  color: var(--color-text-muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.75px;
+}
+
+.metricValue {
+  grid-column: 1 / -1;
+  margin-top: 13px;
+  color: var(--color-text-heading);
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.metricHint {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.panel {
+  min-width: 0;
+  padding: 21px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.panelHeader h2 {
+  margin: 5px 0 0;
+  color: var(--color-text-heading);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.panelIcon {
+  color: var(--color-brand-500);
+}
+
+.activityChart {
+  height: 190px;
+  display: grid;
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  gap: 8px;
+  align-items: end;
+}
+
+.dayColumn {
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.dayValue {
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.barTrack {
+  width: 100%;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--color-surface-subtle);
+}
+
+.bar {
+  width: 100%;
+  min-height: 4px;
+  border-radius: 5px;
+  background: var(--color-brand-500);
+  transition: height 0.25s ease;
+}
+
+.dayLabel {
+  color: var(--color-text-muted);
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.chartCaption {
+  margin: 17px 0 0;
+  color: var(--color-text-muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+
+.activityItem {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.activityInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.activityInfo > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.activityInfo strong {
+  color: var(--color-text-primary);
+  font-size: 11px;
+}
+
+.activityInfo span {
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+
+.activityNumbers {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.activityNumbers strong {
+  min-width: 22px;
+  text-align: right;
+}
+
+.activityNumbers span {
+  min-width: 32px;
+  text-align: right;
+  font-weight: 700;
+}
+
+.progressTrack,
+.difficultyTrack {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-surface-subtle);
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-brand-500);
+}
+
+.difficultList {
+  display: flex;
+  flex-direction: column;
+}
+
+.difficultItem {
+  min-height: 56px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px minmax(110px, 0.8fr);
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.difficultItem:last-child {
+  border-bottom: 0;
+}
+
+.itemIdentity {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.itemIdentity strong {
+  overflow: hidden;
+  color: var(--color-text-heading);
+  font-size: 15px;
+  text-overflow: ellipsis;
+}
+
+.itemKind {
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+
+.itemAttempts {
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  text-align: right;
+}
+
+.difficulty {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.difficultyTrack {
+  flex: 1;
+}
+
+.difficultyFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-orange);
+}
+
+.difficulty strong {
+  min-width: 30px;
+  color: var(--color-text-secondary);
+  font-size: 10px;
+  text-align: right;
+}
+
+.emptyState {
+  min-height: 110px;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.stateCard {
+  margin: 40px auto;
+  max-width: 480px;
+  padding: 28px;
+  text-align: center;
+}
+
+.stateCard h2 {
+  margin: 0 0 8px;
+  color: var(--color-text-heading);
+  font-size: 17px;
+}
+
+.stateCard p {
+  margin: 0 0 18px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.inlineError {
+  padding: 12px 15px;
+  border: 1px solid #f1d5d5;
+  border-radius: var(--radius-md);
+  background: #fff6f6;
+  color: #a34d4d;
+  font-size: 11px;
+}
+
+.pageFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+
+@media (max-width: 1100px) {
+  .page {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+
+  .overviewGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 25px 15px;
+    gap: 16px;
+  }
+
+  .pageHeader {
+    align-items: flex-start;
+  }
+
+  .pageHeader h1 {
+    font-size: 24px;
+  }
+
+  .refreshButton {
+    padding: 9px;
+    font-size: 0;
+  }
+
+  .overviewGrid {
+    gap: 9px;
+  }
+
+  .metricCard {
+    padding: 13px;
+  }
+
+  .metricValue {
+    font-size: 23px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .activityChart {
+    gap: 4px;
+  }
+
+  .dayLabel {
+    font-size: 7px;
+  }
+
+  .difficultItem {
+    grid-template-columns: minmax(0, 1fr) 65px;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .difficulty {
+    grid-column: 1 / -1;
+  }
+
+  .pageFooter {
+    flex-direction: column;
+  }
+}

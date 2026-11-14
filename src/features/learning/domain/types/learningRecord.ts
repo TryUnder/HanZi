@@ -53,6 +53,14 @@ export interface CharacterWritingAttemptDetails {
 }
 
 /**
+ * Result of writing one character as part of a vocabulary exercise.
+ * The discriminator keeps it separate from independent character practice.
+ */
+export interface VocabularyCharacterWritingAttemptDetails extends CharacterWritingAttemptDetails {
+  readonly kind: "vocabulary-character";
+}
+
+/**
  * Result of writing a complete vocabulary item
  * with visible Chinese character guidance.
  */
@@ -78,6 +86,7 @@ export interface MemoryWritingAttemptDetails {
 
 export type WritingAttemptDetails =
   | CharacterWritingAttemptDetails
+  | VocabularyCharacterWritingAttemptDetails
   | VocabularyWritingAttemptDetails
   | MemoryWritingAttemptDetails;
 

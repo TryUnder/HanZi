@@ -5,7 +5,8 @@ export type LearningRecordStorageErrorCode =
   | "invalid-data"
   | "unsupported-version"
   | "invalid-record"
-  | "duplicate-id";
+  | "duplicate-id"
+  | "idempotency-conflict";
 
 export class LearningRecordStorageError extends Error {
   public readonly code: LearningRecordStorageErrorCode;

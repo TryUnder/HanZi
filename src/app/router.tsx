@@ -17,6 +17,7 @@ import { PronunciationLabPage } from "../features/pronunciation/presentation/pag
 import { ResetPasswordPage } from "../features/auth/pages/ResetPasswordPage";
 import { SetPasswordPage } from "../features/auth/pages/SetPasswordPage";
 import { SettingsPage } from "../features/settings/presentation/pages/SettingsPage";
+import { StatisticsPage } from "../features/statistics/pages/StatisticsPage";
 
 export function AppRouter() {
   return (
@@ -35,6 +36,7 @@ export function AppRouter() {
           <Route index element={<Navigate to="/dashboard" replace />} />
 
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
 
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/courses/:courseId" element={<CourseDetailPage />} />

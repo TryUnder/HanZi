@@ -20,6 +20,32 @@ function createEmptyStorageData() {
   };
 }
 
+function normalizeForComparison(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(normalizeForComparison);
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, entryValue]) => [key, normalizeForComparison(entryValue)]),
+    );
+  }
+
+  return value;
+}
+
+function haveSameContent(
+  first: LearningRecord,
+  second: LearningRecord,
+): boolean {
+  return (
+    JSON.stringify(normalizeForComparison(first)) ===
+    JSON.stringify(normalizeForComparison(second))
+  );
+}
+
 function parseStorageData(rawData: string | null): LearningRecord[] {
   if (rawData === null) {
     return createEmptyStorageData().records;
@@ -136,7 +162,6 @@ export class LocalStorageLearningRecordRepository implements LearningRecordRepos
       return;
     }
 
-    // Validate the complete batch before reading or changing storage.
     if (!records.every(isLearningRecord)) {
       throw new LearningRecordStorageError(
         "invalid-record",
@@ -163,7 +188,33 @@ export class LocalStorageLearningRecordRepository implements LearningRecordRepos
       );
     }
 
-    // One setItem call persists the complete batch.
     this.writeRecords([...existingRecords, ...records]);
+  }
+
+  async appendIdempotent(record: LearningRecord): Promise<void> {
+    if (!isLearningRecord(record)) {
+      throw new LearningRecordStorageError(
+        "invalid-record",
+        "The learning record is invalid.",
+      );
+    }
+
+    const existingRecords = this.readRecords();
+    const existingRecord = existingRecords.find(
+      (entry) => entry.id === record.id,
+    );
+
+    if (existingRecord) {
+      if (haveSameContent(existingRecord, record)) {
+        return;
+      }
+
+      throw new LearningRecordStorageError(
+        "idempotency-conflict",
+        "A learning record with the same ID but different content already exists.",
+      );
+    }
+
+    this.writeRecords([...existingRecords, record]);
   }
 }

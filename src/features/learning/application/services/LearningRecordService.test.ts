@@ -35,6 +35,20 @@ class InMemoryLearningRecordRepository implements LearningRecordRepository {
 
     this.records.push(...records);
   }
+
+  async appendIdempotent(record: LearningRecord): Promise<void> {
+    const existing = this.records.find((entry) => entry.id === record.id);
+
+    if (existing) {
+      if (JSON.stringify(existing) === JSON.stringify(record)) {
+        return;
+      }
+
+      throw new Error("Idempotency conflict.");
+    }
+
+    this.records.push(record);
+  }
 }
 
 describe("LearningRecordService", () => {
@@ -55,6 +69,77 @@ describe("LearningRecordService", () => {
     return { service, repository };
   }
 
+  it("creates a writing attempt with generated metadata without saving it", async () => {
+    const { service, repository } = createService();
+
+    const record = service.createAttempt({
+      item,
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 2,
+        strokeMistakes: [{ strokeIndex: 1, mistakes: 2 }],
+      },
+    });
+
+    expect(record).toEqual({
+      id: "record-1",
+      item,
+      occurredAt: "2026-11-07T20:00:00.000Z",
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 2,
+        strokeMistakes: [{ strokeIndex: 1, mistakes: 2 }],
+      },
+    });
+
+    await expect(repository.getAll()).resolves.toEqual([]);
+  });
+
+  it("saves a prepared record", async () => {
+    const { service, repository } = createService();
+
+    const record = service.createAttempt({
+      item,
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 0,
+      },
+    });
+
+    await service.saveRecord(record);
+
+    await expect(repository.getAll()).resolves.toEqual([record]);
+  });
+
+  it("allows retrying the same prepared record without creating duplicates", async () => {
+    const { service, repository } = createService();
+
+    const record = service.createAttempt({
+      item,
+      recordType: "attempt",
+      activity: "writing",
+      details: {
+        correctStrokes: 7,
+        totalStrokes: 7,
+        mistakes: 0,
+      },
+    });
+
+    await service.saveRecord(record);
+    await service.saveRecord(record);
+
+    await expect(repository.getAll()).resolves.toEqual([record]);
+  });
+
   it("records a writing attempt with generated metadata", async () => {
     const { service, repository } = createService();
 
@@ -70,19 +155,8 @@ describe("LearningRecordService", () => {
       },
     });
 
-    expect(result).toEqual({
-      id: "record-1",
-      item,
-      occurredAt: "2026-11-07T20:00:00.000Z",
-      recordType: "attempt",
-      activity: "writing",
-      details: {
-        correctStrokes: 7,
-        totalStrokes: 7,
-        mistakes: 2,
-        strokeMistakes: [{ strokeIndex: 1, mistakes: 2 }],
-      },
-    });
+    expect(result.id).toBe("record-1");
+    expect(result.occurredAt).toBe("2026-11-07T20:00:00.000Z");
 
     await expect(repository.getAll()).resolves.toEqual([result]);
   });
@@ -105,6 +179,22 @@ describe("LearningRecordService", () => {
 
     expect(result.activity).toBe("speaking");
     expect(result.id).toBe("record-1");
+  });
+
+  it("creates a status change without saving it", async () => {
+    const { service, repository } = createService();
+
+    const record = service.createStatusChange(item, "learning");
+
+    expect(record).toEqual({
+      id: "record-1",
+      item,
+      occurredAt: "2026-11-07T20:00:00.000Z",
+      recordType: "status-changed",
+      status: "learning",
+    });
+
+    await expect(repository.getAll()).resolves.toEqual([]);
   });
 
   it("records a self-assessed status change", async () => {
